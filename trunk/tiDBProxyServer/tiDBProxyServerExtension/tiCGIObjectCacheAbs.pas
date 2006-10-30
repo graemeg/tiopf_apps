@@ -13,6 +13,8 @@ uses
   ;
 
 const
+  cTICGIExitCodeOK                                   = 0;
+  cTICGIExitCodeUnknownException                     = 2000 ;
   cTICGIExitCodeCanNotCreateCacheDirectory           = 2001 ;
   cTICGIExitCodeNoDataReturnedFromGetLatestDateQuery = 2002 ;
   cTICGIExitCodeInvalidParameterToCGIExtension       = 2003 ;

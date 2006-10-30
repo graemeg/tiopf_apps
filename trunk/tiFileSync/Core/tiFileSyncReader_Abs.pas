@@ -31,6 +31,7 @@ type
     FCurrentFile: TtiFileName; // used to pass data to OnProgressEvent
     FOnProgress: TtiFileSyncMgrProgressEvent;
     FOnCheckTerminated: TtiFileSyncCheckTerminatedEvent;
+    FRoot: string;
     // These have nothing to do with TtiFileSyncReaderAbs as they contain code
     // that is custom written for the remote server. Move to their own class.
     // (Perhaps the server thingy)
@@ -43,6 +44,7 @@ type
     function    DoWriteFileData(const pData: string): string;
     function    DoDeleteFileData(const pData: string): string;
     function    DoWriteIndex(const pData: string): string;
+    procedure   SetRoot(const Value: string);
   protected
     function    GetParamsAsString: string; virtual ;
     procedure   SetParamsAsString(const Value: string); virtual ;
@@ -52,6 +54,7 @@ type
   public
     constructor Create; override ;
     destructor  Destroy; override ;
+    property    Root: string Read FRoot Write SetRoot;
     procedure   ReadFileIndex(  pFileNames : TtiFileNames ;
                                 pSourceFileNameFilters : TtiFileNameFilters = nil ) ; virtual ; abstract ;
     procedure   ReadPathIndex(  pPathNames : TtiPathNames ;
@@ -111,13 +114,14 @@ end;
 
 function TtiFileSyncReaderAbs.AbsolutePath(const pPath: string): string;
 begin
-  Result := ExpandFileName(tiAddTrailingSlash(tiGetEXEPath) + '.\' + pPath );
+  Result := ExpandFileName(FRoot + '.\' + pPath );
 end;
 
 constructor TtiFileSyncReaderAbs.Create;
 begin
   inherited;
   FParams:= TStringList.Create;
+  Root:= tiGetEXEPath;
 end;
 
 destructor TtiFileSyncReaderAbs.Destroy;
@@ -349,6 +353,11 @@ end;
 procedure TtiFileSyncReaderAbs.SetParamsAsString(const Value: string);
 begin
   FParams.CommaText := Value;
+end;
+
+procedure TtiFileSyncReaderAbs.SetRoot(const Value: string);
+begin
+  FRoot := tiAddTrailingSlash(Value);
 end;
 
 initialization

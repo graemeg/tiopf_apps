@@ -32,8 +32,8 @@ type
   protected
     procedure   AssignClassProps(pSource: TtiObject); override;
   public
-    constructor create ; override ;
-    destructor  destroy ; override ;
+    constructor Create ; override ;
+    destructor  Destroy ; override ;
     function    Clone : TtiFileSyncSetup ; reintroduce ;
   published
     property FileSyncDirs : TtiFileSyncDirs read FFileSyncDirs ;
@@ -97,7 +97,7 @@ type
     function    GetOwner: TtiFileNameFilters; reintroduce ;
     procedure   SetOwner(const Value: TtiFileNameFilters); reintroduce ;
   public
-    constructor create ; override ;
+    constructor Create ; override ;
     property    Owner       : TtiFileNameFilters             read GetOwner      write SetOwner ;
     function    Clone : TtiFileNameFilter ; reintroduce ;
     property    FilterType : TtiFileFilterType read FFilterType write FFilterType ;

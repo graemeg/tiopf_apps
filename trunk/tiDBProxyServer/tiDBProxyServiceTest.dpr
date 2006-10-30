@@ -2,7 +2,6 @@ program tiDBProxyServiceTest;
 
 uses
   FastMM4,
-  madExcept,
   Forms,
   tiLogToGUI,
   FMainTIDBProxy in 'FMainTIDBProxy.pas' {FormMainTIDBProxyServer},

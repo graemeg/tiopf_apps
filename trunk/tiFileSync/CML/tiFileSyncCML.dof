@@ -31,12 +31,12 @@ ShowHints=1
 ShowWarnings=1
 UnitAliases=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 NamespacePrefix=
-SymbolDeprecated=1
+SymbolDeprecated=0
 SymbolLibrary=1
 SymbolPlatform=0
-UnitLibrary=0
+UnitLibrary=1
 UnitPlatform=0
-UnitDeprecated=1
+UnitDeprecated=0
 HResultCompat=1
 HidingMember=1
 HiddenVirtual=1
@@ -111,7 +111,7 @@ ProjectLang=$00000C09
 RootDir=C:\Program Files\Borland\Delphi7\Bin\
 [Version Info]
 IncludeVerInfo=0
-AutoIncBuild=0
+AutoIncBuild=1
 MajorVer=0
 MinorVer=0
 Release=0
@@ -133,3 +133,54 @@ LegalTrademarks=
 OriginalFilename=
 ProductName=
 ProductVersion=
+[Excluded Packages]
+C:\Program Files\Borland\Delphi7\Projects\Bpl\JclDebugIde70.bpl=JCL Debug IDE extension for Delphi 7
+C:\Program Files\Borland\Delphi7\Projects\Bpl\ProjectAnalyzer70.bpl=JCL Project Analyzer for Delphi 7
+C:\Program Files\Borland\Delphi7\Projects\Bpl\IdeOpenDlgFavorite70.bpl=JCL Open and Save IDE dialogs with favorite folders for Delphi 7
+C:\Program Files\Borland\Delphi7\Projects\Bpl\JVCL200_D70.bpl=JEDI-VCL Components
+c:\program files\borland\delphi7\Projects\Bpl\WinHTTPD7.bpl=WinHTTP component TRIAL for Delphi 7
+c:\program files\borland\delphi7\Projects\Bpl\tb2kdsgn_d7.bpl=Toolbar2000 Design Package (Jordan Russell)
+C:\Program Files\Borland\Delphi7\Projects\Bpl\tb2k_d7.bpl=Toolbar2000 Components (Jordan Russell)
+C:\Program Files\Borland\Delphi7\Projects\Bpl\tbx_d7.bpl=Toolbar2000 -- TBX Extensions (Alex Denisov)
+c:\program files\borland\delphi7\Projects\Bpl\tbxdsgn_d7.bpl=Toolbar2000 -- TBX Extensions Design Package (Alex Denisov)
+c:\program files\borland\delphi7\Projects\Bpl\dxPack2D7.bpl=dxPack2 for Delphi7
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=C:\NEMMCO\OPDMS\Source\OPDMSiCore\;C:\NEMMCO\OPDMS\Source\NDSCSupport\NDSCSupport_BOM\;C:\NEMMCO\OPDMS\Source\NDSCSupport\PSSEBusMtn\;C:\NEMMCO\OPDMS\Source\TrendAnalysis\;C:\NEMMCO\OPDMS\Source\PhysNetworkData\;C:\NEMMCO\OPDMS\Source\OPDMSiCoreGUI\;C:\NEMMCO\OPDMS\Source\TeeChartPro\
+[HistoryLists\hlConditionals]
+Count=4
+Item0=madExcept
+Item1=madExcept,INTERNAL_HTTP_SERVER
+Item2=BOOLEAN_CHAR_1;OID_AS_INT64;madExcept
+Item3=madExcept;OPTIMISE_XMLDB_SIZE
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlSearchPath]
+Count=10
+Item0=..\Core;..\..\..\Source\3rdParty\DUnit\9.2.1.WithLeakDetection;..\..\..\Source\3rdParty\Indy\10.0.52\Core;..\..\..\Source\3rdParty\Indy\10.0.52\Protocols;..\..\..\Source\3rdParty\Indy\10.0.52\System
+Item1=..\Core;..\..\..\3rdParty\DUnit\9.2.1.WithLeakDetection;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\Core;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\Protocols;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\System
+Item2=..\Core;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\DUnit\9.2.1.WithLeakDetection;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\Core;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\Protocols;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\Indy\10.0.52\System
+Item3=..\Core;C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\DUnit\9.2.1.WithLeakDetection
+Item4=C:\NEMMCO\OPDMS\Source\3rdParty\tiOPF\Source\3rdParty\DUnit\9.2.1.WithLeakDetection
+Item5=..\Src
+Item6=..\Core
+Item7=..\OPDMSCore;..\3rdParty\tiOPF\SupportApps\tiFileSync\Src
+Item8=..\..\..\..\OPDMSCore
+Item9=C:\TechInsite\SupportApps\tiSQLManager;..\OPDMSiCore;..\opdmsicoregui;..\NDSCSupport\NDSCSupport_BOM;..\NDSCSupport\NDSCSupport_Cli;..\TrendAnalysis;..\NDSCSupport\NetworkModel_Report;..\NDSCSupport\NetworkModel_Edit;..\TeeChartPro;.\EHSHelp;.\HTMLLight
+[HistoryLists\hlUnitOutputDirectory]
+Count=4
+Item0=.\_Dcu
+Item1=..\..\..\Bin
+Item2=..\..\Bin
+Item3=C:\TechInsite\bin
+[HistoryLists\hlOutputDirectorry]
+Count=8
+Item0=..\..\..\_Bin
+Item1=..\..\..\..\_Bin
+Item2=..\..\..\..\Bin
+Item3=..\..\..\Bin
+Item4=..\Bin
+Item5=..\..\Bin
+Item6=C:\NEMMCO\Bin
+Item7=C:\TechInsite\bin

@@ -6,11 +6,6 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, SvcMgr, Dialogs,
   ExtCtrls;
 
-const
-  cINISection         = 'System';
-  cINIIdent           = 'ApplicationTitle';
-  cDefaultDisplayName = 'TechInsite Database Proxy Service';
-
 type
   TtiDBProxyServer = class(TService)
     procedure ServiceCreate(Sender: TObject);
@@ -34,10 +29,12 @@ uses
   ,tiDBConnectionPool
   ,tiQueryRemote_Svr
   ,tiWebServerConstants
+  ,tiWebServerConfig
   {$IFDEF madexcept} ,madexcept {$ENDIF}
   ,tiDBProxyServerDependencies
   ,ServicesUtil
   ,tiLog
+  ,tiLogToFile
 
   ;
 
@@ -54,9 +51,17 @@ begin
 end;
 
 procedure TtiDBProxyServer.ServiceCreate(Sender: TObject);
+var
+  LConfig: TtiWebServerConfig;
 begin
-  Self.Name := cTIDBProxyServiceName ;
-  Self.DisplayName := ProxyServerINI.ReadString(cINISection, cINIIdent, cDefaultDisplayName);
+  LConfig:= TtiWebServerConfig.Create;
+  try
+    LConfig.RegisterLog;
+    Self.Name:= LConfig.WebServiceShortName;
+    Self.DisplayName:= LConfig.WebServiceDiaplayName;
+  finally
+    LConfig.Free;
+  end;
 end;
 
 procedure TtiDBProxyServer.ServiceAfterInstall(Sender: TService);
@@ -81,8 +86,8 @@ begin
   Log(Format('%s (%s) service stopping...', [Name, DisplayName]));
   // ToDo: Will have to do better than this. Should wait for database activity to end. Then shut down.
   Stopped := False;
-  gTIDBProxy.Stop;
   gTIOPFManager.Terminate;
+  gTIDBProxy.Stop;
   FreeAndNilTIPerMgr;
   Stopped := True;
   Log(Format('%s (%s) service stopped.', [Name, DisplayName]));

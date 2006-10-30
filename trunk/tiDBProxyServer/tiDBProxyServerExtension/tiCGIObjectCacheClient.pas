@@ -17,8 +17,15 @@ type
   protected
     procedure   RefreshCacheFromDB; override ;
     procedure   Init; override ;
+
     function    CGIEXEName: string; virtual ; abstract ;
     procedure   CacheToBOM(const pData: TtiObject);virtual; abstract;
+    function    GetAppServerURL: string; virtual; abstract;
+    function    GetConnectWith: string; virtual; abstract;
+    function    GetProxyServerActive: Boolean; virtual; abstract;
+    function    GetProxyServerName: string; virtual; abstract;
+    function    GetProxyServerPort: Integer; virtual; abstract;
+
   public
     constructor Create; override ;
     procedure   Execute(const pData: TtiObject); virtual ;
@@ -28,12 +35,17 @@ type
   protected
     procedure   CacheToBOM(const pData: TtiObject); override;
     function    VisitorGroupName: string; virtual ; abstract ;
+    procedure   RegisterVisitors; virtual;
+  public
+    procedure   Execute(const pData: TtiObject); override;
+    {:For unit testing}
+    class procedure   StringToBOM(const AStr: string; const AData: TtiObject);
   end ;
 
 implementation
 uses
   // tiOPF
-  tiDBProxyServerCGIRequest
+   tiCGIExtensionRequest
   ,tiUtils
   ,tiStreams
   ,tiXML
@@ -46,26 +58,24 @@ uses
   ,SysUtils
   ,Classes
   ,Windows
-  // OPDMS
-  ,OPDMSINI
   ;
 
 { TtiCGIObjectCacheClientVisitor }
 
 procedure TtiCGIObjectCacheClient.RefreshCacheFromDB;
 var
-  lCGIRequest: TtiDBProxyServerCGIRequest ;
+  lCGIRequest: TtiCGIExtensionRequest;
   lResponse:   string ;
 begin
-  lCGIRequest:= TtiDBProxyServerCGIRequest.Create ;
+  lCGIRequest:= TtiCGIExtensionRequest.CreateInstance;
   try
-    lResponse := lCGIRequest.Execute( gOPDMSConfig.AppServerURL,
+    lResponse := lCGIRequest.Execute( GetAppServerURL,
                                       CGIEXEName,
                                       Params.AsCompressedEncodedString,
-                                      gOPDMSConfig.ConnectWith,
-                                      gOPDMSConfig.ProxyServerActive,
-                                      gOPDMSConfig.ProxyServerName,
-                                      gOPDMSConfig.ProxyServerPort ) ;
+                                      GetConnectWith,
+                                      GetProxyServerActive,
+                                      GetProxyServerName,
+                                      GetProxyServerPort ) ;
     ResponseToFile(lResponse);
   finally
     lCGIRequest.Free;
@@ -84,7 +94,6 @@ end;
 constructor TtiCGIObjectCacheClient.Create;
 begin
   inherited;
-  Init;
 end;
 
 procedure TtiCGIObjectCacheClient.ResponseToFile(const pResponse: string);
@@ -104,6 +113,44 @@ begin
     end;
   finally
     lStreamFrom.Free;
+  end;
+end;
+
+procedure TtiCGIObjectCacheClientVisitor.Execute(const pData: TtiObject);
+begin
+  RegisterVisitors;
+  inherited;
+end;
+
+procedure TtiCGIObjectCacheClientVisitor.RegisterVisitors;
+begin
+  // Do nothing
+end;
+
+class procedure TtiCGIObjectCacheClientVisitor.StringToBOM(const AStr: string; const AData: TtiObject);
+var
+  LO: TtiCGIObjectCacheClientVisitor;
+  lParams: string ;
+  LFileName: string;
+begin
+  LO:= Create;
+  try
+    LO.RegisterVisitors;
+    lParams := tiMakeXMLLightParams( True, cgsCompressNone, optDBSizeOn, xfnsInteger );
+    LFileName := tiGetTempFile('xml');
+    tiStringToFile(AStr, LFileName);
+    try
+      gTIOPFManager.ConnectDatabase( LFileName, 'null', 'null', lParams, cTIPersistXMLLight);
+      try
+        gTIOPFManager.VisMgr.Execute(LO.VisitorGroupName, AData, LFileName, cTIPersistXMLLight ) ;
+      finally
+        gTIOPFManager.DisconnectDatabase(LFileName, cTIPersistXMLLight);
+      end;
+    finally
+      SysUtils.DeleteFile(LFileName);
+    end;
+  finally
+    LO.Free;
   end;
 end;
 
@@ -133,6 +180,7 @@ var
   lCachedFileDate : TDateTime ;
   lDatabaseFileDate : TDateTime ;
 begin
+  Init;
   lCachedFileDate := GetCachedFileDate;
   lDatabaseFileDate := GetDBFileDate ;
   Log([ClassName, 'Execute']);

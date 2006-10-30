@@ -1,5 +1,7 @@
 unit ServicesUtil;
 
+{$I tiDefines.inc}
+
 interface
 
 uses

@@ -12,7 +12,6 @@ uses
 {$R *.RES}
 
 begin
-  gLog.RegisterLog(TtiLogToFile.CreateWithDateInFileName);
   Application.Initialize;
   Application.CreateForm(TtiDBProxyServer, tiDBProxyServer);
   Application.Run;

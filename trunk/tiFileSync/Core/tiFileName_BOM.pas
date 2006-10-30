@@ -15,6 +15,9 @@ unit tiFileName_BOM;
 
 
 interface
+
+{$I tiDefines.inc}
+
 uses
   classes
   ,sysUtils

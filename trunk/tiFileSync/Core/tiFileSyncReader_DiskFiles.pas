@@ -1,6 +1,9 @@
 unit tiFileSyncReader_DiskFiles;
 
 interface
+
+{$I tiDefines.inc}
+
 uses
   tiFileName_BOM
   ,tiFileSyncReader_Abs

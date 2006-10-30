@@ -24,7 +24,8 @@ const
 
   ctiFSNewFilesToBeCopied      = 'New file(s) to be copied';
   ctiFSExistingFilesToBeUpdated = 'Existing file(s) to be updated';
-
+  cMessageWaitingForTerminate = 'Waiting for download to cancel...';
+  
 type
   TtiFileSyncAction = (fsaCopy, fsaUpdate, fsaDelete);
   TtiFileSyncActions = set of TtiFileSyncAction;
@@ -954,7 +955,8 @@ end;
 procedure TtiFileSyncMgr.Terminate;
 begin
   FTerminated := true;
-  Log('Waiting for process to terminate');
+  Log('');
+  Log(cMessageWaitingForTerminate);
 end;
 
 procedure TtiFileSyncMgr.AssignFromFileSyncDir(const pData: TtiFileSyncDir);
@@ -1216,7 +1218,9 @@ begin
       LMessage:= tiIf(LFileList.Count = 1, 'file', 'files');
       Log('The following ' + LMessage + ' appears to be open in another application and could not be locked for update. ' +
           'Please close all active applications and try again. ' +
-          'If this does not work, please re-start your computer and try again.');
+          'If this does not work, please re-start your computer and try again. ' +
+          'You may need to confirm with your IT support staff that you have ' +
+          'write access to this location.');
       Log('');
       for i:= 0 to LFileList.Count - 1 do
         Log('  ' + LFileList.Strings[i]);
