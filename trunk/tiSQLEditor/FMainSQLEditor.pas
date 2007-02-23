@@ -112,6 +112,9 @@ uses
   {$IFDEF FPC}
   ,lcltype
   {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  ,Windows      // Used for GetKeyboardState
+  {$ENDIF}
   ;
 
 const
