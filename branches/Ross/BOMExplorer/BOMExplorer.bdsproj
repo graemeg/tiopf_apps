@@ -119,11 +119,11 @@
 			<Linker Name="ExeDescription">TeeChart 4 for OpenGL</Linker>
 		</Linker>
 		<Directories>
-			<Directories Name="OutputDir">Q:\Projects\Transit\bin</Directories>
-			<Directories Name="UnitOutputDir">Q:\Projects\Transit\link\dcu</Directories>
+			<Directories Name="OutputDir">.\_bin</Directories>
+			<Directories Name="UnitOutputDir">.\_dcu</Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
-			<Directories Name="PackageDCPOutputDir">Q:\Projects\Transit\link\dcp</Directories>
-			<Directories Name="SearchPath">Q:\DelphiTools\tiOPF\tiOPF2\Core;Q:\DelphiTools\tiOPF\tiOPF2\Options;Q:\DelphiTools\tiOPF\tiOPF2\GUI;Q:\DelphiTools\tiOPF\tiOPF2_Demos\Common</Directories>
+			<Directories Name="PackageDCPOutputDir"></Directories>
+			<Directories Name="SearchPath">..\..\..\..\tiOPF2_Demos\DemoDB\Common</Directories>
 			<Directories Name="Packages">VCL50;VCLX50;VCLSMP50;VCLDB50;VCLADO50;ibevnt50;VCLBDE50;VCLDBX50;QRPT50;VCLIB50;VCLMID50;VCLIE50;INETDB50;INET50;NMFAST50;WEBMID50;dclocx50;dclaxserver50;RZ251N50;RZ251D50;G111_R50;B204_R50;vcl;vclx;dbrtl;bdertl</Directories>
 			<Directories Name="Conditionals">LINK_ADOACCESS</Directories>
 			<Directories Name="DebugSourceDirs"></Directories>
@@ -150,7 +150,7 @@
 			<VersionInfo Name="MajorVer">2</VersionInfo>
 			<VersionInfo Name="MinorVer">2</VersionInfo>
 			<VersionInfo Name="Release">0</VersionInfo>
-			<VersionInfo Name="Build">185</VersionInfo>
+			<VersionInfo Name="Build">186</VersionInfo>
 			<VersionInfo Name="Debug">False</VersionInfo>
 			<VersionInfo Name="PreRelease">False</VersionInfo>
 			<VersionInfo Name="Special">False</VersionInfo>
@@ -162,7 +162,7 @@
 		<VersionInfoKeys>
 			<VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
 			<VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
-			<VersionInfoKeys Name="FileVersion">2.2.0.185</VersionInfoKeys>
+			<VersionInfoKeys Name="FileVersion">2.2.0.186</VersionInfoKeys>
 			<VersionInfoKeys Name="InternalName"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
 			<VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
@@ -170,6 +170,12 @@
 			<VersionInfoKeys Name="ProductName"></VersionInfoKeys>
 			<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 			<VersionInfoKeys Name="Comments"></VersionInfoKeys>
-		</VersionInfoKeys>
-		<Excluded_Packages><Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages><Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dcl31w100.bpl">Delphi 1.0 Compatibility Components</Excluded_Packages><Excluded_Packages Name="c:\program files\borland\bds\4.0\RaveReports\Lib\dclRave.bpl">Rave Reports 6.5 BE Package</Excluded_Packages><Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dclIntraweb_80_100.bpl">Intraweb 8.0 Design Package for Borland Development Studio 2006</Excluded_Packages></Excluded_Packages></Delphi.Personality>
+		</VersionInfoKeys>  
+    <Excluded_Packages>
+      <Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dcloffice2k100.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+      <Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dcl31w100.bpl">Delphi 1.0 Compatibility Components</Excluded_Packages>
+      <Excluded_Packages Name="c:\program files\borland\bds\4.0\RaveReports\Lib\dclRave.bpl">Rave Reports 6.5 BE Package</Excluded_Packages>
+      <Excluded_Packages Name="c:\program files\borland\bds\4.0\Bin\dclIntraweb_80_100.bpl">Intraweb 8.0 Design Package for Borland Development Studio 2006</Excluded_Packages>
+    </Excluded_Packages>
+  </Delphi.Personality>
 </BorlandProject>

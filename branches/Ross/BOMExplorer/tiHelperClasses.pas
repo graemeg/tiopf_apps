@@ -60,6 +60,8 @@ type
 //ideally, this function would exist in TtiObject, or be implemented as an
 //interface, so it could appy to both objects and object lists
 
+//PH: Not sure if I understand your requirement here.
+
 implementation
 
 { TtiSkeletonObject }
@@ -120,6 +122,8 @@ begin
   else
     //GOTCHA: this will blow up if concrete class doesn't notify its owner
     AData.Free;
+
+    //PH: Yep. Notification is a new feature and probably not finished. Ask GG for details.
 end;
 
 { TVisDetectDeleted }

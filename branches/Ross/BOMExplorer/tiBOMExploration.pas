@@ -633,6 +633,9 @@ begin
   {GOTCHA: tiOPF doesn't allow us to UnRegister individual visitors,
   only groups of visitors. Thus, we will unregister all 'read' and 'save'
   visitors, which should achieve the same results}
+
+  {PH: Reasonable to add this functionality if required.}
+  
   gTIOPFManager.VisitorManager.UnregisterVisitors(cuStandardTask_Read);
   gTIOPFManager.VisitorManager.UnregisterVisitors(cuStandardTask_Save);
 end;

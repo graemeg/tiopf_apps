@@ -26,8 +26,8 @@ object FtiBOMExplorer: TFtiBOMExplorer
     ColorPanel = clBtnFace
     PanelStyle = spsFramed
     SplitterOrientation = spoVertical
-    SplitterPos = 159
-    SplitterPosPercent = 26
+    SplitterPos = 164
+    SplitterPosPercent = 27
     Panel1Controls = (
       TV
       tbDataRow)
@@ -36,7 +36,7 @@ object FtiBOMExplorer: TFtiBOMExplorer
     object TV: TtiVTTreeView
       Left = 2
       Top = 32
-      Width = 155
+      Width = 160
       Height = 244
       Align = alClient
       DataMappings = <>
@@ -45,14 +45,15 @@ object FtiBOMExplorer: TFtiBOMExplorer
       VisibleButtons = [tiLVBtnVisView, tiLVBtnVisEdit, tiLVBtnVisNew, tiLVBtnVisDelete]
       TreeOptions.AnimationOptions = [toAnimatedToggle]
       OnSelectNode = TVSelectNode
+      ExplicitWidth = 155
       DesignSize = (
-        155
+        160
         244)
     end
     object tbDataRow: TToolBar
       Left = 2
       Top = 2
-      Width = 155
+      Width = 160
       Height = 30
       ButtonHeight = 30
       ButtonWidth = 31
@@ -63,6 +64,7 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Images = ilNormal
       List = True
       TabOrder = 1
+      ExplicitWidth = 155
       object tbRefresh: TToolButton
         Left = 0
         Top = 0
@@ -92,11 +94,11 @@ object FtiBOMExplorer: TFtiBOMExplorer
     object pnlRight: TPanel
       Left = 2
       Top = 2
-      Width = 434
+      Width = 429
       Height = 274
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 403
+      ExplicitWidth = 434
     end
   end
   object pnlBOMStatus: TPanel
@@ -107,7 +109,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 574
     object imgBOMIcon: TImage
       Left = 0
       Top = 0
@@ -643,7 +644,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 574
     object imgViewIcon: TImage
       Left = 0
       Top = 0
@@ -935,7 +935,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
     List = True
     ShowCaptions = True
     TabOrder = 3
-    ExplicitWidth = 574
     object tbSelectBOM: TToolButton
       Left = 0
       Top = 0

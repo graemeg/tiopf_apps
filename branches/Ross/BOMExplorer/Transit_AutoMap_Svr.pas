@@ -63,6 +63,11 @@ begin
   So, automapping appears to have run out of gas.  Use other methods to support
   association relationships}
 
+  //PH: Yep. Auto mapping sure has run out of gas, or the developers of auto
+  //    mapping have run out of gas. It was a great idea at the time, but
+  //    it's a huge job to implement well, so most of us created a few
+  //    code templates to help hand craft visitors instead.
+
 end;
 
 end.

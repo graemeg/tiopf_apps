@@ -63,6 +63,7 @@ uses
   , Transit_AutoMap_Svr
   , Transit_DBIndependentVisitors_Svr
   , Transit_HardCodeVisitors_Svr
+  , tiUtils
   ;
 
 procedure RegisterBOM;
@@ -84,16 +85,16 @@ begin
   //configure alias(es)
   AddAlias('Local Prototype MDB',
     cTIPersistADOAccess,
-    ExtractFilePath(ParamStr(0)) + 'Transit.MDB');
+    ExpandFileName(tiGetEXEPath + '\..\Data\Transit.mdb'));
   AddAlias('Local XML File',
     cTIPersistXMLLight,
-    ExtractFilePath(ParamStr(0)) + 'transit.xml');
+    ExpandFileName(tiGetEXEPath + '\..\Data\Transit.xml'));
   AddAlias('Local CSV File',
     cTIPersistCSV,
-    ExtractFilePath(ParamStr(0)) + 'transit.csv');
+    ExpandFileName(tiGetEXEPath + '\..\Data\Transit.csv'));
   AddAlias('Local TAB File',
     cTIPersistTAB,
-    ExtractFilePath(ParamStr(0)) + 'transit.tab');
+    ExpandFileName(tiGetEXEPath + '\..\Data\Transit.tab'));
 
 
   //configure registrar(s)
@@ -189,6 +190,11 @@ begin
   //following line would work generically, as it does for deletion:
   //TtiObjectList(AData).Add;
   //instead we must have separate handlers, one for each type
+
+  //PH: Not sure if I understand.
+  // TtiObjectList(const ATypeToAdd: TtiObjectClass): TtiObject;
+  // Is this what you are suggesting?
+  // Might be a good idea.
   TPeriodCollection(AData).Add;
 end;
 
