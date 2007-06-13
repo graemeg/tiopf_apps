@@ -153,6 +153,10 @@ uses
   ,tiRegINI
   ;
 
+{$IFDEF FPC}
+  {$R *.dfm}
+{$ENDIF}
+  
 var
   uSaveFileName : TFileName ;
 

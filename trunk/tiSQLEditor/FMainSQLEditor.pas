@@ -117,6 +117,10 @@ uses
   {$ENDIF}
   ;
 
+{$IFDEF FPC}
+  {$R *.dfm}
+{$ENDIF}
+
 const
   cDatabaseName   = '%DatabaseName%';
   cUserName       = '%UserName%';

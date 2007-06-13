@@ -104,6 +104,11 @@ uses
   ;
 
 
+{$IFDEF FPC}
+  {$R *.dfm}
+{$ENDIF}
+  
+
 procedure TFormSQLEditor.Execute;
 var
   lThrd : TthrdSQLMgrBrowse ;
