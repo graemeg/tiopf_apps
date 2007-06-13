@@ -433,7 +433,8 @@ begin
     'var'                               + CrLf +
     '  lData: EnterClassName;'          + CrLf +
     'begin'                             + CrLf +
-    '  lData := EnterClassName.Create;' + CrLf;
+    '  lData := EnterClassName.Create;' + CrLf +
+    '  lData.OID.AssignFromTIQuery(Query);' + CrLf;
 
   for i := 0 to FCols.Count - 1 do
   begin
@@ -452,20 +453,20 @@ end;
 
 procedure TFormSQLMgrBrowse.aSQLAsSetupParamsExecute(Sender: TObject);
 var
-  ls : string ;
-  i  : integer ;
+  ls: string;
+  i: integer;
 begin
   ls :=
     'var'                            + CrLf +
     '  lData: EnterClassType;'         + CrLf +
     'begin'                          + CrLf +
-    '  lData := (Visited as EnterClassType);' + CrLf ;
+    '  lData := (Visited as EnterClassType);' + CrLf +
+    '  lData.OID.AssignToTIQuery(Query);' + CrLf;
 
   for i := 0 to FCols.Count - 1 do
   begin
-    ls := ls +
-          '  Query.ParamAs[ ' +
-          ColNameDelimText(i) + ' ] := lData.' + ColAsProperty(i) + ';' + CrLf;
+    ls := ls + '  Query.ParamAs[ ' +
+        ColNameDelimText(i) + ' ] := lData.' + ColAsProperty(i) + ';' + CrLf;
   end ;
 
   Clipboard.AsText := ls;
