@@ -9,20 +9,22 @@
 
 unit FSQLEditor;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 
 uses
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls ,tiSQLMgr_BOM, ActnList, Menus, ComCtrls, ExtCtrls
-  {,FPickDatabaseObject}
   {$IFDEF SYNEDIT}
     ,SynEdit
     ,SynHighlighterSQL
   {$ENDIF}
   {$IFDEF FPC}
   , LResources
+  {$ENDIF}
+  {$IFDEF MSWINDOWS}
+  ,Windows
   {$ENDIF}
   ;
 
@@ -337,11 +339,10 @@ end;
 
 procedure TFormSQLEditor.DoKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-var
-  lResult : string ;
-  lR: longint;
-  lSelStart : integer ;
-  lPoint : TPoint ;
+//var
+//  lR: longint;
+//  lSelStart : integer ;
+//  lPoint : TPoint ;
 begin
   exit;
 (*
@@ -488,6 +489,8 @@ begin
 end;
 
 initialization
+{$IFDEF FPC}
   {$i FSQLEditor.lrs}
+{$ENDIF}
 
 end.

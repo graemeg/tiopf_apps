@@ -15,7 +15,7 @@
 
 unit FRunAsScript;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 
@@ -51,20 +51,21 @@ type
 implementation
 uses
   tiUtils
-  ,tiRegINI
+  ,tiINI
+  ,tiGUIINI
   ;
 
 
 procedure TFormRunAsScript.FormCreate(Sender: TObject);
 begin
-  gINI.ReadFormState( self ) ;
+  gGUIINI.ReadFormState( self ) ;
   paeApplicationToRun.Value := gINI.ReadString( name, 'AppToRun', '' ) ;
   hcParams.Value   := gINI.ReadString( name, 'Params',   '' ) ;
 end;
 
 procedure TFormRunAsScript.FormDestroy(Sender: TObject);
 begin
-  gINI.WriteFormState( self ) ;
+  gGUIINI.WriteFormState( self ) ;
   gINI.WriteString( name, 'AppToRun', paeApplicationToRun.Value ) ;
   gINI.WriteString( name, 'Params',   hcParams.Value   ) ;
 end;

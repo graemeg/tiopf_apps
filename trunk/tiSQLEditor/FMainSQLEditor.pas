@@ -10,7 +10,7 @@
 
 unit FMainSQLEditor;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 
@@ -106,7 +106,8 @@ uses
   ,}tiOPFManager
   ,tiDialogs
   ,tiCommandLineParams
-  ,tiRegINI
+  ,tiINI
+  ,tiGUIINI
   ,tiDBConnectionPool
   ,tiObject
   {$IFDEF FPC}
@@ -134,7 +135,7 @@ procedure TFormMain.FormCreate(Sender: TObject);
     lMenuItem : TMenuItem ;
 {$ENDIF}
 begin
-  gReg.ReadFormState( self ) ;
+  GGUIINI.ReadFormState( self ) ;
   
 
   FSQLEditor := TFormSQLEditor.Create( self ) ;
@@ -147,7 +148,7 @@ begin
   Caption := crsFormCaption ;
   FSQLEditor.Visible := true ;
 //  FSQLEditor.SetFocus ;
-  FsFileName := gReg.ReadString( 'FileName', gCommandLineParams.GetParam( 'd' ), '' ) ;
+  FsFileName := GINI.ReadString( 'FileName', gCommandLineParams.GetParam( 'd' ), '' ) ;
   if ( FsFileName <> '' ) and
      ( FileExists( FsFileName )) then
     Load( FsFileName )
@@ -170,7 +171,7 @@ end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
-  gReg.WriteFormState( self ) ;
+  GGUIINI.WriteFormState( self ) ;
 end;
 
 procedure TFormMain.aFileOpenExecute(Sender: TObject);
@@ -179,7 +180,7 @@ var
 begin
   lOD := TOpenDialog.Create( nil ) ;
   try
-    lOD.FileName := gReg.ReadString( 'FileName',
+    lOD.FileName := GINI.ReadString( 'FileName',
                                      gCommandLineParams.GetParam( 'd' ), '' ) ;
     lOD.Filter   := 'SQL files|*.SQL|All files|*.*' ;
     lOD.DefaultExt := '.SQL' ;
@@ -210,7 +211,7 @@ begin
     if lSD.Execute then
     begin
       FsFileName := lSD.FileName ;
-      gReg.WriteString( 'FileName',
+      GINI.WriteString( 'FileName',
                         gCommandLineParams.GetParam( 'd' ),
                         FsFileName ) ;
       Save ;
@@ -397,7 +398,7 @@ end;
 procedure TFormMain.Load(const pFileName: TFileName);
 begin
   FsFileName := pFileName ;
-  gReg.WriteString( 'FileName',
+  GINI.WriteString( 'FileName',
                     gCommandLineParams.GetParam( 'd' ),
                     pFileName ) ;
   FSQLEditor.LoadFromFile( pFileName ) ;
@@ -405,6 +406,8 @@ begin
 end;
 
 initialization
+  {$IFDEF FPC}
   {$i FMainSQLEditor.lrs}
+  {$ENDIF}
 
 end.

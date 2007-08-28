@@ -8,7 +8,7 @@
 
 unit tiSQLMgrDataSet_Srv;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 uses
@@ -22,7 +22,7 @@ uses
 
 type
 
-  TVisTIDataSetRead = class( TtiPerObjVisitor )
+  TVisTIDataSetRead = class( TtiObjectVisitor )
   private
     FSQLMgrQuery : TSQLMgrQuery ;
     FtiDataSet   : TtiDataBuffer ;
@@ -122,7 +122,8 @@ begin
   else
     liTimeToScan := 0 ;
 
-  Final ;
+Assert(False, 'Under construction');   
+//  Final ;
 
   TtiDataBufferQueryMapping( Visited ).TimeToRun  := liTimeToRun ;
   TtiDataBufferQueryMapping( Visited ).TimeToScan := liTimeToScan ;

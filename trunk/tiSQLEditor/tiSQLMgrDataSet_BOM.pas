@@ -9,7 +9,7 @@
 
 unit tiSQLMgrDataSet_BOM;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 uses
@@ -20,7 +20,7 @@ uses
   ,tiSQLMgr_BOM
   ,tiDataBuffer_BOM
   {$IFDEF MSWINDOWS}
- //  ,Windows
+  ,Windows
   {$ENDIF}
   {$IFNDEF VER130}
    ,Variants

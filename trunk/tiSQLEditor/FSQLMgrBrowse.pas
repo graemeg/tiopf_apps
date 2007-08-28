@@ -12,7 +12,7 @@
 
 unit FSQLMgrBrowse;
 
-{$I defines.inc}
+{$I tiDefines.inc}
 
 interface
 
@@ -150,7 +150,9 @@ uses
   ,tiCommandLineParams
   ,tiOPFManager
   ,tiDialogs
-  ,tiRegINI
+  ,tiINI
+  ,tiGUIINI
+  ,tiGUIUtils
   ;
 
 {$IFDEF FPC}
@@ -187,14 +189,14 @@ begin
   LV.Align := alClient ;
 //  DBGrid.Align := alClient;
 //  DBGrid.DataSource := DS;
-  gINI.ReadFormState( self ) ;
+  GGUIINI.ReadFormState( self ) ;
   FCols := TStringList.Create ;
   FiColWidth := 0 ;
 end;
 
 procedure TFormSQLMgrBrowse.FormDestroy(Sender: TObject);
 begin
-  gINI.WriteFormState( self ) ;
+  GGUIINI.WriteFormState( self ) ;
   FCols.Free ;
   FtiQueryDataSetMapping.Free ;
 end;
@@ -225,12 +227,12 @@ procedure TFormSQLMgrBrowse.aExportExecute(Sender: TObject);
 var
   lFileName : TFileName ;
 begin
-  lFileName := gINI.ReadString( Name, 'FileName', '' ) ;
+  lFileName := GGUIINI.ReadString( Name, 'FileName', '' ) ;
   lFileName := GetSQLSaveFileName( lFileName ) ;
   tiDataSetToTextFile( FtiQueryDataSetMapping.TIDataSet, lFileName ) ;
   if lFileName <> '' then
   begin
-    gINI.WriteString( Name, 'FileName', lFileName ) ;
+    GGUIINI.WriteString( Name, 'FileName', lFileName ) ;
     if tiAppConfirmation( Format( crsSaveToCSVDone, [lFileName] )) then
       tiEditFile( lFileName ) ;
   end ;
@@ -269,16 +271,7 @@ end ;
 
 procedure TthrdSQLMgrAbs.Execute;
 begin
-//  if gTIOPFManager.VisMgr.Execute( cgsPopulateTIDataSet, FtiDataSetQueryMapping ) <> '' then
-  try
-    FsErrorText := gTIOPFManager.Read( FtiDataSetQueryMapping ) ;
-  except
-    on e: Exception do
-  end;
-  if FtiDataSetQueryMapping.ErrorMessage <> '' then
-    FsErrorText := 
-      FsErrorText + #13 +
-      FtiDataSetQueryMapping.ErrorMessage ;
+  gTIOPFManager.Read( FtiDataSetQueryMapping ) ;
 end;
 
 procedure TthrdSQLMgrAbs.SetSQLMgrQuery(const Value: TSQLMgrQuery);
@@ -617,7 +610,9 @@ begin
 end;
 
 initialization
+  {$IFDEF FPC}
   {$i FSQLMgrBrowse.lrs}
+  {$ENDIF}
   uSaveFileName := '' ;
 
 end.
