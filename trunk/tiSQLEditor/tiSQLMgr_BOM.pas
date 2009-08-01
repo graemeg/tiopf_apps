@@ -43,7 +43,6 @@ type
     destructor  Destroy ; override ;
     procedure   ReadByQueryName( const pQueryName : string ;
                   const pSQLMgrFileName : string ) ;
-    function    IsParamNameUnique(const pParam : TSQLMgrParam): boolean ;
 
   published
     property    QueryName      : string        read FStrQueryName write FStrQueryName ;
@@ -143,11 +142,7 @@ uses
   ,tiLog
   ,Math
   ,tiConstants
-//  ,tiClassToDBMap_BOM
   ;
-
-var
-  uRegisterMappingsCalled : boolean ;
 
 const
   cSemaphoreSQLMgrs = 'SQLMgrs' ;
@@ -252,31 +247,6 @@ begin
 //                  ClassName,
 //                  'SetParamTypeAsStr');
 Assert(False, 'Under construction');
-end;
-
-function TSQLMgrQuery.IsParamNameUnique(
-  const pParam: TSQLMgrParam): boolean;
-begin
-  result := true ;
-//  {$IFNDEF OID_AS_INT64}
-//  for i := 0 to Params.Count - 1 do
-//    if SameText( Params.Items[i].ParamName, pParam.ParamName ) and
-//       ( not Params.Items[i].OID.Equals(pParam.OID) ) and
-//       ( not Params.Items[i].Deleted ) then
-//    begin
-//      result := false ;
-//      Exit ; //==>
-//    end;
-//  {$ELSE}
-//  for i := 0 to Params.Count - 1 do
-//    if SameText( Params.Items[i].ParamName, pParam.ParamName ) and
-//       ( not Params.Items[i].OID = pParam.OID ) and
-//       ( not Params.Items[i].Deleted ) then
-//    begin
-//      result := false ;
-//      Exit ; //==>
-//    end;
-//  {$ENDIF}
 end;
 
 procedure TSQLMgrQuery.ReadByQueryName( const pQueryName : string ;

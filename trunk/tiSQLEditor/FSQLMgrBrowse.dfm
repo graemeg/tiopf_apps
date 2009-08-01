@@ -1,7 +1,6 @@
 object FormSQLMgrBrowse: TFormSQLMgrBrowse
   Left = 428
   Top = 262
-  ActiveControl = LV
   Caption = 'FormSQLMgrBrowse'
   ClientHeight = 241
   ClientWidth = 473
@@ -75,20 +74,14 @@ object FormSQLMgrBrowse: TFormSQLMgrBrowse
     end
   end
   object LV: TListView
-    Left = 28
-    Top = 40
+    Left = 23
+    Top = 32
     Width = 250
     Height = 150
     Columns = <>
-    RowSelect = True
     PopupMenu = PopupMenu1
-    TabOrder = 1
+    TabOrder = 2
     ViewStyle = vsReport
-    OnDblClick = aShowRecordExecute
-  end
-  object DS: TDataSource
-    Left = 32
-    Top = 56
   end
   object PopupMenu1: TPopupMenu
     Images = ImageList1

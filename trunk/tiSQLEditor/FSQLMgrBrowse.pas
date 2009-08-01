@@ -43,7 +43,6 @@ type
 
   TFormSQLMgrBrowse = class(TForm)
     sb: TStatusBar;
-    DS: TDataSource;
     PopupMenu1: TPopupMenu;
     Structure1: TMenuItem;
     ExporttoCSVfile1: TMenuItem;
@@ -59,7 +58,6 @@ type
     ToolButton4: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
-    LV: TListView;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     Close2: TMenuItem;
@@ -82,6 +80,7 @@ type
     Asclassinterface1: TMenuItem;
     ToolButton5: TToolButton;
     aShowRecord: TAction;
+    LV: TListView;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -96,6 +95,7 @@ type
     procedure aSQLAsSetupParamsExecute(Sender: TObject);
     procedure aSQLAsClassInterfaceExecute(Sender: TObject);
     procedure aShowRecordExecute(Sender: TObject);
+    procedure LVData(Sender: TObject; Item: TListItem);
   private
     FCols : TStringList ;
     FiColWidth : integer ;
@@ -198,6 +198,11 @@ begin
   GGUIINI.WriteFormState( self ) ;
   FCols.Free ;
   FtiQueryDataSetMapping.Free ;
+end;
+
+procedure TFormSQLMgrBrowse.LVData(Sender: TObject; Item: TListItem);
+begin
+  tiDataSetToListItem(FtiQueryDataSetMapping.TIDataSet, Item);
 end;
 
 procedure TFormSQLMgrBrowse.FormClose(Sender: TObject;
@@ -509,13 +514,14 @@ end;
 procedure TFormSQLMgrBrowse.SetTIQueryDataSetMapping( const Value: TtiDataBufferQueryMapping);
 var
   i : integer ;
-  item: TListItem;
+  LItem: TListItem;
 begin
   FtiQueryDataSetMapping := Value;
   Caption := ' Results for query: ' + FtiQueryDataSetMapping.SQLMgrQuery.Caption ;
   
   // Create the Columns in the Listview
   tiDataSetToListView( FtiQueryDataSetMapping.TIDataSet, LV ) ;
+  LV.OnData:= LVData;
   SB.Panels[0].Text := 'Record count: ' + intToStr( FtiQueryDataSetMapping.TIDataSet.Count ) ;
   SB.Panels[1].Text := 'Time to execute on server: '  + IntToStr( FtiQueryDataSetMapping.TimeToRun ) + 'ms' ;
   SB.Panels[2].Text := 'Time to download dara: '  + IntToStr( FtiQueryDataSetMapping.TimeToScan ) + 'ms' ;
@@ -527,11 +533,11 @@ begin
     FiColWidth := Max( FiColWidth, Length( FCols.Strings[i] )) ;
     
   // Populate the ListView with data (items)
-  for i := 0 to FtiQueryDataSetMapping.TIDataSet.Count - 1 do
-  begin
-    item := LV.Items.Add;
-    tiDataSetToListItem(FtiQueryDataSetMapping.TIDataSet, item);
-  end;
+//  for i := 0 to FtiQueryDataSetMapping.TIDataSet.Count - 1 do
+//  begin
+//    LItem := LV.Items[i];
+//    tiDataSetToListItem(FtiQueryDataSetMapping.TIDataSet, LItem);
+//  end;
 end;
 
 function TthrdSQLMgrAbs.GetSQLMgrQuery: TSQLMgrQuery;
