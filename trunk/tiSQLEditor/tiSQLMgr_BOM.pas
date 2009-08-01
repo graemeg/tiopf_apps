@@ -20,103 +20,11 @@ const
 
 type
 
+  TSQLMgrParamName = string[30];
 
   TSQLMgrQuery  = class ;
   TSQLMgrParams = class ;
   TSQLMgrParam  = class ;
-
-  // A visitor for finding a group of queries based on a pattern match on the
-  // queries name.
-  //----------------------------------------------------------------------------
-  TVisFindQueriesByName = class ( TtiVisitor )
-  private
-    FsPattern: string;
-    FList: TList;
-  protected
-    function    AcceptVisitor : boolean ; override ;
-  public
-    property  List : TList read FList write FList ;
-    property  Pattern : string read FsPattern write FsPattern ;
-    procedure Execute( const pVisited : TtiVisited ) ; override ;
-  end ;
-
-  //----------------------------------------------------------------------------
-  TSQLMgrs = class( TtiObjectList )
-  private
-    FCritSect : TCriticalSection;
-  protected
-    function    GetCaption : string ; override ;
-    procedure   SetItems(i: integer; const Value: TSQLMgr); reintroduce ;
-  public
-    constructor Create ; override ;
-    destructor  Destroy ; override ;
-    property    Items[i:integer] : TSQLMgr read GetItems write SetItems ;
-    function    Add(const pObject : TSQLMgr): integer ; reintroduce ;
-    function    AddDatabase( const pDatabaseName : string ) : TSQLMgr ;
-    function    FindByDatabaseName( const pDatabaseName : string ) : TSQLMgr ;
-    procedure   Clear ; override;
-  published
-  end ;
-
-  // The main container for SQLManager data
-  TSQLMgr = class( TtiObjectList )
-  private
-    FDatabaseName: string;
-    FQueries : TSQLMgrGroup;
-    FCritSect : TCriticalSection;
-    FFileName: string;
-  protected
-    function    GetCaption : string ; override ;
-    function    GetItems(i: integer): TSQLMgrGroup ; reintroduce ;
-    procedure   SetItems(i: integer; const Value: TSQLMgrGroup); reintroduce ;
-  public
-    constructor Create ; override ;
-    destructor  Destroy ; override ;
-    property    FileName : string read FFileName Write FFileName;
-    class procedure CreateFile(   const pDBConnectionName : string ) ;
-
-    function    FindQueryByName(const pQueryName: String): TSQLMgrQuery;
-    function    FindCreateQueryByName(const pQueryName: String): TSQLMgrQuery;
-    procedure   FindQueriesByName( const psPattern : String ; pList : TList );
-    procedure   ValidateModel ;
-    procedure   CreateTables;
-    procedure   DropTables;
-
-    //class function  CheckTableStructure( const pDBConnectionName : string = '' ;
-    //                          const pPerLayerName     : string = ''): boolean ;
-    procedure   Read(     const pDBConnectionName : string ; pPerLayerName : string = ''  ) ; override ;
-    procedure   ReadPK(   const pDBConnectionName : string ; pPerLayerName : string = ''  ) ; override ;
-    procedure   Save(     const pDBConnectionName : string ; pPerLayerName : string = ''  ) ; override ;
-    property    Items[i:integer] : TSQLMgrGroup read GetItems write SetItems ; default ;
-    procedure   Add( pObject : TSQLMgrGroup   ; pDefDispOrdr : boolean = true ) ; reintroduce ;
-    property    Queries : TSQLMgrGroup read FQueries ;
-    function    IsGroupNameUnique(const pGroup : TSQLMgrGroup): boolean ;
-    function    IsQueryNameUnique(const pQuery : TSQLMgrQuery): boolean ;
-
-
-  published
-    property    DatabaseName : string read FDatabaseName    write FDatabaseName ;
-  end ;
-
-  TSQLMgrGroup = class( TtiObjectList )
-  private
-    FStrGroupName : string ;
-  protected
-    function    GetCaption : string ; override ;
-    function    GetOwner: TSQLMgr; reintroduce ;
-    procedure   SetOwner(const Value: TSQLMgr); reintroduce ;
-    function    GetItems(i: integer): TSQLMgrQuery; reintroduce ;
-    procedure   SetItems(i: integer; const Value: TSQLMgrQuery); reintroduce ;
-  public
-    constructor Create ; override ;
-    destructor  Destroy ; override ;
-    property    Owner : TSQLMgr read GetOwner write SetOwner ;
-    property    Items[i:integer] : TSQLMgrQuery read GetItems write SetItems ; default ;
-    function    Add( const pObject : TtiObject): integer ; override;
-  published
-    property    GroupName : string read FStrGroupName write FStrGroupName ;
-    property    Caption ;
-  end ;
 
   TSQLMgrQuery = class( TtiObject )
   private
@@ -127,16 +35,12 @@ type
     FbQueryLocked : boolean;
     FbTestInclude : boolean;
     FQueryVersion: integer;
-    function GetQueryGroupName: string;
   protected
     function    GetCaption : string ; override ;
-    function    GetOwner: TSQLMgrGroup; reintroduce ;
-    procedure   SetOwner(const Value: TSQLMgrGroup); reintroduce ;
     procedure   SetObjectState(const Value: TPerObjectState) ; override ;
   public
     constructor Create ; override ;
     destructor  Destroy ; override ;
-    property    Owner : TSQLMgrGroup read GetOwner write SetOwner ;
     procedure   ReadByQueryName( const pQueryName : string ;
                   const pSQLMgrFileName : string ) ;
     function    IsParamNameUnique(const pParam : TSQLMgrParam): boolean ;
@@ -144,7 +48,6 @@ type
   published
     property    QueryName      : string        read FStrQueryName write FStrQueryName ;
     property    QueryDesc      : string        read FStrQueryDesc write FStrQueryDesc ;
-    property    QueryGroupName : string        read GetQueryGroupName ;
     property    QueryVersion   : integer       read FQueryVersion write FQueryVersion ;
     property    SQL            : string        read FStrSQL       write FStrSQL ;
     property    Params         : TSQLMgrParams read FParams       write FParams ;
@@ -194,9 +97,7 @@ type
   end ;
 
 
-function  gSQLMgrs: TSQLMgrs;
 function  SQLParamAsProp( const pParamName : string ; pWidth : integer = 0) : string ;
-procedure RegisterMappings;
 
 const
   cTableNameSQLManGroup    = 'sqlman_group';
@@ -236,7 +137,6 @@ const
 implementation
 uses
   SysUtils // Exception
-  ,tiSQLMgr_Svr // To force visitor registration
   ,tiUtils
   ,tiDialogs
   ,tiOPFManager
@@ -247,54 +147,11 @@ uses
   ;
 
 var
-  uSQLMgrs: TSQLMgrs;
   uRegisterMappingsCalled : boolean ;
 
 const
   cSemaphoreSQLMgrs = 'SQLMgrs' ;
   cSemaphoreSQLMgr  = 'SQLMgr ' ;
-
-function gSQLMgrs: TSQLMgrs;
-begin
-  if uSQLMgrs = nil then
-    uSQLMgrs:= TSQLMgrs.Create;
-  result := uSQLMgrs ;
-end;
-
-// Tempting to put this in the Initialization section, but while there is the
-// option of overriding cFieldNameSQLSQL, the place that RegisterMappings is
-// called must be under control of the programmer.
-procedure RegisterMappings;
-begin
-
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrGroup,cTableNameSQLManGroup,'OID',cFieldNameGroupOID,[pktDB]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrGroup,cTableNameSQLManGroup,'GroupName',cFieldNameGroupName,[pktReadable]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrGroup,cTableNameSQLManGroup,'DispOrder',cFieldNameGroupDispOrder,[pktReadable]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterCollection(TSQLMgr,TSQLMgrGroup);
-//
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'OID',         cFieldNameSQLOID,[pktDB]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'Owner.OID',   cFieldNameSQLOIDGroup,[pktFK]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'DispOrder',   cFieldNameSQLDispOrder);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'QueryVersion',cFieldNameSQLVersion);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'QueryName',   cFieldNameSQLName);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'QueryDesc',   cFieldNameSQLDesc);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'QueryLocked', cFieldNameSQLLocked);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'TestInclude', cFieldNameSQLTestInclude);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrQuery,cTableNameSQLManSQL,'SQL',         cFieldNameSQLSQL);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterCollection(TSQLMgrGroup,TSQLMgrQuery);
-//
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'OID',         cFieldNameParamOID,[pktDB]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'Owner.OID',   cFieldNameParamOIDSQL,[pktFK]);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'DispOrder',   cFieldNameParamDispOrder);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'ParamName',   cFieldNameParamName);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'ParamTypeStr',cFieldNameParamType);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'ParamValue',  cFieldNameParamValue);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterMapping(TSQLMgrParam,cTableNameSQLManParam,'IsNull',      cFieldNameParamIsNull);
-//  gTIPerMgr.ClassDBMappingMgr.RegisterCollection(TSQLMgrParams,TSQLMgrParam);
-//
-//  uRegisterMappingsCalled := true ;
-
-end ;
 
 function SQLParamAsProp( const pParamName : string ; pWidth : integer = 0 ) : string ;
 begin
@@ -305,51 +162,6 @@ begin
     result := tiPadR( result, pWidth ) ;
 end;
 
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-// *
-// * TSQLMgr
-// *
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-function TSQLMgr.GetCaption: string;
-begin
-  result := 'SQL Manager on ' + DatabaseName ;
-end;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-// *
-// * TSQLMgrGroup
-// *
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-function TSQLMgrGroup.Add(const pObject: TtiObject): integer;
-begin
-  inherited Add(pObject);
-  if Owner <> nil then
-    Owner.Queries.Add(pObject);
-      result:= 0;
-end;
-
-constructor TSQLMgrGroup.Create;
-begin
-  inherited;
-  OwnsObjects := false ;
-  AutoSetItemOwner := true ;
-end;
-
-destructor TSQLMgrGroup.Destroy;
-begin
-  inherited;
-end;
-
-function TSQLMgrGroup.getCaption: string;
-begin
-  result := GroupName ;
-end;
-
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-// *
-// * TSQLMgrQuery
-// *
-// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 procedure TSQLMgrQuery.Assign(pData: TSQLMgrQuery);
 begin
   // We can't use the parent classes Assign method because params in an owned
@@ -416,135 +228,6 @@ begin
   Result := cgaQueryFieldKindSQLMgr[FParamType];
 end;
 
-procedure TSQLMgr.FindQueriesByName( const psPattern : String ; pList : TList );
-var
-  lVis : TVisFindQueriesByName ;
-begin
-
-  Assert( pList <> nil, 'List not assigned' ) ;
-  Assert( psPattern <> EmptyStr, 'Pattern not assigned' ) ;
-
-  pList.Clear ;
-
-  lVis := TVisFindQueriesByName.Create ;
-  try
-    lVis.List := pList ;
-    lVis.Pattern := psPattern ;
-    Iterate( lVis ) ;
-
-  finally
-    lVis.Free ;
-  end;
-end;
-
-//------------------------------------------------------------------------------
-function  TSQLMgr.FindQueryByName(const pQueryName: String): TSQLMgrQuery;
-var
-  i : integer ;
-begin
-  result := nil ;
-  for i := 0 to Queries.Count - 1 do
-    if SameText( Queries.Items[i].QueryName, pQueryName ) and
-       ( not Queries.Items[i].Deleted ) then
-    begin
-      result := Queries.Items[i];
-      Exit ; //==>
-    end ;
-end;
-
-procedure TSQLMgr.ValidateModel;
-var
-  i, j : integer ;
-  lSQLMgrQuery : TSQLMgrQuery ;
-  lGroup         : TSQLMgrGroup ;
-  lStringList    : TStringList ;
-begin
-  lStringList := TStringList.Create ;
-  try
-    for i := 0 to Count - 1 do begin
-      lGroup := TSQLMgrGroup( Items[i] ) ;
-      lStringList.Add( 'Group: ' + lGroup.GroupName ) ;
-      for j := 0 to lGroup.Count - 1 do begin
-        try
-          lSQLMgrQuery := TSQLMgrQuery( lGroup.Items[j] ) ;
-          if lSQLMgrQuery.ObjectState <> posDelete then begin
-            lStringList.Add( '  Query: ' +
-                             lSQLMgrQuery.QueryName +
-                             ', ' + tiPadR( lSQLMgrQuery.SQL, 20 )) ;
-Assert(False, 'Under construction');
-//            for k := 0 to lSQLMgrQuery.Params.Count - 1 do begin
-//              try
-//                lSQLMgrParam := TSQLMgrParam( lSQLMgrQuery.Params.Items[k] ) ;
-//                if lSQLMgrParam.ObjectState <> posDelete then
-//                  lStringList.Add( '    Param: ' + lSQLMgrParam.Caption ) ;
-//              except
-//                on e:exception do
-//                  lStringList.Add( '    Param: Error: ' + e.message ) ;
-//              end ;
-//            end ;
-          end ;
-        except
-          on e:exception do
-              lStringList.Add( '  Query: Error: ' + e.message ) ;
-        end ;
-      end ;
-    end ;
-    tiShowStringList( lStringList ) ;
-  finally
-    lStringList.Free ;
-  end;
-end;
-
-function TSQLMgrQuery.GetOwner: TSQLMgrGroup;
-begin
-  result := TSQLMgrGroup( inherited GetOwner ) ;
-end;
-
-function TSQLMgrQuery.GetQueryGroupName: string;
-begin
-  if Owner = nil then
-    result := 'N/A'
-  else
-    result := TSQLMgrGroup( Owner ).GroupName ;
-end;
-
-function TSQLMgrGroup.GetItems(i: integer): TSQLMgrQuery;
-begin
-  result := TSQLMgrQuery(inherited GetItems(i));
-end;
-
-function TSQLMgrGroup.GetOwner: TSQLMgr;
-begin
-  result := TSQLMgr( inherited GetOwner ) ;
-end;
-
-//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-//*
-//* TVisFindQueriesByName
-//*
-//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-function TVisFindQueriesByName.AcceptVisitor: boolean;
-begin
-  result := ( Visited is TSQLMgrQuery ) and
-            ( not TSQLMgrQuery( Visited ).Deleted ) ;
-end;
-
-procedure TVisFindQueriesByName.Execute(const pVisited: TtiVisited ) ;
-begin
-  inherited Execute( pVisited ) ;
-
-  Assert( FList <> nil, 'List not assigned' ) ;
-  Assert( FsPattern <> EmptyStr, 'Pattern not assigned' ) ;
-
-  if not AcceptVisitor then
-    Exit ; //==>
-
-  if ( tiWildCardMatch( TSQLMgrQuery( pVisited ).QueryName, FsPattern )) or
-     ( tiWildCardMatch( TSQLMgrGroup( TSQLMgrQuery( pVisited ).Owner ).GroupName, FsPattern )) then
-    FList.Add( pVisited ) ;
-
-end;
-
 function TSQLMgrParam.ParamTypeAsTIQueryParamType: string;
 begin
   result := GetParamTypeStr ;
@@ -569,73 +252,6 @@ begin
 //                  ClassName,
 //                  'SetParamTypeAsStr');
 Assert(False, 'Under construction');
-end;
-
-{ TSQLMgrs }
-
-function TSQLMgrs.Add(const pObject: TSQLMgr): integer;
-begin
-  result:= inherited Add( pObject ) ;
-end;
-
-function TSQLMgrs.AddDatabase(const pDatabaseName: string) : TSQLMgr ;
-begin
-  result := TSQLMgr.Create ;
-  result.DatabaseName := pDatabaseName ;
-  Add( result ) ;
-end;
-
-procedure TSQLMgrs.Clear;
-begin
-  inherited;
-  ObjectState := posEmpty ;
-end;
-
-constructor TSQLMgrs.Create;
-begin
-  inherited;
-  FCritSect := TCriticalSection.Create;
-end;
-
-destructor TSQLMgrs.Destroy;
-begin
-  FCritSect.Free;
-  inherited;
-end;
-
-function TSQLMgrs.FindByDatabaseName(const pDatabaseName: string): TSQLMgr;
-var
-  i : integer ;
-begin
-  result := nil ;
-  FCritSect.Enter;
-  try
-    for i := 0 to Count - 1 do
-      if SameText( Items[i].DatabaseName, pDatabaseName ) then
-      begin
-        result := Items[i] ;
-        Break ; //==>
-      end ;
-    if result = nil then
-      result := AddDatabase( pDatabaseName ) ;
-  finally
-    FCritSect.Leave ;
-  end ;
-end;
-
-function TSQLMgrs.GetCaption: string;
-begin
-  result := 'SQLManager Databases' ;
-end;
-
-function TSQLMgrs.GetItems(i: integer): TSQLMgr;
-begin
-  result := TSQLMgr( inherited GetItems( i )) ;
-end;
-
-procedure TSQLMgrs.SetItems(i: integer; const Value: TSQLMgr);
-begin
-  inherited SetItems( i, Value ) ;
 end;
 
 function TSQLMgrQuery.IsParamNameUnique(
@@ -681,21 +297,6 @@ begin
      ( Value = posDeleted ) then
     Params.ObjectState := posDeleted ;
   inherited;
-end;
-
-procedure TSQLMgrQuery.SetOwner(const Value: TSQLMgrGroup);
-begin
-  inherited SetOwner( Value ) ;
-end;
-
-procedure TSQLMgrGroup.SetItems(i: integer; const Value: TSQLMgrQuery);
-begin
-  inherited SetItems(i, Value);
-end;
-
-procedure TSQLMgrGroup.SetOwner(const Value: TSQLMgr);
-begin
-  inherited SetOwner( Value ) ;
 end;
 
 { TSQLMgrParams }
@@ -745,105 +346,6 @@ begin
 
 end;
 
-procedure TSQLMgr.CreateTables;
-  procedure _CreateTableSQLMan_Group;
-  var
-    lTable : TtiDBMetaDataTable ;
-  begin
-    lTable := TtiDBMetaDataTable.Create ;
-    try
-      lTable.Name := cTableNameSQLManGroup ;
-      lTable.AddField( cFieldNameGroupOID,        qfkString, 36 ) ; // Should be Not Null & PK
-      lTable.AddField( cFieldNameGroupName, qfkString, 50 ) ;
-      lTable.AddField( cFieldNameGroupDispOrder, qfkInteger ) ;
-      //gTIPerMgr.CreateTable( lTable, FFileName, cTIPersistXMLLight) ;
-    finally
-      lTable.Free ;
-    end ;
-  end;
-
-  procedure _CreateTableSQLMan_SQL;
-  var
-    lTable : TtiDBMetaDataTable ;
-  begin
-    lTable := TtiDBMetaDataTable.Create ;
-    try
-      lTable.Name := cTableNameSQLManSQL ;
-      lTable.AddField( cFieldNameSQLOID,         qfkString, 36 ) ; // Should be Not Null & PK
-      lTable.AddField( cFieldNameSQLOIDGroup,    qfkString, 36 ) ;
-      lTable.AddField( cFieldNameSQLDispOrder,   qfkInteger ) ;
-      lTable.AddField( cFieldNameSQLVersion,     qfkInteger ) ;
-      lTable.AddField( cFieldNameSQLName,        qfkString, 50 ) ;
-      lTable.AddField( cFieldNameSQLDesc,        qfkLongString ) ;
-      lTable.AddField( cFieldNameSQLLocked,      qfkLogical ) ;
-      lTable.AddField( cFieldNameSQLTestInclude, qfkLogical ) ;
-      lTable.AddField( cFieldNameSQLSQL,         qfkLongString ) ;
-      //gTIPerMgr.CreateTable( lTable, FFileName, cTIPersistXMLLight ) ;
-    finally
-      lTable.Free ;
-    end ;
-  end;
-
-  procedure _CreateTableSQLMan_Param;
-  var
-    lTable : TtiDBMetaDataTable ;
-  begin
-    lTable := TtiDBMetaDataTable.Create ;
-    try
-      lTable.Name := cTableNameSQLManParam ;
-      lTable.AddField( cFieldNameParamOID,       qfkString, 36 ) ; // Should be Not Null & PK
-      lTable.AddField( cFieldNameParamOIDSQL,    qfkString, 36 ) ;
-      lTable.AddField( cFieldNameParamDispOrder, qfkInteger ) ;
-      lTable.AddField( cFieldNameParamName,      qfkString, 20 ) ;
-      lTable.AddField( cFieldNameParamType,      qfkString, 20  ) ;
-      lTable.AddField( cFieldNameParamValue,     qfkString, 50 ) ;
-      lTable.AddField( cFieldNameParamIsNull,    qfkLogical ) ;
-      //gTIPerMgr.CreateTable( lTable, FFileName, cTIPersistXMLLight ) ;
-    finally
-      lTable.Free ;
-    end ;
-  end;
-
-begin
-
-  Assert(uRegisterMappingsCalled, 'tiSQLMgr_BOM.RegisterMappings has not been called.');
-  Assert(FileName <> '', ClassName + '.FileName not assigned.');
-  _CreateTableSQLMan_Group;
-  _CreateTableSQLMan_SQL;
-  _CreateTableSQLMan_Param;
-
-end;
-
-procedure TSQLMgr.DropTables;
-begin
-  Assert(uRegisterMappingsCalled, 'tiSQLMgr_BOM.RegisterMappings has not been called.');
-  Assert(FileName <> '', ClassName + '.FileName not assigned');
-  //gTIPerMgr.DropTable( cTableNameSQLManGroup, FFileName, cTIPersistXMLLight);
-  //gTIPerMgr.DropTable( cTableNameSQLManSQL,   FFileName, cTIPersistXMLLight);
-  //gTIPerMgr.DropTable( cTableNameSQLManParam, FFileName, cTIPersistXMLLight);
-end;
-
-procedure TSQLMgr.Read(const pDBConnectionName: string; pPerLayerName: string);
-begin
-  Assert(false, 'Don''t call ' + ClassName + '.Read Call ' +
-         ClassName + '.ReadPK');
-end;
-
-procedure TSQLMgr.Add(pObject: TSQLMgrGroup; pDefDispOrdr: boolean);
-begin
-  inherited Add(pObject);
-end;
-
-function TSQLMgr.GetItems(i: integer): TSQLMgrGroup;
-begin
-  result := TSQLMgrGroup(inherited GetItems(i));
-end;
-
-procedure TSQLMgr.SetItems(i: integer; const Value: TSQLMgrGroup);
-begin
-  inherited SetItems(i, Value);
-end;
-
 function TSQLMgrParams.GetItems(i: integer): TSQLMgrParam;
 begin
   result := TSQLMgrParam(inherited GetItems(i));
@@ -871,126 +373,6 @@ procedure TSQLMgrParams.SetOwner(const Value: TSQLMgrQuery);
 begin
   inherited SetOwner(Value);
 end;
-
-constructor TSQLMgr.Create;
-begin
-  inherited;
-  FCritSect := TCriticalSection.Create;
-  FQueries := TSQLMgrGroup.Create;
-  FQueries.OwnsObjects := true ;
-  FQueries.AutoSetItemOwner := false ;
-end;
-
-destructor TSQLMgr.Destroy;
-begin
-  FCritSect.Free;
-  FQueries.Free;
-  inherited;
-end;
-
-function TSQLMgr.FindCreateQueryByName(const pQueryName: String): TSQLMgrQuery;
-begin
-  FCritSect.Enter;
-  try
-    result := FindQueryByName(pQueryName);
-    if result <> nil then
-      Exit ; //==>
-    result := TSQLMgrQuery.create;
-    result.ReadByQueryName(pQueryName, FFileName);
-    if result.ObjectState <> posClean then
-    begin
-      result.free;
-      result := nil ;
-    end else
-      Queries.Add(result);
-  finally
-    FCritSect.Leave;
-  end;
-end;
-
-function TSQLMgr.IsGroupNameUnique(const pGroup: TSQLMgrGroup): boolean;
-var
-  i : integer;
-begin
-  result := true ;
-  {$IFNDEF OID_AS_INT64}
-  for i := 0 to Count - 1 do
-    if SameText( Items[i].GroupName, pGroup.GroupName ) and
-       ( not Items[i].OID.Equals(pGroup.OID) ) and
-       ( not Items[i].Deleted ) then
-    begin
-      result := false ;
-      Exit ; //==>
-    end;
-  {$ELSE}
-  for i := 0 to Count - 1 do
-    if SameText( Items[i].GroupName, pGroup.GroupName ) and
-       ( not Items[i].OID = pGroup.OID ) and
-       ( not Items[i].Deleted ) then
-    begin
-      result := false ;
-      Exit ; //==>
-    end;
-  {$ENDIF}
-end;
-
-function TSQLMgr.IsQueryNameUnique(const pQuery: TSQLMgrQuery): boolean;
-var
-  i : integer;
-begin
-  result := true ;
-  {$IFNDEF OID_AS_INT64}
-  for i := 0 to Queries.Count - 1 do
-    if SameText( Queries.Items[i].QueryName, pQuery.QueryName ) and
-       ( not Queries.Items[i].OID.Equals(pQuery.OID) ) and
-       ( not Queries.Items[i].Deleted ) then
-    begin
-      result := false ;
-      Exit ; //==>
-    end;
-  {$ELSE}
-  for i := 0 to Queries.Count - 1 do
-    if SameText( Queries.Items[i].QueryName, pQuery.QueryName ) and
-       ( not Queries.Items[i].OID = pQuery.OID ) and
-       ( not Queries.Items[i].Deleted ) then
-    begin
-      result := false ;
-      Exit ; //==>
-    end;
-  {$ENDIF}
-end;
-
-procedure TSQLMgr.ReadPK(const pDBConnectionName: string; pPerLayerName: string);
-begin
-  Assert(uRegisterMappingsCalled, 'tiSQLMgr_BOM.RegisterMappings has not been called.');
-  Assert(pDBConnectionName = '', ClassName + '.ReadPK() does not accept parameters.');
-  Assert(pPerLayerName = '', ClassName + '.ReadPK() does not accept parameters.');
-  Assert(FFileName <> '', ClassName + '.FileName not assigned');
-  //gTIPerMgr.VisMgr.Execute(cVisSQLMgrReadPK, Self, FFileName, cTIPersistXMLLight);
-  //SortByDispOrder;
-//  for i := 0 to Count - 1 do
-//    Items[i].SortByDispOrder;
-end;
-
-procedure TSQLMgr.Save(const pDBConnectionName: string;pPerLayerName: string);
-begin
-  Assert(uRegisterMappingsCalled, 'tiSQLMgr_BOM.RegisterMappings has not been called.');
-  Assert(pDBConnectionName = '', ClassName + '.Save() does not accept parameters.');
-  Assert(pPerLayerName = '', ClassName + '.Save() does not accept parameters.');
-  Assert(FFileName <> '', ClassName + '.FileName not assigned');
-  inherited Save(FFileName, ctiPersistXMLLight);
-end;
-
-class procedure TSQLMgr.CreateFile(const pDBConnectionName: string);
-begin
-  //gTIPerMgr.CreateDatabase(pDBConnectionName, 'null', 'null', cTIPersistXMLLight);
-end;
-
-initialization
-  uRegisterMappingsCalled := false ;
-
-finalization
-  uSQLMgrs.Free ;
 
 end.
 
