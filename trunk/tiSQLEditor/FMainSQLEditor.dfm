@@ -1,9 +1,9 @@
 object FormMain: TFormMain
   Left = 461
   Top = 209
-  Width = 334
-  Height = 277
   Caption = ' TechInsite SQL Editor'
+  ClientHeight = 223
+  ClientWidth = 326
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -21,7 +21,7 @@ object FormMain: TFormMain
   TextHeight = 13
   object SB: TStatusBar
     Left = 0
-    Top = 207
+    Top = 199
     Width = 326
     Height = 24
     Panels = <
@@ -31,6 +31,72 @@ object FormMain: TFormMain
       item
         Width = 150
       end>
+  end
+  object TB: TToolBar
+    Left = 0
+    Top = 0
+    Width = 326
+    Height = 25
+    Caption = 'TB'
+    Images = ImageList1
+    TabOrder = 1
+    ExplicitTop = 4
+    object ToolButton1: TToolButton
+      Left = 0
+      Top = 0
+      Action = aFileSave
+    end
+    object ToolButton2: TToolButton
+      Left = 23
+      Top = 0
+      Action = aFileSaveAs
+    end
+    object ToolButton3: TToolButton
+      Left = 46
+      Top = 0
+      Action = aFileOpen
+    end
+    object ToolButton4: TToolButton
+      Left = 69
+      Top = 0
+      Action = aNew
+    end
+    object ToolButton5: TToolButton
+      Left = 92
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton5'
+      ImageIndex = 4
+      Style = tbsSeparator
+    end
+    object ToolButton6: TToolButton
+      Left = 100
+      Top = 0
+      Action = aRun
+    end
+    object ToolButton7: TToolButton
+      Left = 123
+      Top = 0
+      Action = aRunScript
+    end
+    object ToolButton8: TToolButton
+      Left = 146
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton8'
+      ImageIndex = 6
+      Style = tbsSeparator
+    end
+    object ToolButton10: TToolButton
+      Left = 154
+      Top = 0
+      Action = aDatabaseConnectionDetails
+    end
+    object ToolButton11: TToolButton
+      Left = 177
+      Top = 0
+      Action = aClose
+    end
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -72,7 +138,7 @@ object FormMain: TFormMain
     object Help1: TMenuItem
       Caption = '&Help'
       object About1: TMenuItem
-        Action = aAbout
+        Caption = '&About'
       end
       object N1: TMenuItem
         Caption = '-'
@@ -127,10 +193,6 @@ object FormMain: TFormMain
       ImageIndex = 4
       ShortCut = 16499
       OnExecute = aCloseExecute
-    end
-    object aAbout: TAction
-      Caption = '&About'
-      OnExecute = aAboutExecute
     end
     object aDatabaseConnectionDetails: TAction
       Caption = 'View database connection details'

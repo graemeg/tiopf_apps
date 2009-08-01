@@ -55,6 +55,10 @@ uses
   ,tiGUIINI
   ;
 
+//{$IFDEF FPC}
+  {$R *.dfm}
+//{$ENDIF}
+  
 
 procedure TFormRunAsScript.FormCreate(Sender: TObject);
 begin

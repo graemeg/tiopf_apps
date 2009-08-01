@@ -1,18 +1,18 @@
 program tiSQLEditor;
 
 uses
-  Forms
-  ,FMainSQLEditor in 'FMainSQLEditor.pas' {FMainSQLEditor}
-  ,tiLogReg
-  ,tiOIDGUID
-  ,tiOPFManager
-  ,FSQLEditor in 'FSQLEditor.pas' {FSQLEditor}
-  ,FSQLMgrBrowse in 'FSQLMgrBrowse.pas' {FSQLMgrBrowse}
-  ,tiSQLMgrDataSet_Srv in 'tiSQLMgrDataSet_Srv.pas'
-  ,tiSQLMgrDataSet_BOM in 'tiSQLMgrDataSet_BOM.pas'
-  ,tiCommandLineParams
-  ,SysUtils
-  ;
+  Forms,
+  FMainSQLEditor in 'FMainSQLEditor.pas' {FMainSQLEditor},
+  tiLogReg,
+  tiOIDGUID,
+  tiOPFManager,
+  FSQLEditor in 'FSQLEditor.pas' {FSQLEditor},
+  FSQLMgrBrowse in 'FSQLMgrBrowse.pas' {FSQLMgrBrowse},
+  tiSQLMgrDataSet_Srv in 'tiSQLMgrDataSet_Srv.pas',
+  tiSQLMgrDataSet_BOM in 'tiSQLMgrDataSet_BOM.pas',
+  tiCommandLineParams,
+  SysUtils,
+  FRunAsScript in 'FRunAsScript.pas';
 
 {$R *.res}
 

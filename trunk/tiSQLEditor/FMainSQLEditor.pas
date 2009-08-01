@@ -28,14 +28,6 @@ resourcestring
 
 type
   TFormMain = class(TForm)
-    TB: TtiToolBar;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
-    ToolButton7: TToolButton;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     N2: TMenuItem;
@@ -60,12 +52,22 @@ type
     miEdit: TMenuItem;
     Query1: TMenuItem;
     Help1: TMenuItem;
-    aAbout: TAction;
     About1: TMenuItem;
     aDatabaseConnectionDetails: TAction;
     Viewdatabaseconnectiondetails1: TMenuItem;
     N1: TMenuItem;
     SB: TStatusBar;
+    TB: TToolBar;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure aFileOpenExecute(Sender: TObject);
@@ -79,7 +81,6 @@ type
     procedure aRunScriptExecute(Sender: TObject);
     procedure ActionList1OnUpdate(Action: TBasicAction;
       var Handled: Boolean);
-    procedure aAboutExecute(Sender: TObject);
     procedure aDatabaseConnectionDetailsExecute(Sender: TObject);
   private
     FSQLEditor : TFormSQLEditor ;
@@ -116,11 +117,12 @@ uses
   {$IFDEF MSWINDOWS}
   ,Windows      // Used for GetKeyboardState
   {$ENDIF}
+  ,tiQuery
   ;
 
-{$IFDEF FPC}
+//{$IFDEF FPC}
   {$R *.dfm}
-{$ENDIF}
+//{$ENDIF}
 
 const
   cDatabaseName   = '%DatabaseName%';
@@ -140,11 +142,12 @@ begin
 
   FSQLEditor := TFormSQLEditor.Create( self ) ;
   FSQLEditor.Parent := self ;
-  FSQLEditor.Top := {TB.Height}20 + 4 ;
-  FSQLEditor.Left := 4 ;
-  FSQLEditor.Height := ClientHeight - {TB.Height}20 - 8 - SB.Height ;
-  FSQLEditor.Width  := ClientWidth - 8  ;
-  FSQLEditor.Anchors := [akTop, akLeft, akBottom, akRight ] ;
+  FSQLEditor.Align:= alClient;
+//  FSQLEditor.Top := TB.Top + TB.Height + 24 ;
+//  FSQLEditor.Left := 4 ;
+//  FSQLEditor.Height := ClientHeight - TB.Height - 8 - SB.Height ;
+//  FSQLEditor.Width  := ClientWidth - 8  ;
+//  FSQLEditor.Anchors := [akTop, akLeft, akBottom, akRight ] ;
   Caption := crsFormCaption ;
   FSQLEditor.Visible := true ;
 //  FSQLEditor.SetFocus ;
@@ -319,17 +322,16 @@ procedure TFormMain.RunAsScript( const psAppName, psParams : string ) ;
 var
   lFileName : string ;
   lParams   : string ;
-  lDBParams: TDBConnectParams;
+  lDBParams: TtiDBConnectionParams;
 begin
   lFileName := tiGetTempFile( 'SQL' ) ;
   lFileName := tiAddTrailingSlash(ExtractFilePath(lFileName)) + 'tiSQLEditor\' + ExtractFileName(lFileName);
   tiForceDirectories(ExtractFilePath(lFileName));
   tiStringToFile( GetSQL, lFileName ) ;
   lDBParams := gTIOPFManager.DefaultDBConnectionPool.DBConnectParams;
-  Assert( lDBParams.TestValid, cErrorTIPerObjAbsTestValid );
   lParams := tiStrTran( psParams, cDatabaseName,   lDBParams.DatabaseName ) ;
   lParams := tiStrTran( lParams,  cUserName,       lDBParams.UserName ) ;
-  lParams := tiStrTran( lParams,  cPassword,       lDBParams.UserPassword ) ;
+  lParams := tiStrTran( lParams,  cPassword,       lDBParams.Password ) ;
   lParams := tiStrTran( lParams,  cScriptFileName, lFileName ) ;
   Log('About to run ' + psAppName + ' ' + lParams);
 //  tiShellExecute( psAppName, lParams ) ;
@@ -371,20 +373,6 @@ begin
   aRunScript.Enabled := aRun.Enabled ;
   Handled := true ;
   
-end;
-
-procedure TFormMain.aAboutExecute(Sender: TObject);
-//var
-//  lForm : TFormAbout ;
-begin
-{
-  lForm := TFormAbout.Create( nil ) ;
-  try
-    lForm.ShowModal ;
-  finally
-    lForm.Free ;
-  end ;
-}
 end;
 
 procedure TFormMain.aDatabaseConnectionDetailsExecute(Sender: TObject);

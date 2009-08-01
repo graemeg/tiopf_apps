@@ -20,7 +20,7 @@ uses
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   tiDBConnectionPool, tiSQLMgr_BOM, ActnList, ToolWin, ComCtrls,
   ImgList, Menus, Db
-  ,tiThreadProgress
+  ,tiThread
   ,tiQuery
   ,tiDataBuffer_BOM
   ,tiDataBuffer_Cli
@@ -45,7 +45,6 @@ type
     sb: TStatusBar;
     DS: TDataSource;
     PopupMenu1: TPopupMenu;
-    StringGrid1: TStringGrid;
     Structure1: TMenuItem;
     ExporttoCSVfile1: TMenuItem;
     N1: TMenuItem;
@@ -112,7 +111,7 @@ type
 
 
   // Modify to take a list of SQLMgrQuery objects as well as a single instance
-  TthrdSQLMgrAbs = class( TtiThreadProgress )
+  TthrdSQLMgrAbs = class( TtiThread )
   private
     FtiDataSetQueryMapping : TtiDataBufferQueryMapping ;
     FsErrorText   : string ;
@@ -155,9 +154,9 @@ uses
   ,tiGUIUtils
   ;
 
-{$IFDEF FPC}
+//{$IFDEF FPC}
   {$R *.dfm}
-{$ENDIF}
+//{$ENDIF}
   
 var
   uSaveFileName : TFileName ;
@@ -271,7 +270,12 @@ end ;
 
 procedure TthrdSQLMgrAbs.Execute;
 begin
-  gTIOPFManager.Read( FtiDataSetQueryMapping ) ;
+  try
+    gTIOPFManager.Read( FtiDataSetQueryMapping ) ;
+  except
+    on e:exception do
+      FsErrorText:= e.message;
+  end;
 end;
 
 procedure TthrdSQLMgrAbs.SetSQLMgrQuery(const Value: TSQLMgrQuery);

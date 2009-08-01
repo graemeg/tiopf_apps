@@ -97,8 +97,7 @@ type
 
 implementation
 uses
-  tiSQLMgr_Cli
-  ,FSQLMgrBrowse
+  FSQLMgrBrowse
   ,tiUtils
   ,ClipBrd
   ,Math
@@ -106,9 +105,9 @@ uses
   ;
 
 
-{$IFDEF FPC}
+//{$IFDEF FPC}
   {$R *.dfm}
-{$ENDIF}
+//{$ENDIF}
   
 
 procedure TFormSQLEditor.Execute;

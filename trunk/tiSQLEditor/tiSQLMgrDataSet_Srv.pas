@@ -1,11 +1,3 @@
-{
-  Purpose:
-
-  ToDo:
-
-}
-
-
 unit tiSQLMgrDataSet_Srv;
 
 {$I tiDefines.inc}
@@ -122,7 +114,6 @@ begin
   else
     liTimeToScan := 0 ;
 
-Assert(False, 'Under construction');   
 //  Final ;
 
   TtiDataBufferQueryMapping( Visited ).TimeToRun  := liTimeToRun ;
