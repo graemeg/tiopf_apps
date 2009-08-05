@@ -455,7 +455,7 @@ begin
     ls := FMemoSQL.SelText
   else
     ls := FMemoSQL.Lines.Text ;
-  Clipboard.AsText := ls ;
+  Clipboard.AsText := LowerCase(ls);
 end;
 
 procedure TFormSQLEditor.aPasteAsQuotedStringExecute(Sender: TObject);

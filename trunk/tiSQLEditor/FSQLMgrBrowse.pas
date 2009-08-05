@@ -514,7 +514,6 @@ end;
 procedure TFormSQLMgrBrowse.SetTIQueryDataSetMapping( const Value: TtiDataBufferQueryMapping);
 var
   i : integer ;
-  LItem: TListItem;
 begin
   FtiQueryDataSetMapping := Value;
   Caption := ' Results for query: ' + FtiQueryDataSetMapping.SQLMgrQuery.Caption ;
