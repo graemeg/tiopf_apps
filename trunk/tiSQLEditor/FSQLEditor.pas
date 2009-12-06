@@ -270,7 +270,7 @@ begin
 
     ls := '' ;
     for i := 0 to lsl.Count - 1 do begin
-      ls := ls + '    ' + QuotedStr( lsl.Strings[i] + ' '  ) + ' ' ;
+      ls := ls + '    ' + QuotedStr( TrimRight(lsl.Strings[i]) + ' '  ) + ' ' ;
       if i < lsl.Count - 1 then
         ls := ls + '+' + CrLf
       else
@@ -279,7 +279,7 @@ begin
   finally
     lsl.Free ;
   end ;
-  Clipboard.AsText := ls ;
+  Clipboard.AsText := LowerCase(ls) ;
 end;
 
 procedure TFormSQLEditor.aRunQueryExecute(Sender: TObject);
