@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+    tab-spaces="2"
+    begin-end-tabs="1"
+    visibility-tabs="0"
+    project-name="MyProject"
+    enum-type="int"
+    >
+    
+    <!-- Includes are added to this schema before build-time. -->
+    <includes>
+        <item file-name="/jobs_schema.xml"/>
+    </includes>
+      
+    <!-- Units (pas) files that will be created along with defined types, classes, etc. -->
+    <project-units>
+        <unit name="person_bom">
+            
+            <!-- Enumerations defined here -->  
+            <enums>
+                <enum name="TGenderType">
+                    <values>
+                        <item name="gtFemale" value="0"/>
+                        <item name="gtMale" value="1"/>
+                    </values>
+                </enum>                
+            </enums>
+            
+            <!-- Classes defined here -->
+            <classes>                     
+                                       
+                <!-- Basic Person Object -->                                                                                  
+                <class                                  
+                    base-class="TPerson"
+                    base-class-parent="TtiObject"                                                                            
+                    auto-map="true"                      
+                    auto-create-list="true">
+                    <!-- Class properties -->
+                    <class-props>                                               
+                        <prop name="FirstName" type="string"/>                        
+                        <prop name="LastName" type="string"/>
+                        <prop name="Age" type="Integer"/>
+                        <prop name="Gender" type="TGenderType"/>
+                        <prop name="IsActive" type="Boolean"/>
+                        <prop name="ActiveDate" type="TDateTime"/>
+                        <prop name="Email"/>
+                    </class-props>
+                    <!-- Mapping into the tiOPF framework -->
+                    <mapping table="person" pk="OID" pk-field="OID" oid-type="string">                        
+                        <prop-map prop="FirstName" field="first_name" type="string"/>
+                        <prop-map prop="LastName" field="last_name" type="string"/>
+                        <prop-map prop="Age" field="age"  type="integer"/>
+                        <prop-map prop="Gender" field="gender" type="enum"/>
+                                                                    
+                    </mapping>     
+                    <selections>
+                        <select type="func" name="FindByFirstName">
+                            <params>
+                                <item name="AName" type="string" pass-by="const" sql-param="user_first"/>
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        PERSON
+                                    WHERE 
+                                        PERSON.FIRST_NAME = :USER_FIRST
+                                ]]>
+                            </sql>                            
+                        </select>                        
+                    </selections>                                                                               
+                </class>
+                
+            </classes>
+        </unit>
+    </project-units>
+</project>
