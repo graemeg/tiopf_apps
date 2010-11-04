@@ -809,9 +809,12 @@ begin
   WriteLine('function ' + lListName + '.FindByOID(const AOID: string): integer;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('MarkListItemsForDeletion;', ASL);
-      WriteLine('Clear;', ASL);
-      WriteLine('NotifyObservers;', ASL);
+      WriteLine('if self.Count > 0 then', ASL);
+        IncTab;
+          WriteLine('self.Clear;', ASL);
+          WriteLine('', ASL);
+        DecTab;
+
       WriteLine('Criteria.ClearAll;', ASL);
 
       if AClassDef.ClassMapping.OIDType = otString then

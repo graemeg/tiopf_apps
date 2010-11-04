@@ -47,7 +47,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="6" Y="8"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="145"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -73,13 +73,14 @@
       <Unit3>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="13"/>
-        <CursorPos X="45" Y="25"/>
+        <TopLine Value="787"/>
+        <CursorPos X="9" Y="817"/>
         <UsageCount Value="72"/>
         <Bookmarks Count="1">
-          <Item0 X="32" Y="1784" ID="1"/>
+          <Item0 X="32" Y="1787" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
@@ -115,11 +116,10 @@
       <Unit7>
         <Filename Value="..\demos\bom\person_bom.pas"/>
         <UnitName Value="person_bom"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="268"/>
-        <CursorPos X="42" Y="285"/>
+        <CursorPos X="35" Y="277"/>
         <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit7>
@@ -129,7 +129,7 @@
         <UsageCount Value="20"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="24" HistoryIndex="23">
       <Position1>
         <Filename Value="..\mapper\mapper.pas"/>
         <Caret Line="756" Column="1" TopLine="741"/>
@@ -214,6 +214,18 @@
         <Filename Value="..\mapper\mapper.pas"/>
         <Caret Line="671" Column="1" TopLine="654"/>
       </Position21>
+      <Position22>
+        <Filename Value="..\mapper\mapper_project_writer.pas"/>
+        <Caret Line="25" Column="45" TopLine="31"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\mapper\mapper_project_writer.pas"/>
+        <Caret Line="815" Column="41" TopLine="790"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\mapper\mapper_project_writer.pas"/>
+        <Caret Line="131" Column="1" TopLine="114"/>
+      </Position24>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
