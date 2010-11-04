@@ -71,7 +71,9 @@ type
     { Return count (1) if successful. }
     function    FindByOID(const AOID: string): integer;
     { Returns Number of objects retrieved. }
-    function    FindGroupsForUser(const AUser: string): integer;
+    function    FindJobsForUser(const AUser: string): integer;
+    { Returns Number of objects retrieved. }
+    function    FindByStatus(const AStatus: integer): integer;
   end;
   
 
@@ -179,8 +181,16 @@ type
   end;
   
 
-  { TJobList_FindGroupsForUserVis }
-  TJobList_FindGroupsForUserVis = class(TtiMapParameterListReadVisitor)
+  { TJobList_FindJobsForUserVis }
+  TJobList_FindJobsForUserVis = class(TtiMapParameterListReadVisitor)
+  protected
+    function    AcceptVisitor: Boolean; override;
+    procedure   MapRowToObject; override;
+  end;
+  
+
+  { TJobList_FindByStatusVis }
+  TJobList_FindByStatusVis = class(TtiMapParameterListReadVisitor)
   protected
     function    AcceptVisitor: Boolean; override;
     procedure   MapRowToObject; override;
@@ -293,7 +303,7 @@ begin
   GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TUserJobRelation,
     'user_job_relation','JobOID', 'job_oid');
   GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TUserJobRelation,
-    'user_job_relation','UserOID', 'user_id');
+    'user_job_relation','UserOID', 'user_oid');
   GTIOPFManager.ClassDBMappingMgr.RegisterCollection(TUserJobRelationList, TUserJobRelation);
   
 
@@ -311,7 +321,8 @@ begin
   GTIOPFManager.VisitorManager.RegisterVisitor('TJobsave', TJob_Save);
   GTIOPFManager.VisitorManager.RegisterVisitor('TJobdelete', TJob_Delete);
   GTIOPFManager.VisitorManager.RegisterVisitor('TJobcreate', TJob_Create);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TJobList_FindGroupsForUserVis', TJobList_FindGroupsForUserVis);
+  GTIOPFManager.VisitorManager.RegisterVisitor('TJobList_FindJobsForUserVis', TJobList_FindJobsForUserVis);
+  GTIOPFManager.VisitorManager.RegisterVisitor('TJobList_FindByStatusVis', TJobList_FindByStatusVis);
   
 
   { Register Visitors for TUserJobRelation }
@@ -408,7 +419,7 @@ begin
 end;
 
 
-function TJobList.FindGroupsForUser(const AUser: string): integer;
+function TJobList.FindJobsForUser(const AUser: string): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -419,8 +430,24 @@ begin
     ' SELECT JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS  ' + 
     ' FROM JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID  ' + 
     ' = USER_JOB_RELATION.JOB_OID WHERE USER_JOB_RELATION.USER_OID  ' + 
-    ' = :user_oid;'; 
-  GTIOPFManager.VisitorManager.Execute('TJobList_FindGroupsForUserVis', self);
+    ' = :user_oid ORDER BY JOBS.JOB_NAME'; 
+  GTIOPFManager.VisitorManager.Execute('TJobList_FindJobsForUserVis', self);
+  result := self.Count;
+end;
+
+
+function TJobList.FindByStatus(const AStatus: integer): integer;
+begin
+  if self.Count > 0 then
+    self.Clear;
+    
+  Params.Clear;
+  AddParam('AStatus', 'status', ptInteger, AStatus);
+  self.SQL := 
+    ' SELECT JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS  ' + 
+    ' FROM JOBS WHERE JOBS.JOB_STATUS = :STATUS ORDER BY  ' + 
+    ' JOBS.JOB_NAME'; 
+  GTIOPFManager.VisitorManager.Execute('TJobList_FindByStatusVis', self);
   result := self.Count;
 end;
 
@@ -772,14 +799,35 @@ begin
 end;
 
 
-{ TJobList_FindGroupsForUserVis }
-function TJobList_FindGroupsForUserVis.AcceptVisitor: Boolean;
+{ TJobList_FindJobsForUserVis }
+function TJobList_FindJobsForUserVis.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posEmpty);
 end;
 
 
-procedure TJobList_FindGroupsForUserVis.MapRowToObject;
+procedure TJobList_FindJobsForUserVis.MapRowToObject;
+var
+  lObj: TJob;
+begin
+  lObj := TJob.Create;
+  lObj.OID.AssignFromTIQuery('OID',Query);
+  lObj.JobName := Query.FieldAsString['job_name'];
+  lObj.JobDesc := Query.FieldAsString['job_desc'];
+  lObj.Status := TJobStatus(Query.FieldAsInteger['job_status']);
+  lObj.ObjectState := posClean;
+  TtiObjectList(Visited).Add(lObj);
+end;
+
+
+{ TJobList_FindByStatusVis }
+function TJobList_FindByStatusVis.AcceptVisitor: Boolean;
+begin
+  result := (Visited.ObjectState = posEmpty);
+end;
+
+
+procedure TJobList_FindByStatusVis.MapRowToObject;
 var
   lObj: TJob;
 begin
@@ -806,11 +854,11 @@ begin
     'INSERT INTO user_job_relation(' + 
     ' OID, ' + 
     ' job_oid, ' + 
-    ' user_id' + 
+    ' user_oid' + 
     ') VALUES (' +
     ' :OID, ' +
     ' :job_oid, ' + 
-    ' :user_id' + 
+    ' :user_oid' + 
     ') ';
 end;
 
@@ -822,7 +870,7 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
   Query.ParamAsString['job_oid'] := lObj.JobOID;
-  Query.ParamAsString['user_id'] := lObj.UserOID;
+  Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
 
@@ -838,7 +886,7 @@ begin
   Query.SQLText := 
     'UPDATE user_job_relation SET ' +
     ' job_oid = :job_oid, ' + 
-    ' user_id = :user_id ' + 
+    ' user_oid = :user_oid ' + 
     'WHERE OID = :OID' ;
 end;
 
@@ -850,7 +898,7 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
   Query.ParamAsString['job_oid'] := lObj.JobOID;
-  Query.ParamAsString['user_id'] := lObj.UserOID;
+  Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
 
@@ -867,7 +915,7 @@ begin
     'SELECT ' + 
     ' OID, ' +
     ' job_oid, ' + 
-    ' user_id ' + 
+    ' user_oid ' + 
     'FROM  user_job_relation WHERE OID = :OID' ;
 end;
 
@@ -888,7 +936,7 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignFromTIQuery('OID',Query);
   lObj.JobOID := Query.FieldAsString['job_oid'];
-  lObj.UserOID := Query.FieldAsString['user_id'];
+  lObj.UserOID := Query.FieldAsString['user_oid'];
 end;
 
 
@@ -947,7 +995,7 @@ begin
     'SELECT ' + 
     ' OID, ' +
     ' job_oid, ' + 
-    ' user_id ' + 
+    ' user_oid ' + 
     'FROM  user_job_relation %s %s ;';
   
 
@@ -964,7 +1012,7 @@ begin
   lObj := TUserJobRelation.Create;
   lObj.OID.AssignFromTIQuery('OID',Query);
   lObj.JobOID := Query.FieldAsString['job_oid'];
-  lObj.UserOID := Query.FieldAsString['user_id'];
+  lObj.UserOID := Query.FieldAsString['user_oid'];
   lObj.ObjectState := posClean;
   TtiObjectList(Visited).Add(lObj);
 end;
@@ -983,11 +1031,11 @@ begin
     'INSERT INTO user_job_relation(' + 
     ' OID, ' + 
     ' job_oid, ' + 
-    ' user_id' + 
+    ' user_oid' + 
     ') VALUES (' +
     ' :OID, ' +
     ' :job_oid, ' + 
-    ' :user_id' + 
+    ' :user_oid' + 
     ') ';
 end;
 
@@ -999,7 +1047,7 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
   Query.ParamAsString['job_oid'] := lObj.JobOID;
-  Query.ParamAsString['user_id'] := lObj.UserOID;
+  Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
 
@@ -1037,7 +1085,7 @@ begin
   Query.SQLText := 
     'UPDATE user_job_relation SET ' +
     ' job_oid = :job_oid, ' + 
-    ' user_id = :user_id ' + 
+    ' user_oid = :user_oid ' + 
     'WHERE OID = :OID' ;
 end;
 
@@ -1049,7 +1097,7 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
   Query.ParamAsString['job_oid'] := lObj.JobOID;
-  Query.ParamAsString['user_id'] := lObj.UserOID;
+  Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
 

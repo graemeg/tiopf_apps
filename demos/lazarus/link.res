@@ -93,6 +93,7 @@ M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazarus\output\connection_util
 M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazarus\output\jobs_bom.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazarus\output\person_bom.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\laz_timapper.o
+M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazarus\output\test_cleanup.o
 M:\lazarus_current\lazarus\lcl\units\i386-win32\interfacebase.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\types.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\classes.o
@@ -412,7 +413,6 @@ M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\fpc_
 M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\fpc_schema_writer.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\mapper_project_writer.o
 M:\lazarus_current\lazarus\packager\units\i386-win32\lazaruspackageintf.o
-M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\mapper_query.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\sysinitpas.o
 )
 GROUP(

@@ -50,9 +50,9 @@
                         <prop-map prop="FirstName" field="first_name" type="string"/>
                         <prop-map prop="LastName" field="last_name" type="string"/>
                         <prop-map prop="Age" field="age"  type="integer"/>
-                        <prop-map prop="Gender" field="gender" type="enum"/>
-                                                                    
+                        <prop-map prop="Gender" field="gender" type="enum"/>                                                                    
                     </mapping>     
+                    
                     <selections>
                         <select type="func" name="FindByFirstName">
                             <params>
@@ -69,7 +69,8 @@
                                 ]]>
                             </sql>                            
                         </select>                        
-                    </selections>                                                                               
+                    </selections>
+                                                                                                   
                 </class>
                 
             </classes>

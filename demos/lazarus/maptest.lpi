@@ -45,70 +45,65 @@
         <PackageName Value="FCL"/>
       </Item5>
     </RequiredPackages>
-    <Units Count="10">
+    <Units Count="11">
       <Unit0>
         <Filename Value="maptest.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="maptest"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="29" Y="16"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="24"/>
       </Unit0>
       <Unit1>
         <Filename Value="test_mapper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="test_mapper"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="24"/>
-        <CursorPos X="50" Y="46"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="38"/>
+        <CursorPos X="1" Y="59"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="base_connected_test.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="base_connected_test"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="8"/>
         <CursorPos X="31" Y="20"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="24"/>
       </Unit2>
       <Unit3>
         <Filename Value="connection_util.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="connection_util"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2"/>
-        <CursorPos X="10" Y="19"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="18"/>
+        <CursorPos X="28" Y="45"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiUtils.pas"/>
         <UnitName Value="tiUtils"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="175"/>
         <CursorPos X="29" Y="19"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\bom\jobs_bom.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="jobs_bom"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="233"/>
-        <CursorPos X="18" Y="267"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="266"/>
+        <CursorPos X="1" Y="283"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -117,163 +112,167 @@
         <UnitName Value="person_bom"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="11"/>
-        <CursorPos X="10" Y="22"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="321"/>
+        <CursorPos X="1" Y="340"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="M:\lazarus\components\tiOPF2\Options\tiQuerySqldb.pas"/>
         <UnitName Value="tiQuerySqldb"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="140"/>
-        <CursorPos X="1" Y="157"/>
+        <TopLine Value="210"/>
+        <CursorPos X="1" Y="227"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="M:\lazarus\components\tiOPF2\Options\tiQueryDataset.pas"/>
         <UnitName Value="tiQueryDataset"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="597"/>
         <CursorPos X="1" Y="623"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\..\mapper\tiSQLParser.pas"/>
         <UnitName Value="tiSQLParser"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="97"/>
+        <CursorPos X="29" Y="16"/>
+        <UsageCount Value="10"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="test_cleanup.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="test_cleanup"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="36" Y="13"/>
-        <UsageCount Value="10"/>
+        <CursorPos X="4" Y="20"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
-      </Unit9>
+      </Unit10>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="36" Column="1" TopLine="23"/>
+        <Caret Line="43" Column="1" TopLine="20"/>
       </Position1>
       <Position2>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="39" Column="1" TopLine="23"/>
+        <Caret Line="44" Column="1" TopLine="20"/>
       </Position2>
       <Position3>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="40" Column="1" TopLine="23"/>
+        <Caret Line="45" Column="1" TopLine="20"/>
       </Position3>
       <Position4>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="41" Column="1" TopLine="23"/>
+        <Caret Line="47" Column="1" TopLine="20"/>
       </Position4>
       <Position5>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="45" Column="1" TopLine="23"/>
+        <Caret Line="49" Column="1" TopLine="21"/>
       </Position5>
       <Position6>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="46" Column="1" TopLine="23"/>
+        <Caret Line="52" Column="1" TopLine="24"/>
       </Position6>
       <Position7>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="338" Column="1" TopLine="321"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="53" Column="1" TopLine="25"/>
       </Position7>
       <Position8>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="339" Column="1" TopLine="321"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="54" Column="1" TopLine="26"/>
       </Position8>
       <Position9>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="340" Column="1" TopLine="321"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="55" Column="1" TopLine="27"/>
       </Position9>
       <Position10>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="344" Column="1" TopLine="321"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="58" Column="1" TopLine="30"/>
       </Position10>
       <Position11>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="349" Column="53" TopLine="321"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="51" Column="54" TopLine="18"/>
       </Position11>
       <Position12>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="46" Column="1" TopLine="23"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="47" Column="1" TopLine="19"/>
       </Position12>
       <Position13>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="338" Column="1" TopLine="321"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="49" Column="1" TopLine="21"/>
       </Position13>
       <Position14>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="339" Column="1" TopLine="321"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="50" Column="1" TopLine="22"/>
       </Position14>
       <Position15>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="340" Column="1" TopLine="321"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="51" Column="1" TopLine="23"/>
       </Position15>
       <Position16>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="344" Column="1" TopLine="321"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="50" Column="17" TopLine="23"/>
       </Position16>
       <Position17>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="345" Column="1" TopLine="321"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="95" Column="1" TopLine="78"/>
       </Position17>
       <Position18>
-        <Filename Value="..\bom\jobs_bom.pas"/>
-        <Caret Line="267" Column="18" TopLine="233"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="96" Column="1" TopLine="94"/>
       </Position18>
       <Position19>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="46" Column="1" TopLine="23"/>
+        <Caret Line="117" Column="1" TopLine="94"/>
       </Position19>
       <Position20>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="339" Column="1" TopLine="322"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="120" Column="1" TopLine="94"/>
       </Position20>
       <Position21>
-        <Filename Value="..\bom\jobs_bom.pas"/>
-        <Caret Line="267" Column="18" TopLine="233"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="122" Column="1" TopLine="94"/>
       </Position21>
       <Position22>
         <Filename Value="test_mapper.pas"/>
-        <Caret Line="46" Column="1" TopLine="23"/>
+        <Caret Line="69" Column="1" TopLine="52"/>
       </Position22>
       <Position23>
-        <Filename Value="..\bom\jobs_bom.pas"/>
-        <Caret Line="267" Column="18" TopLine="233"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="50" Column="31" TopLine="23"/>
       </Position23>
       <Position24>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="338" Column="1" TopLine="331"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="47" Column="1" TopLine="23"/>
       </Position24>
       <Position25>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="339" Column="1" TopLine="331"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="49" Column="1" TopLine="23"/>
       </Position25>
       <Position26>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="340" Column="1" TopLine="331"/>
+        <Filename Value="connection_util.pas"/>
+        <Caret Line="50" Column="1" TopLine="23"/>
       </Position26>
       <Position27>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="47" Column="1" TopLine="23"/>
+        <Filename Value="test_cleanup.pas"/>
+        <Caret Line="26" Column="37" TopLine="1"/>
       </Position27>
       <Position28>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="50" Column="1" TopLine="23"/>
+        <Filename Value="test_cleanup.pas"/>
+        <Caret Line="20" Column="4" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="340" Column="1" TopLine="331"/>
+        <Filename Value="..\bom\jobs_bom.pas"/>
+        <Caret Line="991" Column="41" TopLine="991"/>
       </Position29>
       <Position30>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="22" Column="10" TopLine="11"/>
+        <Filename Value="..\bom\jobs_bom.pas"/>
+        <Caret Line="441" Column="3" TopLine="439"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -303,8 +302,8 @@
   <Debugging>
     <BreakPoints Count="1">
       <Item1>
-        <Source Value="..\bom\person_bom.pas"/>
-        <Line Value="338"/>
+        <Source Value="test_mapper.pas"/>
+        <Line Value="59"/>
       </Item1>
     </BreakPoints>
     <Exceptions Count="3">

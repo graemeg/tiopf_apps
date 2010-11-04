@@ -4,7 +4,7 @@ program maptest;
 
 uses
   Interfaces, Forms, GuiTestRunner, test_mapper, base_connected_test,
-  connection_util, jobs_bom, person_bom, laz_timapper;
+  connection_util, jobs_bom, person_bom, laz_timapper, test_cleanup;
 
 {$R *.res}
 

@@ -39,7 +39,7 @@
                     </mapping>   
                     <!-- Selections are used to create custom methods of the TtiObjectList to retrieve custom queries. -->
                     <selections>
-                        <select type="func" name="FindGroupsForUser">
+                        <select type="func" name="FindJobsForUser">
                             <params>
                                 <item name="AUser" type="string" pass-by="const" sql-param="user_oid"/>
                             </params>
@@ -51,10 +51,29 @@
                                         JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID = 
                                         USER_JOB_RELATION.JOB_OID
                                     WHERE 
-                                        USER_JOB_RELATION.USER_OID = :user_oid;
+                                        USER_JOB_RELATION.USER_OID = :user_oid
+                                    ORDER BY 
+                                        JOBS.JOB_NAME
                                 ]]>
                             </sql>                            
-                        </select>                        
+                        </select>   
+                        <select type="func" name="FindByStatus">
+                            <params>
+                                <item name="AStatus" type="integer" pass-by="const" sql-param="status"/>
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        JOBS 
+                                    WHERE 
+                                        JOBS.JOB_STATUS = :STATUS
+                                    ORDER BY 
+                                        JOBS.JOB_NAME
+                                ]]>
+                            </sql>                            
+                        </select>                      
                     </selections>    
                 </class>
                 
@@ -70,7 +89,7 @@
                     </class-props>
                     <mapping table="user_job_relation" pk="OID" pk-field="OID" oid-type="string">                        
                         <prop-map prop="JobOID" field="job_oid" type="string"/>
-                        <prop-map prop="UserOID" field="user_id" type="string"/>                        
+                        <prop-map prop="UserOID" field="user_oid" type="string"/>                        
                     </mapping>                                        
                 </class>
             </classes>
