@@ -120,6 +120,15 @@ begin
     lPersons.Clear;
     lPersons.FindByFirstName('Abby');
     AssertTrue('Custom method FindByFirstName did not work', lPersons.Count > 0);
+
+    { Because we hook into the automapping registrations, we leverage the tiCriteriaAsSQL
+    methods to create simple filter using tiCriteria but with hard coded visitors.  Allows to use
+    only object's properties for attributes.  See /demos/bom/person_bom.pas -> TPersonList_Read.init method. }
+    lPersons.Clear;
+    lPersons.Criteria.AddEqualTo('FirstName', 'Abby');
+    lPersons.Read;
+    AssertTrue('Custom method FindByFirstName did not work', lPersons.Count > 0);
+
   finally
     lPersons.Free;
   end;
