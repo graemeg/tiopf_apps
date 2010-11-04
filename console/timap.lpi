@@ -47,7 +47,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="6" Y="8"/>
-        <UsageCount Value="142"/>
+        <UsageCount Value="144"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -55,9 +55,9 @@
         <UnitName Value="mapper"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="654"/>
-        <CursorPos X="1" Y="671"/>
-        <UsageCount Value="72"/>
+        <TopLine Value="1815"/>
+        <CursorPos X="50" Y="1842"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -67,18 +67,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="76"/>
         <CursorPos X="32" Y="104"/>
-        <UsageCount Value="72"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="62" Y="14"/>
-        <UsageCount Value="71"/>
+        <TopLine Value="13"/>
+        <CursorPos X="45" Y="25"/>
+        <UsageCount Value="72"/>
         <Bookmarks Count="1">
           <Item0 X="32" Y="1784" ID="1"/>
         </Bookmarks>
@@ -91,7 +90,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="92"/>
         <CursorPos X="64" Y="115"/>
-        <UsageCount Value="60"/>
+        <UsageCount Value="61"/>
         <Bookmarks Count="1">
           <Item0 X="24" Y="64" ID="2"/>
         </Bookmarks>
@@ -116,11 +115,12 @@
       <Unit7>
         <Filename Value="..\demos\bom\person_bom.pas"/>
         <UnitName Value="person_bom"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="40" Y="17"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="268"/>
+        <CursorPos X="42" Y="285"/>
+        <UsageCount Value="22"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
@@ -129,7 +129,7 @@
         <UsageCount Value="20"/>
       </Unit8>
     </Units>
-    <JumpHistory Count="20" HistoryIndex="19">
+    <JumpHistory Count="21" HistoryIndex="20">
       <Position1>
         <Filename Value="..\mapper\mapper.pas"/>
         <Caret Line="756" Column="1" TopLine="741"/>
@@ -210,6 +210,10 @@
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
         <Caret Line="309" Column="44" TopLine="294"/>
       </Position20>
+      <Position21>
+        <Filename Value="..\mapper\mapper.pas"/>
+        <Caret Line="671" Column="1" TopLine="654"/>
+      </Position21>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -228,7 +232,15 @@
         <UseAnsiStrings Value="True"/>
       </SyntaxOptions>
     </Parsing>
+    <Linking>
+      <Debugging>
+        <StripSymbols Value="True"/>
+      </Debugging>
+    </Linking>
     <Other>
+      <CompilerMessages>
+        <UseMsgFile Value="True"/>
+      </CompilerMessages>
       <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
