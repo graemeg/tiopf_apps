@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<CONFIG>
-  <Compiler Value="M:\lazarus_current\lazarus\fpc\2.4.0\bin\i386-win32\fpc.exe" Date="1019746704"/>
-  <Params Value=" -MObjFPC -Scghi -O1 -gl -vewnhi -l -FuM:\LazarusProjects\custom_comps\tiOPFMapper\mapper\ -FuM:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\ -FuM:\lazarus_current\lazarus\lcl\units\i386-win32\ -FuM:\lazarus_current\lazarus\lcl\units\i386-win32\win32\ -FuM:\lazarus_current\lazarus\packager\units\i386-win32\ -FuM:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\ -Fu. -FUM:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\ -dLCL -dLCLwin32 laz_timapper.pas"/>
-</CONFIG>

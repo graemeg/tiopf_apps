@@ -77,7 +77,7 @@ type
 
   {: Base Mapper Object. }
   {$M+}
-  TBaseMapObject = class(TInterfacedObject)
+  TBaseMapObject = class(TtiObject)
   private
     FObservers: TList;
   public
@@ -91,26 +91,13 @@ type
   end;
   {$M-}
 
-  TBaseMapObjectList = class(TBaseMapObject)
-  private
-    FOL: TObjectList;
-    function GetCount: integer;
+  TBaseMapObjectList = class(TtiObjectList)
   protected
-    function    GetItem(index: Integer): TBaseMapObject; virtual;
-    procedure   SetItem(index: Integer;  AObject: TBaseMapObject); virtual;
+    function    GetItems(i: Integer): TBaseMapObject; virtual;
+    procedure   SetItems(i: Integer;  AObject: TBaseMapObject); virtual;
   public
-    property    Items[Index: Integer]: TBaseMapObject read GetItem write SetItem; default;
-    function    Extract(Item: TBaseMapObject): TBaseMapObject;
-    function    Remove(AObject: TBaseMapObject): Integer;
-    function    IndexOf(AObject: TBaseMapObject): Integer;
-    Procedure   Insert(Index: Integer; AObject: TBaseMapObject);
-    function    First: TBaseMapObject;
-    Function    Last: TBaseMapObject;
-    property    Count: integer read GetCount;
-    procedure   Clear; virtual;
+    property    Items[Index: Integer]: TBaseMapObject read GetItems write SetItems; default;
     function    Add(AObject: TBaseMapObject): Integer; virtual;
-    constructor Create(OwnsObjects: boolean = true); virtual;
-    destructor  Destroy; override;
   end;
 
   {: Base project class. }
@@ -160,10 +147,10 @@ type
 
   TMapProjectList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapProject; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapProject); reintroduce;
+    function    GetItems(i: Integer): TMapProject; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapProject); reintroduce;
   public
-    property    Items[Index: Integer]: TMapProject read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapProject read GetItems write SetItems; default;
     function    Add(AObject: TMapProject): Integer; reintroduce;
   end;
 
@@ -188,10 +175,10 @@ type
 
   TMapConnectionDefList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapConnectionDef; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapConnectionDef); reintroduce;
+    function    GetItems(i: Integer): TMapConnectionDef; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapConnectionDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapConnectionDef read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapConnectionDef read GetItems write SetItems; default;
     function    Add(AObject: TMapConnectionDef): Integer; reintroduce;
   end;
 
@@ -210,10 +197,10 @@ type
 
   TMapEnumValueList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapEnumValue; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapEnumValue); reintroduce;
+    function    GetItems(i: Integer): TMapEnumValue; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapEnumValue); reintroduce;
   public
-    property    Items[Index: Integer]: TMapEnumValue read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapEnumValue read GetItems write SetItems; default;
     function    Add(AObject: TMapEnumValue): Integer; overload; reintroduce;
     function    Add(const AName: string; const AValue: integer = -1): integer; overload;
   end;
@@ -234,10 +221,10 @@ type
 
   TMapEnumList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapEnum; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapEnum); reintroduce;
+    function    GetItems(i: Integer): TMapEnum; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapEnum); reintroduce;
   public
-    property    Items[Index: Integer]: TMapEnum read GetItem write SetItem; default;
+    property    Items[i: Integer]: TMapEnum read GetItems write SetItems; default;
     function    Add(AObject: TMapEnum): Integer; reintroduce;
     function    FindByName(const AName: string): TMapEnum;
   end;
@@ -261,10 +248,10 @@ type
 
   TMapClassPropList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapClassProp; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapClassProp); reintroduce;
+    function    GetItems(i: Integer): TMapClassProp; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapClassProp); reintroduce;
   public
-    property    Items[Index: Integer]: TMapClassProp read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapClassProp read GetItems write SetItems; default;
     function    Add(AObject: TMapClassProp): Integer; overload; reintroduce;
     function    Add(const AName: string; const APropType: TMapPropType): integer; overload;
     function    FindByName(const AName: string): TMapClassProp;
@@ -286,10 +273,10 @@ type
 
   TPropMappingList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TPropMapping; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TPropMapping); reintroduce;
+    function    GetItems(i: Integer): TPropMapping; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TPropMapping); reintroduce;
   public
-    property    Items[Index: Integer]: TPropMapping read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TPropMapping read GetItems write SetItems; default;
     function    Add(AObject: TPropMapping): Integer; reintroduce;
   end;
 
@@ -339,10 +326,10 @@ type
 
   TSelectParamList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TSelectParam; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TSelectParam); reintroduce;
+    function    GetItems(i: Integer): TSelectParam; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TSelectParam); reintroduce;
   public
-    property    Items[Index: Integer]: TSelectParam read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TSelectParam read GetItems write SetItems; default;
     function    Add(AObject: TSelectParam): Integer; reintroduce;
     function    FindByName(const AName: string): TSelectParam;
   end;
@@ -363,19 +350,19 @@ type
 
   TClassMappingSelectList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TClassMappingSelect; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TClassMappingSelect); reintroduce;
+    function    GetItems(i: Integer): TClassMappingSelect; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TClassMappingSelect); reintroduce;
   public
-    property    Items[Index: Integer]: TClassMappingSelect read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TClassMappingSelect read GetItems write SetItems; default;
     function    Add(AObject: TClassMappingSelect): Integer; reintroduce;
   end;
 
   TClassMappingList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TClassMapping; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TClassMapping); reintroduce;
+    function    GetItems(i: Integer): TClassMapping; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TClassMapping); reintroduce;
   public
-    property    Items[Index: Integer]: TClassMapping read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TClassMapping read GetItems write SetItems; default;
     function    Add(AObject: TClassMapping): Integer; reintroduce;
   end;
 
@@ -392,10 +379,10 @@ type
 
   TFilterDefList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TFilterDef; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TFilterDef); reintroduce;
+    function    GetItems(i: Integer): TFilterDef; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TFilterDef); reintroduce;
   public
-    property    Items[Index: Integer]: TFilterDef read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TFilterDef read GetItems write SetItems; default;
     function    Add(AObject: TFilterDef): Integer; reintroduce;
   end;
 
@@ -449,10 +436,10 @@ type
 
   TMapClassDefList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapClassDef; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapClassDef); reintroduce;
+    function    GetItems(i: Integer): TMapClassDef; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapClassDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapClassDef read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapClassDef read GetItems write SetItems; default;
     function    Add(AObject: TMapClassDef): Integer; reintroduce;
     function    FindByName(const AName: string): TMapClassDef;
   end;
@@ -477,10 +464,10 @@ type
 
   TMapUnitDefList = class(TBaseMapObjectList)
   protected
-    function    GetItem(index: Integer): TMapUnitDef; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TMapUnitDef); reintroduce;
+    function    GetItems(i: Integer): TMapUnitDef; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TMapUnitDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapUnitDef read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TMapUnitDef read GetItems write SetItems; default;
     function    Add(AObject: TMapUnitDef): Integer; reintroduce;
     function    FindByName(const AName: string): TMapUnitDef;
   end;
@@ -552,11 +539,11 @@ type
     FListState: TORMListState;
     procedure SetListState(const AValue: TORMListState);
   protected
-    function    GetItem(index: Integer): TORMObject; reintroduce;
-    procedure   SetItem(index: Integer;  AObject: TORMObject); reintroduce;
+    function    GetItems(i: Integer): TORMObject; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TORMObject); reintroduce;
   public
     property    ListState: TORMListState read FListState write SetListState;
-    property    Items[Index: Integer]: TORMObject read GetItem write SetItem; default;
+    property    Items[Index: Integer]: TORMObject read GetItems write SetItems; default;
     function    Add(AObject: TORMObject): Integer; reintroduce;
     procedure   Clear; override;
   end;
@@ -712,8 +699,10 @@ begin
   inherited Create;
   FIncludes := TStringList.Create;
   FUnits := TMapUnitDefList.Create;
-  FProjectClasses := TMapClassDefList.Create(false);
-  FProjectEnums := TMapEnumList.Create(false);
+  FProjectClasses := TMapClassDefList.Create;
+  FProjectClasses.OwnsObjects := false;
+  FProjectEnums := TMapEnumList.Create;
+  FProjectEnums.OwnsObjects := false;
   FMaxEditorCodeWidth := 80;
 end;
 
@@ -823,69 +812,17 @@ end;
 
 function TBaseMapObjectList.Add(AObject: TBaseMapObject): Integer;
 begin
-  result := FOL.Add(AObject);
+  inherited Add(AObject);
 end;
 
-procedure TBaseMapObjectList.Clear;
+function TBaseMapObjectList.GetItems(i: Integer): TBaseMapObject;
 begin
-  FOL.Clear;
+  result := inherited GetItems(i) as TBaseMapObject;
 end;
 
-constructor TBaseMapObjectList.Create(OwnsObjects: boolean = true);
+procedure TBaseMapObjectList.SetItems(i: Integer; AObject: TBaseMapObject);
 begin
-  inherited Create;
-  FOL := TObjectList.create(OwnsObjects);
-end;
-
-destructor TBaseMapObjectList.Destroy;
-begin
-  FOL.Free;
-  inherited Destroy;
-end;
-
-function TBaseMapObjectList.Extract(Item: TBaseMapObject): TBaseMapObject;
-begin
-  result := TBaseMapObject(FOL.Extract(Item));
-end;
-
-function TBaseMapObjectList.First: TBaseMapObject;
-begin
-  result := FOL.First as TBaseMapObject;
-end;
-
-function TBaseMapObjectList.GetCount: integer;
-begin
-  result := FOL.Count;
-end;
-
-function TBaseMapObjectList.GetItem(index: Integer): TBaseMapObject;
-begin
-  result := FOL.Items[index] as TBaseMapObject;
-end;
-
-function TBaseMapObjectList.IndexOf(AObject: TBaseMapObject): Integer;
-begin
-  result := FOL.IndexOf(AObject);
-end;
-
-procedure TBaseMapObjectList.Insert(Index: Integer; AObject: TBaseMapObject);
-begin
-  FOL.Insert(Index, AObject);
-end;
-
-function TBaseMapObjectList.Last: TBaseMapObject;
-begin
-  result := FOL.Last as TBaseMapObject;
-end;
-
-function TBaseMapObjectList.Remove(AObject: TBaseMapObject): Integer;
-begin
-  result := FOL.Remove(AObject);
-end;
-
-procedure TBaseMapObjectList.SetItem(index: Integer; AObject: TBaseMapObject);
-begin
-  FOL.Items[index] := AObject;
+  inherited SetItems(i, AObject);
 end;
 
 { TMapProjectList }
@@ -895,14 +832,14 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TMapProjectList.GetItem(index: Integer): TMapProject;
+function TMapProjectList.GetItems(i: Integer): TMapProject;
 begin
-  result := inherited GetItem(index) as TMapProject;
+  result := inherited GetItems(i) as TMapProject;
 end;
 
-procedure TMapProjectList.SetItem(index: Integer; AObject: TMapProject);
+procedure TMapProjectList.SetItems(i: Integer; AObject: TMapProject);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapConnectionDef }
@@ -944,15 +881,15 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TMapConnectionDefList.GetItem(index: Integer): TMapConnectionDef;
+function TMapConnectionDefList.GetItems(i: Integer): TMapConnectionDef;
 begin
-  result := TMapConnectionDef(inherited GetItem(index));
+  result := TMapConnectionDef(inherited GetItems(i));
 end;
 
-procedure TMapConnectionDefList.SetItem(index: Integer;
+procedure TMapConnectionDefList.SetItems(i: Integer;
   AObject: TMapConnectionDef);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapUnitDef }
@@ -1023,14 +960,14 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TMapEnumValueList.GetItem(index: Integer): TMapEnumValue;
+function TMapEnumValueList.GetItems(i: Integer): TMapEnumValue;
 begin
-  result := TMapEnumValue(inherited GetItem(index));
+  result := TMapEnumValue(inherited GetItems(i));
 end;
 
-procedure TMapEnumValueList.SetItem(index: Integer; AObject: TMapEnumValue);
+procedure TMapEnumValueList.SetItems(i: Integer; AObject: TMapEnumValue);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapEnum }
@@ -1169,14 +1106,14 @@ begin
     end;
 end;
 
-function TMapClassDefList.GetItem(index: Integer): TMapClassDef;
+function TMapClassDefList.GetItems(i: Integer): TMapClassDef;
 begin
-  result := TMapClassDef(inherited GetItem(index));
+  result := TMapClassDef(inherited GetItems(i));
 end;
 
-procedure TMapClassDefList.SetItem(index: Integer; AObject: TMapClassDef);
+procedure TMapClassDefList.SetItems(i: Integer; AObject: TMapClassDef);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapClassProp }
@@ -1239,14 +1176,14 @@ begin
     end;
 end;
 
-function TMapClassPropList.GetItem(index: Integer): TMapClassProp;
+function TMapClassPropList.GetItems(i: Integer): TMapClassProp;
 begin
-  result := TMapClassProp(inherited GetItem(index));
+  result := TMapClassProp(inherited GetItems(i));
 end;
 
-procedure TMapClassPropList.SetItem(index: Integer; AObject: TMapClassProp);
+procedure TMapClassPropList.SetItems(i: Integer; AObject: TMapClassProp);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TClassMapping }
@@ -1294,14 +1231,14 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TClassMappingList.GetItem(index: Integer): TClassMapping;
+function TClassMappingList.GetItems(i: Integer): TClassMapping;
 begin
-  result := TClassMapping(inherited GetItem(index));
+  result := TClassMapping(inherited GetItems(i));
 end;
 
-procedure TClassMappingList.SetItem(index: Integer; AObject: TClassMapping);
+procedure TClassMappingList.SetItems(i: Integer; AObject: TClassMapping);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TPropMapping }
@@ -1331,14 +1268,14 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TPropMappingList.GetItem(index: Integer): TPropMapping;
+function TPropMappingList.GetItems(i: Integer): TPropMapping;
 begin
-  result := TPropMapping(inherited GetItem(index));
+  result := TPropMapping(inherited GetItems(i));
 end;
 
-procedure TPropMappingList.SetItem(index: Integer; AObject: TPropMapping);
+procedure TPropMappingList.SetItems(i: Integer; AObject: TPropMapping);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TFilterDef }
@@ -1362,14 +1299,14 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TFilterDefList.GetItem(index: Integer): TFilterDef;
+function TFilterDefList.GetItems(i: Integer): TFilterDef;
 begin
-  result := TFilterDef(inherited GetItem(index));
+  result := TFilterDef(inherited GetItems(i));
 end;
 
-procedure TFilterDefList.SetItem(index: Integer; AObject: TFilterDef);
+procedure TFilterDefList.SetItems(i: Integer; AObject: TFilterDef);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapEnumList }
@@ -1398,14 +1335,14 @@ begin
     end;
 end;
 
-function TMapEnumList.GetItem(index: Integer): TMapEnum;
+function TMapEnumList.GetItems(i: Integer): TMapEnum;
 begin
-  result := TMapEnum(inherited GetItem(index));
+  result := TMapEnum(inherited GetItems(i));
 end;
 
-procedure TMapEnumList.SetItem(index: Integer; AObject: TMapEnum);
+procedure TMapEnumList.SetItems(i: Integer; AObject: TMapEnum);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapUnitDefList }
@@ -1434,14 +1371,14 @@ begin
     end;
 end;
 
-function TMapUnitDefList.GetItem(index: Integer): TMapUnitDef;
+function TMapUnitDefList.GetItems(i: Integer): TMapUnitDef;
 begin
-  result := TMapUnitDef(inherited GetItem(index));
+  result := TMapUnitDef(inherited GetItems(i));
 end;
 
-procedure TMapUnitDefList.SetItem(index: Integer; AObject: TMapUnitDef);
+procedure TMapUnitDefList.SetItems(i: Integer; AObject: TMapUnitDef);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TMapSchemaWriter }
@@ -1534,14 +1471,14 @@ begin
   FListState := lsEmpty;
 end;
 
-function TORMObjectList.GetItem(index: Integer): TORMObject;
+function TORMObjectList.GetItems(i: Integer): TORMObject;
 begin
-  result := TORMObject(inherited GetItem(index));
+  result := TORMObject(inherited GetItems(i));
 end;
 
-procedure TORMObjectList.SetItem(index: Integer; AObject: TORMObject);
+procedure TORMObjectList.SetItems(i: Integer; AObject: TORMObject);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 procedure TORMObjectList.SetListState(const AValue: TORMListState);
@@ -1719,14 +1656,14 @@ begin
     end;
 end;
 
-function TSelectParamList.GetItem(index: Integer): TSelectParam;
+function TSelectParamList.GetItems(i: Integer): TSelectParam;
 begin
-  result := TSelectParam(inherited GetItem(index));
+  result := TSelectParam(inherited GetItems(i));
 end;
 
-procedure TSelectParamList.SetItem(index: Integer; AObject: TSelectParam);
+procedure TSelectParamList.SetItems(i: Integer; AObject: TSelectParam);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TClassMappingSelect }
@@ -1758,15 +1695,15 @@ begin
   result := inherited Add(AObject);
 end;
 
-function TClassMappingSelectList.GetItem(index: Integer): TClassMappingSelect;
+function TClassMappingSelectList.GetItems(i: Integer): TClassMappingSelect;
 begin
-  result := TClassMappingSelect(inherited GetItem(index));
+  result := TClassMappingSelect(inherited GetItems(i));
 end;
 
-procedure TClassMappingSelectList.SetItem(index: Integer;
+procedure TClassMappingSelectList.SetItems(i: Integer;
   AObject: TClassMappingSelect);
 begin
-  inherited SetItem(index, AObject);
+  inherited SetItems(i, AObject);
 end;
 
 { TtiMapParameterListReadVisitor }

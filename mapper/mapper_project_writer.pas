@@ -21,7 +21,7 @@ type
     procedure SetBaseDir(const AValue: string);
   protected
     procedure   PrepareUnitList(AList: TStringList);
-    procedure   WriteProjectUnits;
+//    procedure   WriteProjectUnits;
     procedure   WriteUnitEnums(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteSingleUnitEnum(ASL: TStringList; AEnumDef: TMapEnum);
     procedure   WriteUnitClasses(ASL: TStringList; AUnitDef: TMapUnitDef);
@@ -298,10 +298,6 @@ end;
 
 procedure TMapperProjectWriter.WriteORMClass(ASL: TStringList;
   AClassDef: TMapClassDef);
-var
-  lCtr: integer;
-  lProp: TMapClassProp;
-  lMap: TClassMapping;
 begin
   WriteLine('{ Generated ORM Class: ' + AClassDef.BaseClassName + 'ORM}', ASL);
   WriteLine(AClassDef.BaseClassName + ' = class(' + AClassDef.BaseClassParent + ')', ASL);
@@ -337,8 +333,6 @@ end;
 
 procedure TMapperProjectWriter.WriteClassIntfMethods(ASL: TStringList;
   AClassDef: TMapClassDef);
-var
-  lCtr: integer;
 begin
 
 end;
@@ -363,9 +357,10 @@ var
   lBaseSig: string;
   lParam: TSelectParam;
   lTempStr: string;
-  lTemp: string;
   lSL: TStringList;
 begin
+
+  lParamSig := '';
 
   lTempStr := 'function ' + AClassDef.BaseClassName + 'List.' + ASelect.Name;
 
@@ -465,7 +460,6 @@ procedure TMapperProjectWriter.WriteClassProps(ASL: TStringList;
 var
   lCtr: integer;
   lProp: TMapClassProp;
-  lTemp: string;
 begin
   for lCtr := 0 to AClassDef.ClassProps.Count - 1 do
     begin
@@ -478,10 +472,11 @@ procedure TMapperProjectWriter.WriteClassListSelectMethodIntf(ASL: TStringList;
   AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
 var
   lCtr: integer;
-  lParamStr, lParamSig: string;
+  lParamSig: string;
   lParam: TSelectParam;
   lTempStr: string;
 begin
+  lParamSig := '';
 
   WriteLine('{ Returns Number of objects retrieved. }', ASL);
   lTempStr := 'function    ' + ASelect.Name;
@@ -521,8 +516,6 @@ end;
 
 procedure TMapperProjectWriter.WriteClassVisitorIntfs(ASL: TStringList;
   AClassMap: TMapClassDef);
-var
-  lCtr: integer;
 begin
   //WriteVisListReadIntf(ASL, AClassMap);
   WriteVisClassReadIntf(ASL, AClassMap);
@@ -637,9 +630,7 @@ end;
 procedure TMapperProjectWriter.WriteDeleteSQL(ASL: TStringList;
   AClassDef: TMapClassDef);
 var
-  lPropMap: TPropMapping;
   lMapping: TClassMapping;
-  lCtr: integer;
 begin
 
   lMapping := AClassDef.ClassMapping;
@@ -657,8 +648,6 @@ var
   lPropMap: TPropMapping;
   lMapping: TClassMapping;
   lCtr: integer;
-
-  lNoFieldYet: boolean;
 begin
 
   lMapping := AClassDef.ClassMapping;
@@ -872,7 +861,6 @@ var
   lCtr: integer;
   lPropMap: TPropMapping;
   lClassProp: TMapClassProp;
-  lEnum: TMapEnum;
 begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
@@ -906,7 +894,6 @@ var
   lCtr: integer;
   lPropMap: TPropMapping;
   lClassProp: TMapClassProp;
-  lEnum: TMapEnum;
 begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
@@ -963,7 +950,6 @@ var
   lCtr: Integer;
   lSL: TStringList;
   lUnit: TMapUnitDef;
-  lName: string;
 begin
 
   BaseDir := ADirectory;
@@ -974,7 +960,6 @@ begin
       begin
         lSL.Clear;
         lUnit := Project.Units.Items[lCtr];
-        lname := lUnit.UnitName;
         WriteUnit(lUnit, lSL);
         lSL.SaveToFile(BaseDir + PathDelim + lUnit.UnitName + '.pas');
       end;
@@ -1004,19 +989,6 @@ begin
       ASL.SaveToFile(BaseDir + PathDelim + lUnit.UnitName + '.pas');
     end;
 
-end;
-
-procedure TMapperProjectWriter.WriteProjectUnits;
-var
-  lSL: TStringList;
-  lCtr: Integer;
-  lUnit: TMapUnitDef;
-begin
-  for lCtr := 0 to Project.Units.Count - 1 do
-    begin
-      lUnit := Project.Units.Items[lCtr];
-      WriteUnit(lUnit, lSL);
-    end;
 end;
 
 procedure TMapperProjectWriter.WritePropGetter(ASL: TStringList;
@@ -1137,10 +1109,6 @@ end;
 
 procedure TMapperProjectWriter.WriteSingleUnitClass(ASL: TStringList;
   AClassDef: TMapClassDef);
-var
-  lCtr: integer;
-  lProp: TMapClassProp;
-  lMap: TClassMapping;
 begin
 
   // Event Notification
@@ -1182,6 +1150,8 @@ var
   lEnumVal: TMapEnumValue;
   lVal: string;
 begin
+
+  lValues := '';
 
   if AEnumDef.Values.Count = 0 then
     exit;
