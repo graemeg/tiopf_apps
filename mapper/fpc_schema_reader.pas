@@ -428,32 +428,35 @@ begin
                     for lSelectCtr := 0 to lSelListNode.ChildNodes.Length - 1 do
                       begin
                         lSelectNode := lSelListNode.ChildNodes.Item[lSelectCtr];
-                        lNewSelect := TClassMappingSelect.Create;
-                        lTemp := StringReplace(lSelectNode.FindNode('sql').ChildNodes.Item[0].NodeValue, #13, '', [rfReplaceAll]);
-                        lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
-                        lTemp := tiNormalizeStr(lTemp);
-                        // Change variable ${field_list} into list of field names in sql format
-                        if POS('${field_list}', lTemp) > 0 then
-                          lTemp := StringReplace(lTemp, '${field_list}', CreateSQLSelectList(lNewClass), [rfReplaceAll]);
-                        lNewSelect.SQL.Text := lTemp;
-                        lNewSelect.Name := lSelectNode.Attributes.GetNamedItem('name').NodeValue;
-                        lParamListNode := lSelectNode.FindNode('params');
-                        if (lParamListNode <> nil) and (lParamListNode.HasChildNodes) then
+                        if lSelectNode.NodeType <> COMMENT_NODE then
                           begin
-                            for lParamsCtr := 0 to lParamListNode.ChildNodes.Length - 1 do
+                            lNewSelect := TClassMappingSelect.Create;
+                            lTemp := StringReplace(lSelectNode.FindNode('sql').ChildNodes.Item[0].NodeValue, #13, '', [rfReplaceAll]);
+                            lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
+                            lTemp := tiNormalizeStr(lTemp);
+                            // Change variable ${field_list} into list of field names in sql format
+                            if POS('${field_list}', lTemp) > 0 then
+                              lTemp := StringReplace(lTemp, '${field_list}', CreateSQLSelectList(lNewClass), [rfReplaceAll]);
+                            lNewSelect.SQL.Text := lTemp;
+                            lNewSelect.Name := lSelectNode.Attributes.GetNamedItem('name').NodeValue;
+                            lParamListNode := lSelectNode.FindNode('params');
+                            if (lParamListNode <> nil) and (lParamListNode.HasChildNodes) then
                               begin
-                                lParam := lParamListNode.ChildNodes.Item[lParamsCtr];
-                                lNewParam := TSelectParam.Create;
-                                lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
-                                lNewParam.ParamType := gStrToPropType(lParam.Attributes.GetNamedItem('type').NodeValue);
-                                lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
-                                lNewParam.PassBy := lParam.Attributes.GetNamedItem('pass-by').NodeValue;
-                                lNewParam.SQLParamName := lParam.Attributes.GetNamedItem('sql-param').NodeValue;
-                                lNewSelect.Params.Add(lNewParam);
+                                for lParamsCtr := 0 to lParamListNode.ChildNodes.Length - 1 do
+                                  begin
+                                    lParam := lParamListNode.ChildNodes.Item[lParamsCtr];
+                                    lNewParam := TSelectParam.Create;
+                                    lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
+                                    lNewParam.ParamType := gStrToPropType(lParam.Attributes.GetNamedItem('type').NodeValue);
+                                    lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
+                                    lNewParam.PassBy := lParam.Attributes.GetNamedItem('pass-by').NodeValue;
+                                    lNewParam.SQLParamName := lParam.Attributes.GetNamedItem('sql-param').NodeValue;
+                                    lNewSelect.Params.Add(lNewParam);
+                                  end;
                               end;
+                            // finally, add to list.
+                            lNewClass.Selections.Add(lNewSelect);
                           end;
-
-                        lNewClass.Selections.Add(lNewSelect);
                       end;
                   end;
               end;

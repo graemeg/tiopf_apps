@@ -45,6 +45,7 @@ begin
     lRelList.Add(lRel);
 
     lRelList.Save;
+
   finally
     lRelList.Free;
   end;

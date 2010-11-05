@@ -53,17 +53,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="29" Y="16"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="36"/>
       </Unit0>
       <Unit1>
         <Filename Value="test_mapper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="test_mapper"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="29"/>
-        <CursorPos X="1" Y="57"/>
-        <UsageCount Value="35"/>
+        <TopLine Value="69"/>
+        <CursorPos X="49" Y="128"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -73,7 +74,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="8"/>
         <CursorPos X="31" Y="20"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="36"/>
       </Unit2>
       <Unit3>
         <Filename Value="connection_util.pas"/>
@@ -82,7 +83,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="18"/>
         <CursorPos X="28" Y="45"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="36"/>
       </Unit3>
       <Unit4>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiUtils.pas"/>
@@ -100,7 +101,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1075"/>
         <CursorPos X="5" Y="1109"/>
-        <UsageCount Value="35"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -109,9 +110,9 @@
         <UnitName Value="person_bom"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="40"/>
-        <CursorPos X="10" Y="69"/>
-        <UsageCount Value="35"/>
+        <TopLine Value="34"/>
+        <CursorPos X="15" Y="45"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
       </Unit6>
       <Unit7>
@@ -149,11 +150,10 @@
       </Unit10>
       <Unit11>
         <Filename Value="..\..\readme.txt"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="119"/>
-        <CursorPos X="29" Y="66"/>
+        <TopLine Value="35"/>
+        <CursorPos X="32" Y="137"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
@@ -306,28 +306,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="5">
-      <Item1>
-        <Source Value="test_mapper.pas"/>
-        <Line Value="98"/>
-      </Item1>
-      <Item2>
-        <Source Value="test_mapper.pas"/>
-        <Line Value="72"/>
-      </Item2>
-      <Item3>
-        <Source Value="test_mapper.pas"/>
-        <Line Value="108"/>
-      </Item3>
-      <Item4>
-        <Source Value="test_mapper.pas"/>
-        <Line Value="120"/>
-      </Item4>
-      <Item5>
-        <Source Value="test_mapper.pas"/>
-        <Line Value="52"/>
-      </Item5>
-    </BreakPoints>
     <Exceptions Count="3">
       <Item1>
         <Name Value="EAbort"/>

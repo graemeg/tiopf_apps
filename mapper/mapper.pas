@@ -57,7 +57,7 @@ type
 
   {: Filter type to use when filtering objects. }
   TFilterType = (ftEqual, ftNotEqual, ftGreater, ftGreaterOrEqual, ftLess, ftLessOrEqual,
-    ftLike, ftNotLike, ftStartingWith);
+    ftLike, ftNotLike, ftStartingWith, ftNotEmpty);
 
   {: Indicates an objects state. }
   TORMObjectState = (osUnchanged, osChanged, osDeleted, osCreated);
@@ -398,6 +398,8 @@ type
     property    Items[Index: Integer]: TFilterDef read GetItem write SetItem; default;
     function    Add(AObject: TFilterDef): Integer; reintroduce;
   end;
+
+  {: Validators get written into the class object's IsValid override. }
 
   TMapClassDef = class(TBaseMapObject)
   private
