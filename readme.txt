@@ -6,10 +6,10 @@ tiOPFMapper
 DESCRIPTION
 
 tiOPF is a wonderful framework, but the tasks of writing all of the boiler plate
-code can be a lot of work.  So I wrote the tiMapper utility in the spirity of
-some existing PHP frameworks that used YML or XML to describle a project's classes
-and other types which would then transformed into the abstract class files with all of
-hard coded boiler plate already written.
+code can be a lot of work.  So I wrote the tiMapper utility in the spirit of
+some existing PHP frameworks that use YML or XML to describle a project's classes
+and other types which are then transformed into the base class files with all of
+hard coded boiler plate code already written.
 
 The tiMapper utility uses one or more xml documents to describe a "schema".  The schema
 describes any TtiObject based classes and enumerations as well as mappings that use
@@ -17,8 +17,13 @@ the tiAutoMap registration mechanism to store meta data about the types describe
 in the schema.  There is one main "schema" file which can have INCLUDES pointing to
 other xml files which describe yet additional classes, enums and mappings if necessary.
 
+Eventually, I'll write a GUI utility front end for it, but for now I am content writing
+out the xml.  A typical 200 line xml schema will produce about 2K lines or more of pascal
+code for defining the classes, their visitors, registering visitors, mappings, etc and
+gluing everything up so that you're bascially able to just start writing code.
+
 The utility uses the schema to create unit (.pas) files and within the unit files, each
-classes, enumeration mappings, etc described in the schema.  Take the following class
+classe, enumeration mappings, etc described in the schema.  Take the following class
 definition.
 
 <class
@@ -57,7 +62,9 @@ as well as separate visitors for TPersonList.
 - Introduces a .FindByOID method to each object list created such as our TPersonList
 example so that you can do MyPersonList.FindByOID('123') and the objectlist will be
 cleared and then populated with the matchin object if found.  It's a function that returns
-the number of object returned.
+the number of object returned.  The schema allows you to define if classes use string or
+integer based OID and writes out the method signature accordingly (like adding quotes if
+necessary).
 
 - Writes specialized visitors and adds named methods to all automatically created
 object lists as described in the schema.  Vis:
@@ -81,21 +88,14 @@ object lists as described in the schema.  Vis:
 </selections>
 
 The <class> tag of the schema can also contain a <selections> tag which holds one or
-more <select> tag which describe a method that will be written into the auto
-generated object lists.  The utility actually creates an additional visitor specifically
+more <select> tags which describe a method that will be written into the auto
+generated object list classes.  The utility actually creates an additional visitor specifically
 for handling the method.  The <select> above would result in the following:
 
   TPersonList = class(TtiMappedFilteredObjectList)
-  protected
-    procedure   SetItems(i: integer; const AValue: TPerson); reintroduce;
-    function    GetItems(i: integer): TPerson; reintroduce;
   public
-    property    Items[i:integer] : TPerson read GetItems write SetItems;
-    procedure   Add(AObject: TPerson); reintroduce;
-    procedure   Read; override;
-    procedure   Save; override;
-    { Return count (1) if successful. }
-    function    FindByOID(const AOID: string): integer;
+    // typical overriden methods for list here
+
     { Returns Number of objects retrieved. }
     function    FindByFirstName(const AName: string): integer;
   end;
@@ -117,7 +117,7 @@ for handling the method.  The <select> above would result in the following:
 
 Notice that the class definition for TPersonList has a built in method called
 FindByFirstName which takes a const AName: string param and returns and integer
-indicate the number of objects that got populated into the object list.  All of
+indicating the number of objects that got populated into the object list.  All of
 the sql and code to use the sql is written automatically.
 
 The utility also creates a specialized visitor and fleshes it out.
