@@ -50,6 +50,23 @@ definition.
     </mapping>
 </class>
 
+{ Generated Class: TPerson}
+  TPerson = class(TtiObject)
+  protected
+    // getters, setters, private prop vars
+  public
+    procedure   Read; override;
+    procedure   Save; override;
+  published
+    property    FirstName: string read FFirstName write SetFirstName;
+    property    LastName: string read FLastName write SetLastName;
+    property    Age: Integer read FAge write SetAge;
+    property    Gender: TGenderType read FGender write SetGender;
+    property    IsActive: Boolean read FIsActive write SetIsActive;
+    property    ActiveDate: TDateTime read FActiveDate write SetActiveDate;
+    property    Email: string read FEmail write SetEmail;
+  end;
+
 Based on this description, the tiMapper utility will create a class called TPerson
 with all of the appropriate properties.  It also creates:
 
