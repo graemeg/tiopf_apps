@@ -127,7 +127,7 @@ begin
     lPersons.Clear;
     lPersons.Criteria.AddEqualTo('FirstName', 'Abby');
     lPersons.Read;
-    AssertTrue('Custom method FindByFirstName did not work', lPersons.Count > 0);
+    AssertTrue('Custom method Critera Map did not work', lPersons.Count > 0);
 
   finally
     lPersons.Free;

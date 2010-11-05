@@ -47,7 +47,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="6" Y="8"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="148"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -57,7 +57,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1815"/>
         <CursorPos X="50" Y="1842"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="75"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -67,18 +67,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="76"/>
         <CursorPos X="32" Y="104"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="75"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="787"/>
-        <CursorPos X="9" Y="817"/>
-        <UsageCount Value="72"/>
+        <CursorPos X="64" Y="799"/>
+        <UsageCount Value="74"/>
         <Bookmarks Count="1">
           <Item0 X="32" Y="1787" ID="1"/>
         </Bookmarks>
@@ -91,7 +90,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="92"/>
         <CursorPos X="64" Y="115"/>
-        <UsageCount Value="61"/>
+        <UsageCount Value="63"/>
         <Bookmarks Count="1">
           <Item0 X="24" Y="64" ID="2"/>
         </Bookmarks>
@@ -103,7 +102,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1012"/>
         <CursorPos X="1" Y="1046"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="11"/>
       </Unit5>
       <Unit6>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiVisitorDB.pas"/>
@@ -111,22 +110,23 @@
         <WindowIndex Value="0"/>
         <TopLine Value="271"/>
         <CursorPos X="3" Y="273"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\demos\bom\person_bom.pas"/>
         <UnitName Value="person_bom"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="268"/>
-        <CursorPos X="35" Y="277"/>
-        <UsageCount Value="22"/>
+        <TopLine Value="1"/>
+        <CursorPos X="28" Y="271"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\demos\bom\jobs_bom.pas"/>
         <UnitName Value="jobs_bom"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="19"/>
       </Unit8>
     </Units>
     <JumpHistory Count="24" HistoryIndex="23">

@@ -409,9 +409,9 @@ begin
 end;
 function TJobList.FindByOID(const AOID: string): integer;
 begin
-  MarkListItemsForDeletion;
-  Clear;
-  NotifyObservers;
+  if self.Count > 0 then
+    self.Clear;
+    
   Criteria.ClearAll;
   Criteria.AddEqualTo('OID', AOID);
   Read;
@@ -515,9 +515,9 @@ begin
 end;
 function TUserJobRelationList.FindByOID(const AOID: string): integer;
 begin
-  MarkListItemsForDeletion;
-  Clear;
-  NotifyObservers;
+  if self.Count > 0 then
+    self.Clear;
+    
   Criteria.ClearAll;
   Criteria.AddEqualTo('OID', AOID);
   Read;

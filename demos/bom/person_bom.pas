@@ -314,9 +314,9 @@ begin
 end;
 function TPersonList.FindByOID(const AOID: string): integer;
 begin
-  MarkListItemsForDeletion;
-  Clear;
-  NotifyObservers;
+  if self.Count > 0 then
+    self.Clear;
+    
   Criteria.ClearAll;
   Criteria.AddEqualTo('OID', AOID);
   Read;
