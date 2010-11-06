@@ -93,6 +93,9 @@ type
       ASelect: TClassMappingSelect);
     procedure   WriteClassListSelectMethodImp(ASL: TStringList; AClassDef: TMapClassDef;
       ASelect: TClassMappingSelect);
+    // Validators
+    procedure   WriteClassValidatorIntf(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteClassValidatorImp(ASL: TStringList; AClassDef: TMapClassDef);
   public
     property    BaseDir: string read FBaseDir write SetBaseDir;
     procedure   WriteUnit(AUnit: TMapUnitDef; ASL: TStringList); virtual;
@@ -512,6 +515,18 @@ begin
       lSelect := AClassDef.Selections.Items[lCtr];
       WriteClassListSelectMethodIntf(ASL, AClassDef, lSelect);
     end;
+end;
+
+procedure TMapperProjectWriter.WriteClassValidatorImp(ASL: TStringList;
+  AClassDef: TMapClassDef);
+begin
+
+end;
+
+procedure TMapperProjectWriter.WriteClassValidatorIntf(ASL: TStringList;
+  AClassDef: TMapClassDef);
+begin
+
 end;
 
 procedure TMapperProjectWriter.WriteClassVisitorIntfs(ASL: TStringList;

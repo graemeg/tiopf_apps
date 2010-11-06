@@ -71,6 +71,10 @@ type
   {: Describes show enumeratated types should be handled. }
   TEnumType = (etInt, etString);
 
+  {: Describes validators types. }
+  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
+    vtNotEqual, vtRegExp);
+
   // -----------------------------------------------------------------
   //  Class Objects
   // -----------------------------------------------------------------
@@ -109,6 +113,7 @@ type
     FIncludes: TStringList;
     FFileName: string;
     FMaxEditorCodeWidth: integer;
+    FOutputDirectory: string;
     FProjectClasses: TMapClassDefList;
     FProjectEnums: TMapEnumList;
     FProjectName: string;
@@ -120,6 +125,7 @@ type
     procedure SetEnumType(const AValue: TEnumType);
     procedure SetFileName(const AValue: string);
     procedure SetMaxEditorCodeWidth(const AValue: integer);
+    procedure SetOutputDirectory(const AValue: string);
     procedure SetProjectClasses(const AValue: TMapClassDefList);
     procedure SetProjectName(const AValue: string);
     procedure SetTabSpaces(const AValue: integer);
@@ -128,6 +134,7 @@ type
     property    FileName: string read FFileName write SetFileName;
     property    ProjectName: string read FProjectName write SetProjectName;
     property    Includes: TStringList read FIncludes;
+    property    OutputDirectory: string read FOutputDirectory write SetOutputDirectory;
     property    BaseDirectory: string read FBaseDirectory write SetBaseDirectory;
     property    TabSpaces: integer read FTabSpaces write SetTabSpaces;
     property    BeginEndTabs: integer read FBeginEndTabs write SetBeginEndTabs;
@@ -239,7 +246,7 @@ type
     procedure SetPropName(const AValue: string);
     procedure SetPropType(const AValue: TMapPropType);
     procedure SetPropTypeName(const AValue: string);
-  public
+  published
     property    PropName: string read FPropName write SetPropName;
     property    PropType: TMapPropType read FPropType write SetPropType;
     property    PropTypeName: string read FPropTypeName write SetPropTypeName;
@@ -387,6 +394,30 @@ type
   end;
 
   {: Validators get written into the class object's IsValid override. }
+  TMapValidator = class(TBaseMapObject)
+  private
+    FClassProp: string;
+    FValidatorType: TValidatorType;
+    FValue: variant;
+    procedure SetClassProp(const AValue: string);
+    procedure SetValidatorType(const AValue: TValidatorType);
+    procedure SetValue(const AValue: variant);
+  published
+    property    ValidatorType: TValidatorType read FValidatorType write SetValidatorType;
+    property    ClassProp : string read FClassProp write SetClassProp;
+    property    Value: variant read FValue write SetValue;
+  end;
+
+  {: List of TValidator objects. }
+  TMapValidatorList = class(TtiObjectList)
+  private
+  protected
+    function    GetItems(i: integer): TMapValidator; reintroduce;
+    procedure   SetItems(i: integer; const AValue: TMapValidator); reintroduce;
+  public
+    property    Items[i:integer] : TMapValidator read GetItems write SetItems;
+    procedure   Add(AObject : TMapValidator); reintroduce;
+  end;
 
   TMapClassDef = class(TBaseMapObject)
   private
@@ -403,6 +434,7 @@ type
     FForwardDeclare: boolean;
     FORMClassName: string;
     FSelections: TClassMappingSelectList;
+    FValidators: TMapValidatorList;
     procedure SetAutoCreateBase(const AValue: boolean);
     procedure SetAutoCreateListClass(const AValue: boolean);
     procedure SetAutoMap(const AValue: boolean);
@@ -429,6 +461,7 @@ type
     property    ClassProps: TMapClassPropList read FClassProps write SetClassProps;
     property    ClassMapping: TClassMapping read FClassMapping;
     property    Selections: TClassMappingSelectList read FSelections;
+    property    Validators: TMapValidatorList read FValidators;
 
     constructor Create; override;
     destructor  Destroy; override;
@@ -601,11 +634,119 @@ type
   function  gStrToPropType(const AString: string): TMapPropType;
   function  gPropTypeToStr(const APropType: TMapPropType): string;
   function  gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
+  function  gStrToValType(const AString: string): TValidatorType;
+  function  GetabsolutePath(Source, Relative: string): string;
 
 implementation
 
 var
   mSchemaReaderClass: TMapSchemaReaderClass;
+
+
+function GetappearNum(sub, st: string): integer;
+var
+    i: integer;
+    P: integer;
+begin
+
+    p := Pos(sub, st);
+    I := 0;
+    while p > 0 do
+    begin
+        inc(i);
+        delete(st, 1, p + length(sub) - 1);
+        p := Pos(sub, st);
+    end;
+    result := i;
+end;
+
+
+
+function decomposestr(sub, st: string; var tst: TStringList): Boolean;
+var
+    num: integer;
+    P: integer;
+
+begin
+    p := Pos(sub, st);
+    tst.Clear;
+    while p > 0 do
+    begin
+        num := p + length(sub) - 1;
+        tst.Add(copy(st, 1, num));
+        delete(st, 1, num);
+        p := Pos(sub, st);
+    end;
+    tst.Add(st);
+    Result := True;
+
+end;
+
+
+
+function CopyLeftNum(sub, st: string; num: integer): string;
+var
+    Tst: TStringList;
+    I: integer;
+begin
+    tst := TStringList.Create;
+    decomposestr(sub, st, Tst);
+    if Num >= Tst.Count then
+        Result := st
+    else
+    begin
+        for i := 0 to num - 1 do
+        begin
+            Result := Result + Tst[i];
+        end;
+    end;
+    Tst.Free;
+end;
+
+
+function CopyRightNum(sub, st: string; Num: integer): string;
+var
+    Tst: TStringList;
+    I: integer;
+begin
+    Tst := TStringList.Create;
+    try
+        decomposestr(sub, st, Tst);
+        Result := '';
+        if Num < Tst.Count then
+        begin
+            for i := Tst.Count - Num to Tst.Count - 1 do
+            begin
+                Result := Result + Tst[i]
+            end;
+        end;
+    finally
+        Tst.Free;
+    end;
+end;
+
+function GetabsolutePath(Source, Relative: string): string;
+var
+    i, Num, num1: integer;
+    St: TStringList;
+    s: string;
+begin
+    Num := GetappearNum('..', Relative);
+    St := TStringList.Create;
+    decomposestr('\', ExcludeTrailingBackslash(Source), st);
+    Num1 := st.Count;
+
+    Result := '';
+
+    for i := 0 to num1 - num - 1 do
+    begin
+        Result := Result + st[i];
+    end;
+    s := CopyRightNum('..\', Relative, 1);
+    Result := Result + s;
+    st.Free;
+end;
+
 
 procedure RegisterMappings;
 begin
@@ -690,6 +831,34 @@ begin
           exit;
         end;
     end;
+end;
+
+function gStrToValType(const AString: string): TValidatorType;
+var
+  lStr: string;
+begin
+  lStr := LowerCase(AString);
+
+  {
+  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
+    vtNotEqual, vtRegExp);
+  }
+  if lStr = 'required' then
+    result := vtRequired
+  else if lStr = 'greater' then
+    result := vtGreater
+  else if lStr = 'greater-equal' then
+    result := vtGreaterEqual
+  else if lStr = 'less' then
+    result := vtLess
+  else if lStr = 'less-equal' then
+    result := vtLessEqual
+  else if lStr = 'not-equal' then
+    result := vtNotEqual
+  else if lStr = 'req-exp' then
+    result := vtRegExp
+  else
+    Raise Exception.Create('Value out of range');
 end;
 
 { TMapProject }
@@ -781,6 +950,12 @@ procedure TMapProject.SetMaxEditorCodeWidth(const AValue: integer);
 begin
   if FMaxEditorCodeWidth=AValue then exit;
   FMaxEditorCodeWidth:=AValue;
+end;
+
+procedure TMapProject.SetOutputDirectory(const AValue: string);
+begin
+  if FOutputDirectory=AValue then exit;
+  FOutputDirectory:=AValue;
 end;
 
 procedure TMapProject.SetProjectClasses(const AValue: TMapClassDefList);
@@ -1004,6 +1179,8 @@ begin
   FClassProps := TMapClassPropList.Create;
   FClassMapping := TClassMapping.Create;
   FSelections := TClassMappingSelectList.Create;
+  FValidators := TMapValidatorList.Create;
+
 end;
 
 destructor TMapClassDef.Destroy;
@@ -1011,6 +1188,7 @@ begin
   FClassProps.Free;
   FClassMapping.free;
   FSelections.Free;
+  FValidators.Free;
   inherited Destroy;
 end;
 
@@ -1831,6 +2009,43 @@ procedure TtiMappedFilteredObjectList.SetSQL(const AValue: String);
 begin
   if FSQL=AValue then exit;
   FSQL:=AValue;
+end;
+
+{ TMapValidator }
+
+procedure TMapValidator.SetClassProp(const AValue: string);
+begin
+  if FClassProp=AValue then exit;
+  FClassProp:=AValue;
+end;
+
+procedure TMapValidator.SetValidatorType(const AValue: TValidatorType);
+begin
+  if FValidatorType=AValue then exit;
+  FValidatorType:=AValue;
+end;
+
+procedure TMapValidator.SetValue(const AValue: variant);
+begin
+  if FValue=AValue then exit;
+  FValue:=AValue;
+end;
+
+{ TMapValidatorList }
+
+procedure TMapValidatorList.Add(AObject: TMapValidator);
+begin
+  inherited Add(AObject);
+end;
+
+function TMapValidatorList.GetItems(i: integer): TMapValidator;
+begin
+  result := inherited GetItems(i) as TMapValidator;
+end;
+
+procedure TMapValidatorList.SetItems(i: integer; const AValue: TMapValidator);
+begin
+  inherited SetItems(i, AValue);
 end;
 
 end.

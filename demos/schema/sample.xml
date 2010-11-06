@@ -5,6 +5,7 @@
     visibility-tabs="0"
     project-name="MyProject"
     enum-type="int"
+    outputdir="..\units"
     >
     
     <!-- Includes are added to this schema before build-time. -->
@@ -68,7 +69,26 @@
                                         PERSON.FIRST_NAME = :USER_FIRST
                                 ]]>
                             </sql>                            
-                        </select>                        
+                        </select>     
+                        <!-- Finds by wild card matching last name -->
+                        <select type="func" name="FindByFirstNameMatch">
+                            <params>
+                                <item name="AName" type="string" pass-by="const" sql-param="user_first"/>
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        PERSON
+                                    WHERE 
+                                        PERSON.FIRST_NAME STARTING WITH :USER_FIRST
+                                    ORDER BY
+                                        PERSON.FIRST_NAME,
+                                        PERSON.LAST_NAME                                       
+                                ]]>
+                            </sql>                            
+                        </select>                      
                     </selections>
                                                                                                    
                 </class>

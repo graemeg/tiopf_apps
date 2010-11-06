@@ -83,6 +83,8 @@ type
     function    FindByOID(const AOID: string): integer;
     { Returns Number of objects retrieved. }
     function    FindByFirstName(const AName: string): integer;
+    { Returns Number of objects retrieved. }
+    function    FindByFirstNameMatch(const AName: string): integer;
   end;
   
 
@@ -167,6 +169,14 @@ type
   end;
   
 
+  { TPersonList_FindByFirstNameMatchVis }
+  TPersonList_FindByFirstNameMatchVis = class(TtiMapParameterListReadVisitor)
+  protected
+    function    AcceptVisitor: Boolean; override;
+    procedure   MapRowToObject; override;
+  end;
+  
+
 
 
   { Visitor Manager Registrations }
@@ -211,6 +221,7 @@ begin
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersondelete', TPerson_Delete);
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersoncreate', TPerson_Create);
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersonList_FindByFirstNameVis', TPersonList_FindByFirstNameVis);
+  GTIOPFManager.VisitorManager.RegisterVisitor('TPersonList_FindByFirstNameMatchVis', TPersonList_FindByFirstNameMatchVis);
   
 
 end;
@@ -336,6 +347,23 @@ begin
     ' PERSON.AGE, PERSON.GENDER FROM PERSON WHERE PERSON.FIRST_NAME  ' + 
     ' = :USER_FIRST'; 
   GTIOPFManager.VisitorManager.Execute('TPersonList_FindByFirstNameVis', self);
+  result := self.Count;
+end;
+
+
+function TPersonList.FindByFirstNameMatch(const AName: string): integer;
+begin
+  if self.Count > 0 then
+    self.Clear;
+    
+  Params.Clear;
+  AddParam('AName', 'user_first', ptString, AName);
+  self.SQL := 
+    ' SELECT PERSON.OID , PERSON.FIRST_NAME, PERSON.LAST_NAME,  ' + 
+    ' PERSON.AGE, PERSON.GENDER FROM PERSON WHERE PERSON.FIRST_NAME  ' + 
+    ' STARTING WITH :USER_FIRST ORDER BY PERSON.FIRST_NAME,  ' + 
+    ' PERSON.LAST_NAME'; 
+  GTIOPFManager.VisitorManager.Execute('TPersonList_FindByFirstNameMatchVis', self);
   result := self.Count;
 end;
 
@@ -636,6 +664,28 @@ end;
 
 
 procedure TPersonList_FindByFirstNameVis.MapRowToObject;
+var
+  lObj: TPerson;
+begin
+  lObj := TPerson.Create;
+  lObj.OID.AssignFromTIQuery('OID',Query);
+  lObj.FirstName := Query.FieldAsString['first_name'];
+  lObj.LastName := Query.FieldAsString['last_name'];
+  lObj.Age := Query.FieldAsInteger['age'];
+  lObj.Gender := TGenderType(Query.FieldAsInteger['gender']);
+  lObj.ObjectState := posClean;
+  TtiObjectList(Visited).Add(lObj);
+end;
+
+
+{ TPersonList_FindByFirstNameMatchVis }
+function TPersonList_FindByFirstNameMatchVis.AcceptVisitor: Boolean;
+begin
+  result := (Visited.ObjectState = posEmpty);
+end;
+
+
+procedure TPersonList_FindByFirstNameMatchVis.MapRowToObject;
 var
   lObj: TPerson;
 begin

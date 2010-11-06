@@ -96,6 +96,7 @@ var
   lPersons: TPersonList;
   lPer: TPerson;
 begin
+
   lPersons := TPersonList.Create;
   try
     lPer := TPerson.CreateNew;
@@ -106,7 +107,22 @@ begin
     lPer.Gender := gtFemale;
     lPersons.Add(lPer);
 
-    lPer.Save;
+    lPer := TPerson.CreateNew;
+    lPer.FirstName := 'Alexandra';
+    lPer.LastName := 'Harrington';
+    lPer.Age := 38;
+    lPer.Gender := gtFemale;
+    lPersons.Add(lPer);
+
+    lPer := TPerson.CreateNew;
+    lPer.FirstName := 'Bill';
+    lPer.LastName := 'Smith';
+    lPer.Age := 49;
+    lPer.Gender := gtMale;
+    lPersons.Add(lPer);
+
+    lPersons.Save;
+
 
     // All created object lists get the FindByOID function.
     lPersons.Clear;
@@ -129,6 +145,11 @@ begin
     lPersons.Criteria.AddEqualTo('FirstName', 'Abby');
     lPersons.Read;
     AssertTrue('Custom method Critera Map did not work', lPersons.Count > 0);
+
+    { Test a Like% query.}
+    lPersons.Clear;
+    lPersons.FindByFirstNameMatch('B');
+    AssertTrue('Custom method FindByFirstNameMatch not work', lPersons.Count > 0);
 
   finally
     lPersons.Free;

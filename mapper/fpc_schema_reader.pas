@@ -30,6 +30,7 @@ type
     procedure   ReadClassProps(AClass: TMapClassDef; ANode: TDOMNodeList);
     procedure   ReadClassMapping(AClass: TMapClassDef; ANode: TDomNodeList);
     procedure   ReadClassSelects(AClass: TMapClassDef; ANode: TDomNode);
+    procedure   ReadClassValidators(AClass: TMapClassDef; ANode: TDomNode);
   public
     procedure   ReadSchema(AProject: TMapProject; const AFileName: string = ''); overload; override;
     procedure   WriteAll; override;
@@ -174,6 +175,55 @@ begin
 
 end;
 
+procedure TFPCSchemaXMLReader.ReadClassValidators(AClass: TMapClassDef;
+  ANode: TDomNode);
+var
+  lCtr: Integer;
+  lVal: TMapValidator;
+  lValNode: TDomNode;
+  lProp: TMapClassProp;
+  lValStr: string;
+begin
+  if not ANode.HasChildNodes then
+    exit;
+
+  for lCtr := 0 to ANode.ChildNodes.Length - 1 do
+    begin
+      lValNode := ANode.ChildNodes.Item[lCtr];
+      if lValNode.NodeType <> COMMENT_NODE then
+        begin
+          lVal := TMapValidator.Create;
+          lVal.ValidatorType := gStrToValType(lValNode.Attributes.GetNamedItem('type').NodeValue);
+          lVal.ClassProp := lValNode.Attributes.GetNamedItem('prop').NodeValue;
+
+          if lVal.ValidatorType <> vtRequired then
+            begin
+              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp], False));
+              if lProp = nil then
+                raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
+                  lVal.ClassProp);
+
+                lValStr := lValNode.ChildNodes.Item[0].NodeValue;
+
+              case lProp.PropType of
+                ptAnsiString, ptString:
+                  lVal.Value := lValStr;
+                ptBoolean:
+                  lVal.Value := StrtoBool(lValStr);
+                ptInt64, ptInteger:
+                  lVal.Value := StrToInt(lValStr);
+                ptDateTime:
+                  lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                ptEnum:;
+                ptFloat:
+                  lVal.Value := StrToFloat(lValStr);
+              end;
+            end;
+        end;
+    end;
+
+end;
+
 procedure TFPCSchemaXMLReader.ReadProjectInfo;
 begin
 
@@ -228,6 +278,7 @@ var
   lIncProjDoc: TXMLDocument;
   lIncPath: string;
   lDirNode: TDomNode;
+  lPath: string;
 begin
   FProject := AProject;
   LoadXMLDoc(AFileName);
@@ -235,6 +286,7 @@ begin
   lNode := FXML.DocumentElement;
   FProject.ProjectName := lNode.Attributes.GetNamedItem('project-name').NodeValue;
 
+  // Establish the base directory
   lDirNode := lNode.Attributes.GetNamedItem('base-directory');
   if lDirNode <> nil then
     begin
@@ -248,6 +300,26 @@ begin
       FProject.BaseDirectory := ExtractFileDir(AFileName);
     end;
 
+  // Establish the Output directory, if present.
+  lDirNode := lNode.Attributes.GetNamedItem('outputdir');
+  if lDirNode <> nil then
+    begin
+      if lDirNode.NodeValue <> '' then
+        begin
+          lPath := FProject.BaseDirectory;
+          lPath := GetabsolutePath(FProject.BaseDirectory, lNode.Attributes.GetNamedItem('outputdir').NodeValue);
+          FProject.OutputDirectory := lPath;
+        end
+      else
+        FProject.OutputDirectory := FProject.BaseDirectory;
+    end
+  else
+    begin
+      FProject.OutputDirectory := FProject.BaseDirectory;
+    end;
+
+
+  lIncPath := FProject.OutputDirectory;
 
   lAttr := lNode.Attributes.GetNamedItem('tab-spaces');
   if lAttr <> nil then
@@ -331,6 +403,7 @@ var
   lNewParam: TSelectParam;
   lNewSelect: TClassMappingSelect;
   lTemp: string;
+  lValNode: TDOMNode;
 begin
 
   lClassListNodes := ANode.ChildNodes;
@@ -368,12 +441,6 @@ begin
             lClassAttr := lClassNode.Attributes.GetNamedItem('auto-map');
             if lClassAttr <> nil then
               lNewClass.AutoMap := StrToBool(lClassAttr.NodeValue);
-
-            //lClassAttr := lClassNode.Attributes.GetNamedItem('orm-class');
-            //if lClassAttr <> nil then
-            //  lNewClass.ORMClassName := lClassAttr.NodeValue
-            //else
-            //  lNewClass.ORMClassName := lClassAttr.NodeValue + 'ORM';
 
             lClassAttr := lClassNode.Attributes.GetNamedItem('auto-create-base');
             if lClassAttr <> nil then
@@ -418,6 +485,11 @@ begin
                 if lClassMappings <> nil then
                   ReadClassMapping(lNewClass, lClassMappings);
               end;
+
+            lValNode := lClassNode.FindNode('validators');
+
+            if lValNode <> nil then
+              ReadClassValidators(lNewClass, lValNode);
 
             // Read in any selections
             lSelListNode := lClassNode.FindNode('selections');

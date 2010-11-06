@@ -66,7 +66,7 @@ begin
           lWriter.OnWriteUnit := {$IFDEF FPC}@{$ENDIF}self.OnWriteUnit;
         end;
 
-      lWriter.WriteProject(lProj.BaseDirectory);
+      lWriter.WriteProject(lProj.OutputDirectory);
 
       WriteLn('Operation was successful');
       WriteProjectStats(lProj);
