@@ -167,6 +167,7 @@ procedure TTestMapper.TestUserCrud;
 var
   lPersons: TPersonList;
   lPer: TPerson;
+  lErrorMsg: string;
 begin
 
   lPersons := TPersonList.Create;
@@ -197,11 +198,16 @@ begin
     lPersons.Add(lPer);
 
     lPer := TPerson.CreateNew;
-    lPer.FirstName := 'Janet';
+    lPer.FirstName := 'Mud Face';
     lPer.LastName := 'Corning';
     lPer.Age := 23;
     lPer.PersonType := ptCustomer;
     lPer.Gender := gtFemale;
+
+    AssertTrue('Validators failed', not lPer.IsValid(lErrorMsg));
+
+    // OK.  Change name to a valid name.
+    lPer.FirstName := 'Josh';
     lPersons.Add(lPer);
 
     lPersons.Save;

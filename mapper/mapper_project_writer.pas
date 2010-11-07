@@ -790,6 +790,7 @@ begin
           end;
           WriteBreak(ASL);
         end;
+      WriteLine('result := AErrors.Count = 0;', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);

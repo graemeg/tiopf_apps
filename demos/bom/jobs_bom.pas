@@ -462,6 +462,7 @@ begin
       AErrors.AddError(lMsg);
     end;
   
+  result := AErrors.Count = 0;
 end;
 
  {TUserJobRelationList }
