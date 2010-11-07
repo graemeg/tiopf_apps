@@ -374,7 +374,11 @@ begin
         lParamSig := lParamSig + '; '
       else
         lParamSig := '(';
-      lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
+
+      if lParam.ParamType = ptEnum then
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.TypeName
+      else
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
     end;
 
   if lParamSig <> '' then
@@ -400,11 +404,12 @@ begin
             ptDateTime: lParamStr := 'ptDateTime';
             ptFloat: lParamStr := 'ptFloat';
             ptInt64, ptInteger: lParamStr := 'ptInteger';
+            ptEnum: lParamStr := 'ptEnum';
           end;
 
           //AddParam('user_oid', ptString, AUser);
-          WriteLine('AddParam('+ QuotedStr(lParam.ParamName) + ', ' + QuotedStr(lParam.SQLParamName) + ', ' +
-            lParamStr + ', ' + lParam.ParamName + ');', ASL);
+            WriteLine('AddParam('+ QuotedStr(lParam.ParamName) + ', ' + QuotedStr(lParam.SQLParamName) + ', ' +
+              lParamStr + ', ' + lParam.ParamName + ');', ASL)
         end;
 
       lBaseSig := AClassDef.BaseClassName + 'List_' + ASelect.Name + 'Vis';
@@ -492,7 +497,10 @@ begin
       else
         lParamSig := '(';
 
-      lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
+      if lParam.ParamType = ptEnum then
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.TypeName
+      else
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
     end;
 
   if lParamSig <> '' then
@@ -585,6 +593,9 @@ procedure TMapperProjectWriter.WriteCustomListVisImp(ASL: TStringList;
   AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
 var
   lBaseSig: string;
+  lProp: TMapClassProp;
+  lParam: TSelectParam;
+  lCtr: integer;
 begin
 
   if not AClassDef.AutoCreateListClass then
@@ -618,6 +629,62 @@ begin
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 
+  // SetupParams
+  WriteLine('procedure ' + lBaseSig + '.SetupParams;', ASL);
+  WriteLine('var', ASL);
+    IncTab;
+      WriteLine('lCtr: integer;', ASL);
+      WriteLine('lParam: TSelectParam;', ASL);
+      WriteLine('lList: TtiMappedFilteredObjectList;', ASL);
+      WriteLine('lOrdInfo: PTypeInfo;', ASL);
+      WriteLine('lOrdDate: PTypeData;', ASL);
+    DecTab;
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('lList := TtiMappedFilteredObjectList(Visited);', ASL);
+      WriteBreak(ASL);
+
+      for lCtr := 0 to ASelect.Params.Count - 1 do
+        begin
+          lParam := ASelect.Params.Items[lCtr];
+          WriteLine('lParam := TSelectParam(lList.Params.FindByProps([''ParamName''], [''' +
+            lParam.ParamName + ''']));', ASL);
+
+          case lParam.ParamType of
+            ptString, ptAnsiString:
+              WriteLine('Query.ParamAsString[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
+            ptBoolean:
+              WriteLine('Query.ParamAsBoolean[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
+            ptDateTime:
+              WriteLine('Query.ParamAsDateTime[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
+            ptFloat:
+              WriteLine('Query.ParamAsFloat[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
+            ptInteger, ptInt64:
+              WriteLine('Query.ParamAsInteger[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
+            ptEnum:
+              begin
+                if Project.EnumType = etInt then
+                  WriteLine('Query.ParamAsInteger[''' + lParam.SQLParamName + '''] := Integer(' + lParam.TypeName +
+                    '(lParam.Value));', ASL)
+                else
+                  begin
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lOrdInfo := TypeInfo(' + lParam.TypeName + ');', ASL);
+                        WriteLine('Query.ParamAsString[''' + lParam.ParamName + '''] := ' +
+                          'GetEnumName(TypeInfo(TTypeKind), Integer(lOrdInfo^.Kind));', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  end;
+
+              end;
+          end;
+        end;
+
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
+
 end;
 
 procedure TMapperProjectWriter.WriteCustomListVisIntf(ASL: TStringList;
@@ -636,6 +703,7 @@ begin
     IncTab;
       WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
       WriteLine('procedure   MapRowToObject; override;', ASL);
+      WriteLine('procedure   SetupParams; override;', ASL);
     DecTab;
   WriteLine('end;', ASL);
 
@@ -705,8 +773,8 @@ begin
     IncTab;
       WriteLine('SysUtils', ASL);
       WriteLine(',tiObject', ASL);
-      //if Project.HasCustomSelects then
-      //  WriteLine(',tiFilteredObjectList', ASL);
+      if Project.HasCustomSelects then
+        WriteLine(',typinfo', ASL);
       WriteLine(',tiAutoMap', ASL);
       WriteLine(',tiOPFManager', ASL);
       WriteLine(',tiVisitorDB', ASL);

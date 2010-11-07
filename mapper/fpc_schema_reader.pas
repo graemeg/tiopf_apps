@@ -517,13 +517,18 @@ begin
                                 for lParamsCtr := 0 to lParamListNode.ChildNodes.Length - 1 do
                                   begin
                                     lParam := lParamListNode.ChildNodes.Item[lParamsCtr];
-                                    lNewParam := TSelectParam.Create;
-                                    lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
-                                    lNewParam.ParamType := gStrToPropType(lParam.Attributes.GetNamedItem('type').NodeValue);
-                                    lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
-                                    lNewParam.PassBy := lParam.Attributes.GetNamedItem('pass-by').NodeValue;
-                                    lNewParam.SQLParamName := lParam.Attributes.GetNamedItem('sql-param').NodeValue;
-                                    lNewSelect.Params.Add(lNewParam);
+                                    if lParam.NodeType <> COMMENT_NODE then
+                                      begin
+                                        lNewParam := TSelectParam.Create;
+                                        lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
+                                        lNewParam.ParamType := gStrToPropType(lParam.Attributes.GetNamedItem('type').NodeValue);
+                                        lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
+                                        if lNewParam.ParamType = ptEnum then
+                                          lNewParam.TypeName := lParam.Attributes.GetNamedItem('type-name').NodeValue;
+                                        lNewParam.PassBy := lParam.Attributes.GetNamedItem('pass-by').NodeValue;
+                                        lNewParam.SQLParamName := lParam.Attributes.GetNamedItem('sql-param').NodeValue;
+                                        lNewSelect.Params.Add(lNewParam);
+                                      end;
                                   end;
                               end;
                             // finally, add to list.

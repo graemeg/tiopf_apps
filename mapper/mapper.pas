@@ -315,18 +315,21 @@ type
     FParamTypeName: string;
     FPassBy: string;
     FSQLParamName: string;
+    FTypeName: string;
     FValue: Variant;
     procedure SetParamName(const AValue: string);
     procedure SetParamType(const AValue: TMapPropType);
     procedure SetParamTypeName(const AValue: string);
     procedure SetPassBy(const AValue: string);
     procedure SetSQLParamName(const AValue: string);
+    procedure SetTypeName(const AValue: string);
     procedure SetValue(const AValue: Variant);
-  public
+  published
     property    ParamName: string read FParamName write SetParamName;
     property    SQLParamName: string read FSQLParamName write SetSQLParamName;
     property    ParamType: TMapPropType read FParamType write SetParamType;
     property    ParamTypeName: string read FParamTypeName write SetParamTypeName;
+    property    TypeName: string read FTypeName write SetTypeName;
     property    PassBy: string read FPassBy write SetPassBy;
     property    Value: Variant read FValue write SetValue;
   end;
@@ -733,7 +736,7 @@ var
 begin
     Num := GetappearNum('..', Relative);
     St := TStringList.Create;
-    decomposestr('\', ExcludeTrailingBackslash(Source), st);
+    decomposestr(PathDelim, ExcludeTrailingBackslash(Source), st);
     Num1 := st.Count;
 
     Result := '';
@@ -742,7 +745,12 @@ begin
     begin
         Result := Result + st[i];
     end;
-    s := CopyRightNum('..\', Relative, 1);
+
+    if Pos('\', Relative) > 0 then
+      s := CopyRightNum('..\', Relative, 1)
+    else
+      s := CopyRightNum('../', Relative, 1);
+
     Result := Result + s;
     st.Free;
 end;
@@ -1633,7 +1641,7 @@ end;
 
 procedure TMapSchemaWriter.WriteBreak(AList: TStringList);
 begin
-  WriteLine(sLineBreak, AList);
+  WriteLine('', AList);
 end;
 
 { TORMObjectList }
@@ -1805,6 +1813,12 @@ begin
   FSQLParamName:=AValue;
 end;
 
+procedure TSelectParam.SetTypeName(const AValue: string);
+begin
+  if FTypeName=AValue then exit;
+  FTypeName:=AValue;
+end;
+
 procedure TSelectParam.SetValue(const AValue: Variant);
 begin
   if FValue=AValue then exit;
@@ -1933,18 +1947,18 @@ procedure TtiMapParameterListReadVisitor.SetupParams;
 var
   lCtr: integer;
   lParam: TSelectParam;
-  lParamList: TSelectParamList;
   lList: TtiMappedFilteredObjectList;
-  lName: string;
+  lProp: TMapClassProp;
 begin
+
+  inherited SetupParams;
+  exit;
 
   lList := TtiMappedFilteredObjectList(Visited);
 
   for lCtr := 0 to lList.Params.Count - 1 do
     begin
       lParam := lList.Params.Items[lCtr];
-      lName := lParam.Value;
-      lName := lParam.SQLParamName;
 
       case lParam.ParamType of
         ptString, ptAnsiString:
@@ -1954,9 +1968,18 @@ begin
         ptDateTime:
           Query.ParamAsDateTime[lParam.SQLParamName] := lParam.Value;
         ptFloat:
-          Query.ParamAsBoolean[lParam.SQLParamName] := lParam.Value;
+          Query.ParamAsFloat[lParam.SQLParamName] := lParam.Value;
         ptInt64, ptInteger:
           Query.ParamAsInteger[lParam.SQLParamName] := lParam.Value;
+        ptEnum:
+          begin
+            if lList.EnumType = etString then
+              begin
+                Query.ParamAsString[lParam.SQLParamName] := GetEnumName(TypeInfo(TMapPropType), Integer(lParam.Value));
+              end
+            else
+              Query.ParamAsInteger[lParam.SQLParamName] := Integer(lParam.Value);
+          end;
       end;
     end;
 end;

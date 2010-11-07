@@ -59,6 +59,8 @@ begin
     lSL := TStringList.create;
     try
 
+      WriteLn('');
+
       if HasOption('v', '-verbose') then
         begin
           lWriter.OnWriteClass := {$IFDEF FPC}@{$ENDIF}Self.OnWriteClass;

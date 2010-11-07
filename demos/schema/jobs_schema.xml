@@ -35,12 +35,12 @@
                     <mapping table="jobs" pk="OID" pk-field="OID" oid-type="string">
                         <prop-map prop="JobName" field="job_name"/>
                         <prop-map prop="JobDesc" field="job_desc"/>
-                        <prpo-map prop="Status" field="job_status" type="enum"/>
+                        <prop-map prop="Status" field="job_status" type="enum"/>                        
                     </mapping>   
                     <!-- Selections are used to create custom methods of the TtiObjectList to retrieve custom queries. -->
                     <selections>
                         <select type="func" name="FindJobsForUser">
-                            <params>
+                            <params>                                
                                 <item name="AUser" type="string" pass-by="const" sql-param="user_oid"/>
                             </params>
                             <sql>
@@ -59,7 +59,8 @@
                         </select>   
                         <select type="func" name="FindByStatus">
                             <params>
-                                <item name="AStatus" type="integer" pass-by="const" sql-param="status"/>
+                                <!-- Notice extra attribute "type-name".  Enums just have this extra attribute. -->
+                                <item name="AStatus" type="enum" type-name="TJobStatus" pass-by="const" sql-param="status"/>
                             </params>
                             <sql>
                                 <![CDATA[
@@ -92,6 +93,7 @@
                         <prop-map prop="UserOID" field="user_oid" type="string"/>                        
                     </mapping>                                        
                 </class>
+                                              
             </classes>
         </unit>
     </project-units>

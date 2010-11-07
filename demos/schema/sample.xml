@@ -5,7 +5,7 @@
     visibility-tabs="0"
     project-name="MyProject"
     enum-type="int"
-    outputdir="..\units"
+    outputdir="../bom"
     >
     
     <!-- Includes are added to this schema before build-time. -->
@@ -24,7 +24,14 @@
                         <item name="gtFemale" value="0"/>
                         <item name="gtMale" value="1"/>
                     </values>
-                </enum>                
+                </enum> 
+                <enum name="TPersonType">
+                    <values>
+                        <item name="ptEmployee"/>
+                        <item name="ptCustomer"/>
+                        <item name="ptVendor"/>
+                    </values>
+                </enum>                  
             </enums>
             
             <!-- Classes defined here -->
@@ -37,7 +44,8 @@
                     auto-map="true"                      
                     auto-create-list="true">
                     <!-- Class properties -->
-                    <class-props>                                               
+                    <class-props>
+                        <prop name="PersonType" type="TPersonType"/>                                               
                         <prop name="FirstName" type="string"/>                        
                         <prop name="LastName" type="string"/>
                         <prop name="Age" type="Integer"/>
@@ -51,13 +59,14 @@
                         <prop-map prop="FirstName" field="first_name" type="string"/>
                         <prop-map prop="LastName" field="last_name" type="string"/>
                         <prop-map prop="Age" field="age"  type="integer"/>
-                        <prop-map prop="Gender" field="gender" type="enum"/>                                                                    
+                        <prop-map prop="Gender" field="gender" type="enum"/>
+                        <prop-map prop="PersonType" field="person_type" type="enum"/>                                                                                        
                     </mapping>     
                     
                     <selections>
-                        <select type="func" name="FindByFirstName">
+                        <select type="func" name="FindByGender">
                             <params>
-                                <item name="AName" type="string" pass-by="const" sql-param="user_first"/>
+                                <item name="AGender" type="enum" type-name="TGenderType" pass-by="const" sql-param="gender_type"/>
                             </params>
                             <sql>
                                 <![CDATA[
@@ -66,7 +75,7 @@
                                     FROM 
                                         PERSON
                                     WHERE 
-                                        PERSON.FIRST_NAME = :USER_FIRST
+                                        PERSON.GENDER = :gender_type
                                 ]]>
                             </sql>                            
                         </select>     
@@ -89,10 +98,28 @@
                                 ]]>
                             </sql>                            
                         </select>                      
-                    </selections>
-                                                                                                   
+                    </selections>                                                                                                   
                 </class>
                 
+                <!-- Customer Class -->                                                                                  
+                <class                                  
+                    base-class="TCustom"
+                    base-class-parent="TtiObject"                                                                            
+                    auto-map="true"                      
+                    auto-create-list="true">
+                    <!-- Class properties -->
+                    <class-props>                                               
+                        <prop name="Name" type="string"/>                        
+                        <prop name="Address" type="string"/>
+                        <prop name="Address2" type="string"/>                        
+                    </class-props>
+                    <!-- Mapping into the tiOPF framework -->
+                    <mapping table="person" pk="OID" pk-field="OID" oid-type="string">                        
+                        <prop-map prop="Name" field="cust_name" type="string"/>
+                        <prop-map prop="Address" field="address" type="string"/>
+                        <prop-map prop="Address2" field="address2"  type="string"/>                                                                                            
+                    </mapping>    
+                </class>
             </classes>
         </unit>
     </project-units>

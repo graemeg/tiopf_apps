@@ -16,6 +16,7 @@ type
     procedure   TestUserCrud;
     procedure   TestJobCrud;
     procedure   TestCreateUserJobRelations;
+    procedure   AllTogetherNow;
   end; 
 
 
@@ -25,6 +26,11 @@ const
   USER_OID = '8AC4AAEE-F6EC-4FF9-89CD-FBEF375C0259';
 
 implementation
+
+procedure TTestMapper.AllTogetherNow;
+begin
+
+end;
 
 procedure TTestMapper.TestCreateUserJobRelations;
 var
@@ -56,7 +62,7 @@ begin
     AssertTrue('Failed Custom method FindJobsForUser', lJobList.Count > 0);
 
     lJobList.Clear;
-    lJobList.FindByStatus(Integer(jsFinished));
+    lJobList.FindByStatus(jsFinished);
     AssertTrue('Failed Custom method FindByStatus', lJobList.Count = 1);
   finally
     lJobList.free;
@@ -105,6 +111,7 @@ begin
     lPer.LastName := 'Johnson';
     lPer.Age := 28;
     lPer.Gender := gtFemale;
+    lPer.PersonType := ptEmployee;
     lPersons.Add(lPer);
 
     lPer := TPerson.CreateNew;
@@ -112,31 +119,43 @@ begin
     lPer.LastName := 'Harrington';
     lPer.Age := 38;
     lPer.Gender := gtFemale;
+    lPer.PersonType := ptEmployee;
     lPersons.Add(lPer);
 
     lPer := TPerson.CreateNew;
     lPer.FirstName := 'Bill';
     lPer.LastName := 'Smith';
     lPer.Age := 49;
+    lPer.PersonType := ptCustomer;
     lPer.Gender := gtMale;
     lPersons.Add(lPer);
 
-    lPersons.Save;
+    lPer := TPerson.CreateNew;
+    lPer.FirstName := 'Janet';
+    lPer.LastName := 'Corning';
+    lPer.Age := 23;
+    lPer.PersonType := ptCustomer;
+    lPer.Gender := gtFemale;
+    lPersons.Add(lPer);
 
+    lPersons.Save;
 
     // All created object lists get the FindByOID function.
     lPersons.Clear;
     lPersons.FindByOID(USER_OID);
     AssertTrue('FindByOID did not work', lPersons.Count > 0);
 
-    {
-      This is a custom method defined for TPerson in the xml schema.
-      It causes the methods defined to be created on the TPersonList object.
-      See /demos/bom/sample.xml.
-    }
+    {This is a custom method defined for TPerson in the xml schema.
+    It causes the methods defined to be created on the TPersonList object.
+    See /demos/bom/sample.xml.}
+
     lPersons.Clear;
-    lPersons.FindByFirstName('Abby');
-    AssertTrue('Custom method FindByFirstName did not work', lPersons.Count > 0);
+    lPersons.FindByFirstNameMatch('B');
+    AssertTrue('Custom method FindByFirstNameMatch did not work', lPersons.Count > 0);
+
+    lPersons.Clear;
+    lPersons.FindByGender(gtFemale);
+    AssertTrue('Custom method FindByGender did not work', lPersons.Count > 0);
 
     { Because we hook into the automapping registrations, we leverage the tiCriteriaAsSQL
     methods to create simple filter using tiCriteria but with hard coded visitors.  Allows to use
@@ -146,10 +165,6 @@ begin
     lPersons.Read;
     AssertTrue('Custom method Critera Map did not work', lPersons.Count > 0);
 
-    { Test a Like% query.}
-    lPersons.Clear;
-    lPersons.FindByFirstNameMatch('B');
-    AssertTrue('Custom method FindByFirstNameMatch not work', lPersons.Count > 0);
 
   finally
     lPersons.Free;

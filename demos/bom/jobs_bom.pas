@@ -14,6 +14,7 @@ interface
 uses
   SysUtils
   ,tiObject
+  ,typinfo
   ,tiAutoMap
   ,tiOPFManager
   ,tiVisitorDB
@@ -22,7 +23,6 @@ uses
   ,tiSQLParser
   ,mapper
   ;
-
 
 type
 
@@ -57,7 +57,6 @@ type
     property    Status: TJobStatus read FStatus write SetStatus;
   end;
   
-
   { List of TJob.  TtiMappedFilteredObjectList descendant. }
   TJobList = class(TtiMappedFilteredObjectList)
   protected
@@ -73,10 +72,9 @@ type
     { Returns Number of objects retrieved. }
     function    FindJobsForUser(const AUser: string): integer;
     { Returns Number of objects retrieved. }
-    function    FindByStatus(const AStatus: integer): integer;
+    function    FindByStatus(const AStatus: TJobStatus): integer;
   end;
   
-
   { Generated Class: TUserJobRelation}
   TUserJobRelation = class(TtiObject)
   protected
@@ -92,7 +90,6 @@ type
     property    UserOID: string read FUserOID write SetUserOID;
   end;
   
-
   { List of TUserJobRelation.  TtiMappedFilteredObjectList descendant. }
   TUserJobRelationList = class(TtiMappedFilteredObjectList)
   protected
@@ -107,7 +104,6 @@ type
     function    FindByOID(const AOID: string): integer;
   end;
   
-
   { Read Visitor for TJob }
   TJob_Read = class(TtiVisitorSelect)
   protected
@@ -117,7 +113,6 @@ type
     procedure   MapRowToObject; override;
   end;
   
-
   { Create Visitor for TJob }
   TJob_Create = class(TtiVisitorUpdate)
   protected
@@ -126,7 +121,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { Update Visitor for TJob }
   TJob_Save = class(TtiVisitorUpdate)
   protected
@@ -135,7 +129,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { Delete Visitor for TJob }
   TJob_Delete = class(TtiVisitorUpdate)
   protected
@@ -144,7 +137,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Read Visitor for TJobList }
   TJobList_Read = class(TtiVisitorSelect)
   protected
@@ -153,7 +145,6 @@ type
     procedure   MapRowToObject; override;
   end;
   
-
   { List Create Visitor for TJobList }
   TJobList_Create = class(TtiVisitorUpdate)
   protected
@@ -162,7 +153,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Update Visitor for TJobList }
   TJobList_Save = class(TtiVisitorUpdate)
   protected
@@ -171,7 +161,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Delete Visitor for TJobList }
   TJobList_Delete = class(TtiVisitorUpdate)
   protected
@@ -180,23 +169,22 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { TJobList_FindJobsForUserVis }
   TJobList_FindJobsForUserVis = class(TtiMapParameterListReadVisitor)
   protected
     function    AcceptVisitor: Boolean; override;
     procedure   MapRowToObject; override;
+    procedure   SetupParams; override;
   end;
   
-
   { TJobList_FindByStatusVis }
   TJobList_FindByStatusVis = class(TtiMapParameterListReadVisitor)
   protected
     function    AcceptVisitor: Boolean; override;
     procedure   MapRowToObject; override;
+    procedure   SetupParams; override;
   end;
   
-
   { Read Visitor for TUserJobRelation }
   TUserJobRelation_Read = class(TtiVisitorSelect)
   protected
@@ -206,7 +194,6 @@ type
     procedure   MapRowToObject; override;
   end;
   
-
   { Create Visitor for TUserJobRelation }
   TUserJobRelation_Create = class(TtiVisitorUpdate)
   protected
@@ -215,7 +202,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { Update Visitor for TUserJobRelation }
   TUserJobRelation_Save = class(TtiVisitorUpdate)
   protected
@@ -224,7 +210,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { Delete Visitor for TUserJobRelation }
   TUserJobRelation_Delete = class(TtiVisitorUpdate)
   protected
@@ -233,7 +218,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Read Visitor for TUserJobRelationList }
   TUserJobRelationList_Read = class(TtiVisitorSelect)
   protected
@@ -242,7 +226,6 @@ type
     procedure   MapRowToObject; override;
   end;
   
-
   { List Create Visitor for TUserJobRelationList }
   TUserJobRelationList_Create = class(TtiVisitorUpdate)
   protected
@@ -251,7 +234,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Update Visitor for TUserJobRelationList }
   TUserJobRelationList_Save = class(TtiVisitorUpdate)
   protected
@@ -260,7 +242,6 @@ type
     procedure   SetupParams; override;
   end;
   
-
   { List Delete Visitor for TUserJobRelationList }
   TUserJobRelationList_Delete = class(TtiVisitorUpdate)
   protected
@@ -270,11 +251,8 @@ type
   end;
   
 
-
-
   { Visitor Manager Registrations }
   procedure RegisterVisitors;
-
 
   { Register Auto Mappings }
   procedure RegisterMappings;
@@ -296,7 +274,6 @@ begin
     'jobs','Status', 'job_status');
   GTIOPFManager.ClassDBMappingMgr.RegisterCollection(TJobList, TJob);
   
-
   { Automap registrations for TUserJobRelation }
   GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TUserJobRelation, 
     'user_job_relation', 'OID', 'OID', [pktDB]);
@@ -306,9 +283,7 @@ begin
     'user_job_relation','UserOID', 'user_oid');
   GTIOPFManager.ClassDBMappingMgr.RegisterCollection(TUserJobRelationList, TUserJobRelation);
   
-
 end;
-
 
 procedure RegisterVisitors;
 begin
@@ -324,7 +299,6 @@ begin
   GTIOPFManager.VisitorManager.RegisterVisitor('TJobList_FindJobsForUserVis', TJobList_FindJobsForUserVis);
   GTIOPFManager.VisitorManager.RegisterVisitor('TJobList_FindByStatusVis', TJobList_FindByStatusVis);
   
-
   { Register Visitors for TUserJobRelation }
   GTIOPFManager.VisitorManager.RegisterVisitor('TUserJobRelationList_listread', TUserJobRelationList_Read);
   GTIOPFManager.VisitorManager.RegisterVisitor('TUserJobRelationList_listsave', TUserJobRelationList_Create);
@@ -335,9 +309,7 @@ begin
   GTIOPFManager.VisitorManager.RegisterVisitor('TUserJobRelationdelete', TUserJobRelation_Delete);
   GTIOPFManager.VisitorManager.RegisterVisitor('TUserJobRelationcreate', TUserJobRelation_Create);
   
-
 end;
-
 
 procedure TJob.SetJobName(const AValue: string);
 begin
@@ -345,13 +317,11 @@ begin
     FJobName := AValue;
 end;
 
-
 procedure TJob.SetJobDesc(const AValue: string);
 begin
   if FJobDesc <> AValue then
     FJobDesc := AValue;
 end;
-
 
 procedure TJob.SetStatus(const AValue: TJobStatus);
 begin
@@ -359,12 +329,10 @@ begin
     FStatus := AValue;
 end;
 
-
 procedure TJob.Read;
 begin
   GTIOPFManager.VisitorManager.Execute(ClassName + 'read', self);
 end;
-
 
 procedure TJob.Save;
 begin
@@ -375,33 +343,27 @@ begin
   end;
 end;
 
-
  {TJobList }
-
 
 procedure TJobList.Add(AObject: TJob);
 begin
   inherited Add(AObject);
 end;
 
-
 function TJobList.GetItems(i: integer): TJob;
 begin
   result := inherited GetItems(i) as TJob;
 end;
-
 
 procedure TJobList.Read;
 begin
   GTIOPFManager.VisitorManager.Execute('TJobList_listread', self);
 end;
 
-
 procedure TJobList.Save;
 begin
   GTIOPFManager.VisitorManager.Execute('TJobList_listsave', self);
 end;
-
 
 procedure TJobList.SetItems(i: integer; const AValue: TJob);
 begin
@@ -417,7 +379,6 @@ begin
   Read;
   result := Count;
 end;
-
 
 function TJobList.FindJobsForUser(const AUser: string): integer;
 begin
@@ -435,14 +396,13 @@ begin
   result := self.Count;
 end;
 
-
-function TJobList.FindByStatus(const AStatus: integer): integer;
+function TJobList.FindByStatus(const AStatus: TJobStatus): integer;
 begin
   if self.Count > 0 then
     self.Clear;
     
   Params.Clear;
-  AddParam('AStatus', 'status', ptInteger, AStatus);
+  AddParam('AStatus', 'status', ptEnum, AStatus);
   self.SQL := 
     ' SELECT JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS  ' + 
     ' FROM JOBS WHERE JOBS.JOB_STATUS = :STATUS ORDER BY  ' + 
@@ -451,13 +411,11 @@ begin
   result := self.Count;
 end;
 
-
 procedure TUserJobRelation.SetJobOID(const AValue: string);
 begin
   if FJobOID <> AValue then
     FJobOID := AValue;
 end;
-
 
 procedure TUserJobRelation.SetUserOID(const AValue: string);
 begin
@@ -465,12 +423,10 @@ begin
     FUserOID := AValue;
 end;
 
-
 procedure TUserJobRelation.Read;
 begin
   GTIOPFManager.VisitorManager.Execute(ClassName + 'read', self);
 end;
-
 
 procedure TUserJobRelation.Save;
 begin
@@ -481,33 +437,27 @@ begin
   end;
 end;
 
-
  {TUserJobRelationList }
-
 
 procedure TUserJobRelationList.Add(AObject: TUserJobRelation);
 begin
   inherited Add(AObject);
 end;
 
-
 function TUserJobRelationList.GetItems(i: integer): TUserJobRelation;
 begin
   result := inherited GetItems(i) as TUserJobRelation;
 end;
-
 
 procedure TUserJobRelationList.Read;
 begin
   GTIOPFManager.VisitorManager.Execute('TUserJobRelationList_listread', self);
 end;
 
-
 procedure TUserJobRelationList.Save;
 begin
   GTIOPFManager.VisitorManager.Execute('TUserJobRelationList_listsave', self);
 end;
-
 
 procedure TUserJobRelationList.SetItems(i: integer; const AValue: TUserJobRelation);
 begin
@@ -524,13 +474,11 @@ begin
   result := Count;
 end;
 
-
 { TJob_Create }
 function TJob_Create.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posCreate;
 end;
-
 
 procedure TJob_Create.Init;
 begin
@@ -548,7 +496,6 @@ begin
     ') ';
 end;
 
-
 procedure TJob_Create.SetupParams;
 var
   lObj: TJob;
@@ -560,13 +507,11 @@ begin
   Query.ParamAsInteger['job_status'] := Integer(lObj.Status);
 end;
 
-
 { TJob_Save }
 function TJob_Save.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posUpdate;
 end;
-
 
 procedure TJob_Save.Init;
 begin
@@ -577,7 +522,6 @@ begin
     ' job_status = :job_status ' + 
     'WHERE OID = :OID' ;
 end;
-
 
 procedure TJob_Save.SetupParams;
 var
@@ -590,13 +534,11 @@ begin
   Query.ParamAsInteger['job_status'] := Integer(lObj.Status);
 end;
 
-
 { TJob_Read }
 function TJob_Read.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean);
 end;
-
 
 procedure TJob_Read.Init;
 begin
@@ -609,7 +551,6 @@ begin
     'FROM  jobs WHERE OID = :OID' ;
 end;
 
-
 procedure TJob_Read.SetupParams;
 var
   lObj: TJob;
@@ -617,7 +558,6 @@ begin
   lObj := TJob(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
 end;
-
 
 procedure TJob_Read.MapRowToObject;
 var
@@ -630,13 +570,11 @@ begin
   lObj.Status := TJobStatus(Query.FieldAsInteger['job_status']);
 end;
 
-
 { TJob_Delete }
 function TJob_Delete.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posDelete;
 end;
-
 
 procedure TJob_Delete.Init;
 begin
@@ -644,7 +582,6 @@ begin
     'DELETE FROM jobs ' +
     'WHERE OID = :OID';
 end;
-
 
 procedure TJob_Delete.SetupParams;
 var
@@ -654,13 +591,11 @@ begin
   lObj.OID.AssignToTIQuery('OID',Query);
 end;
 
-
 { TJobList_Read }
 function TJobList_Read.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posEmpty);
 end;
-
 
 procedure TJobList_Read.Init;
 var
@@ -681,7 +616,6 @@ begin
       lOrder := '';
   end;
   
-
   lSQL := 
     'SELECT ' + 
     ' OID, ' +
@@ -690,12 +624,9 @@ begin
     ' job_status ' + 
     'FROM  jobs %s %s ;';
   
-
   Query.SQLText := gFormatSQL(Format(lSQL, [lWhere, lOrder]), TJob);
   
-
 end;
-
 
 procedure TJobList_Read.MapRowToObject;
 var
@@ -710,13 +641,11 @@ begin
   TtiObjectList(Visited).Add(lObj);
 end;
 
-
 { TJobList_Create }
 function TJobList_Create.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posCreate;
 end;
-
 
 procedure TJobList_Create.Init;
 begin
@@ -734,7 +663,6 @@ begin
     ') ';
 end;
 
-
 procedure TJobList_Create.SetupParams;
 var
   lObj: TJob;
@@ -746,13 +674,11 @@ begin
   Query.ParamAsInteger['job_status'] := Integer(lObj.Status);
 end;
 
-
 { TJobList_Delete }
 function TJobList_Delete.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posDelete;
 end;
-
 
 procedure TJobList_Delete.Init;
 begin
@@ -760,7 +686,6 @@ begin
     'DELETE FROM jobs ' +
     'WHERE OID = :OID';
 end;
-
 
 procedure TJobList_Delete.SetupParams;
 var
@@ -775,7 +700,6 @@ begin
   result := Visited.ObjectState = posUpdate;
 end;
 
-
 procedure TJobList_Save.Init;
 begin
   Query.SQLText := 
@@ -785,7 +709,6 @@ begin
     ' job_status = :job_status ' + 
     'WHERE OID = :OID' ;
 end;
-
 
 procedure TJobList_Save.SetupParams;
 var
@@ -798,13 +721,11 @@ begin
   Query.ParamAsInteger['job_status'] := Integer(lObj.Status);
 end;
 
-
 { TJobList_FindJobsForUserVis }
 function TJobList_FindJobsForUserVis.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posEmpty);
 end;
-
 
 procedure TJobList_FindJobsForUserVis.MapRowToObject;
 var
@@ -819,13 +740,25 @@ begin
   TtiObjectList(Visited).Add(lObj);
 end;
 
+procedure TJobList_FindJobsForUserVis.SetupParams;
+var
+  lCtr: integer;
+  lParam: TSelectParam;
+  lList: TtiMappedFilteredObjectList;
+  lOrdInfo: PTypeInfo;
+  lOrdDate: PTypeData;
+begin
+  lList := TtiMappedFilteredObjectList(Visited);
+  
+  lParam := TSelectParam(lList.Params.FindByProps(['ParamName'], ['AUser']));
+  Query.ParamAsString['user_oid'] := lParam.Value;
+end;
 
 { TJobList_FindByStatusVis }
 function TJobList_FindByStatusVis.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posEmpty);
 end;
-
 
 procedure TJobList_FindByStatusVis.MapRowToObject;
 var
@@ -840,13 +773,25 @@ begin
   TtiObjectList(Visited).Add(lObj);
 end;
 
+procedure TJobList_FindByStatusVis.SetupParams;
+var
+  lCtr: integer;
+  lParam: TSelectParam;
+  lList: TtiMappedFilteredObjectList;
+  lOrdInfo: PTypeInfo;
+  lOrdDate: PTypeData;
+begin
+  lList := TtiMappedFilteredObjectList(Visited);
+  
+  lParam := TSelectParam(lList.Params.FindByProps(['ParamName'], ['AStatus']));
+  Query.ParamAsInteger['status'] := Integer(TJobStatus(lParam.Value));
+end;
 
 { TUserJobRelation_Create }
 function TUserJobRelation_Create.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posCreate;
 end;
-
 
 procedure TUserJobRelation_Create.Init;
 begin
@@ -862,7 +807,6 @@ begin
     ') ';
 end;
 
-
 procedure TUserJobRelation_Create.SetupParams;
 var
   lObj: TUserJobRelation;
@@ -873,13 +817,11 @@ begin
   Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
-
 { TUserJobRelation_Save }
 function TUserJobRelation_Save.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posUpdate;
 end;
-
 
 procedure TUserJobRelation_Save.Init;
 begin
@@ -889,7 +831,6 @@ begin
     ' user_oid = :user_oid ' + 
     'WHERE OID = :OID' ;
 end;
-
 
 procedure TUserJobRelation_Save.SetupParams;
 var
@@ -901,13 +842,11 @@ begin
   Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
-
 { TUserJobRelation_Read }
 function TUserJobRelation_Read.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean);
 end;
-
 
 procedure TUserJobRelation_Read.Init;
 begin
@@ -919,7 +858,6 @@ begin
     'FROM  user_job_relation WHERE OID = :OID' ;
 end;
 
-
 procedure TUserJobRelation_Read.SetupParams;
 var
   lObj: TUserJobRelation;
@@ -927,7 +865,6 @@ begin
   lObj := TUserJobRelation(Visited);
   lObj.OID.AssignToTIQuery('OID',Query);
 end;
-
 
 procedure TUserJobRelation_Read.MapRowToObject;
 var
@@ -939,13 +876,11 @@ begin
   lObj.UserOID := Query.FieldAsString['user_oid'];
 end;
 
-
 { TUserJobRelation_Delete }
 function TUserJobRelation_Delete.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posDelete;
 end;
-
 
 procedure TUserJobRelation_Delete.Init;
 begin
@@ -953,7 +888,6 @@ begin
     'DELETE FROM user_job_relation ' +
     'WHERE OID = :OID';
 end;
-
 
 procedure TUserJobRelation_Delete.SetupParams;
 var
@@ -963,13 +897,11 @@ begin
   lObj.OID.AssignToTIQuery('OID',Query);
 end;
 
-
 { TUserJobRelationList_Read }
 function TUserJobRelationList_Read.AcceptVisitor: Boolean;
 begin
   result := (Visited.ObjectState = posEmpty);
 end;
-
 
 procedure TUserJobRelationList_Read.Init;
 var
@@ -990,7 +922,6 @@ begin
       lOrder := '';
   end;
   
-
   lSQL := 
     'SELECT ' + 
     ' OID, ' +
@@ -998,12 +929,9 @@ begin
     ' user_oid ' + 
     'FROM  user_job_relation %s %s ;';
   
-
   Query.SQLText := gFormatSQL(Format(lSQL, [lWhere, lOrder]), TUserJobRelation);
   
-
 end;
-
 
 procedure TUserJobRelationList_Read.MapRowToObject;
 var
@@ -1017,13 +945,11 @@ begin
   TtiObjectList(Visited).Add(lObj);
 end;
 
-
 { TUserJobRelationList_Create }
 function TUserJobRelationList_Create.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posCreate;
 end;
-
 
 procedure TUserJobRelationList_Create.Init;
 begin
@@ -1039,7 +965,6 @@ begin
     ') ';
 end;
 
-
 procedure TUserJobRelationList_Create.SetupParams;
 var
   lObj: TUserJobRelation;
@@ -1050,13 +975,11 @@ begin
   Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
 
-
 { TUserJobRelationList_Delete }
 function TUserJobRelationList_Delete.AcceptVisitor: Boolean;
 begin
   result := Visited.ObjectState = posDelete;
 end;
-
 
 procedure TUserJobRelationList_Delete.Init;
 begin
@@ -1064,7 +987,6 @@ begin
     'DELETE FROM user_job_relation ' +
     'WHERE OID = :OID';
 end;
-
 
 procedure TUserJobRelationList_Delete.SetupParams;
 var
@@ -1079,7 +1001,6 @@ begin
   result := Visited.ObjectState = posUpdate;
 end;
 
-
 procedure TUserJobRelationList_Save.Init;
 begin
   Query.SQLText := 
@@ -1088,7 +1009,6 @@ begin
     ' user_oid = :user_oid ' + 
     'WHERE OID = :OID' ;
 end;
-
 
 procedure TUserJobRelationList_Save.SetupParams;
 var
@@ -1099,7 +1019,6 @@ begin
   Query.ParamAsString['job_oid'] := lObj.JobOID;
   Query.ParamAsString['user_oid'] := lObj.UserOID;
 end;
-
 
 initialization
   RegisterVisitors;

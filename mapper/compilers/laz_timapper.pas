@@ -7,8 +7,8 @@ unit laz_timapper;
 interface
 
 uses
-    tiSQLParser, mapper, fpc_schema_reader, fpc_schema_writer, 
-  mapper_project_writer, LazarusPackageIntf;
+    tiSQLParser, mapper, fpc_schema_reader, mapper_project_writer, 
+  LazarusPackageIntf;
 
 implementation
 

@@ -19,7 +19,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="5">
+    <Files Count="4">
       <Item1>
         <Filename Value="..\tiSQLParser.pas"/>
         <UnitName Value="tiSQLParser"/>
@@ -33,13 +33,9 @@
         <UnitName Value="fpc_schema_reader"/>
       </Item3>
       <Item4>
-        <Filename Value="..\fpc_schema_writer.pas"/>
-        <UnitName Value="fpc_schema_writer"/>
-      </Item4>
-      <Item5>
         <Filename Value="..\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
-      </Item5>
+      </Item4>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
