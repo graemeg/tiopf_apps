@@ -93,12 +93,15 @@ M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\types.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\typinfo.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\sysconst.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\fcl-base\contnrs.o
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\variants.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiObject.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiRTTI.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiAutoMap.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiVisitorDB.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiOPFManager.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiFilteredObjectList.o
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\math.o
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\varutils.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiBaseObject.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiVisitor.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiOID.o
@@ -107,10 +110,7 @@ M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiExcept.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiStreams.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiUtils.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiConstants.o
-M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\math.o
-M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\variants.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\shellapi.o
-M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\varutils.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\activex.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\ctypes.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiWin32.o
@@ -172,6 +172,7 @@ M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\ibase\ibase60dyn.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\dynlibs.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiQueryDataset.o
 M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiXMLToTIDataset.o
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\dateutils.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\fcl-xml\dom.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\fcl-xml\xmlread.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\fcl-xml\xmlwrite.o
@@ -185,8 +186,8 @@ M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\libimpsystem.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\libimpwindows.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\libimpfpintres.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\libimpsysutils.a
-M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\libimpshellapi.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\libimpvarutils.a
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\libimpshellapi.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\libimpactivex.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\libimpshlobj.a
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\winunits-base\libimpcommctrl.a

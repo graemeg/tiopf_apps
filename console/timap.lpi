@@ -39,29 +39,29 @@
         <PackageName Value="laz_timapper"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="15">
+    <Units Count="19">
       <Unit0>
         <Filename Value="timap.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="timap"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="133"/>
+        <TopLine Value="132"/>
         <CursorPos X="1" Y="161"/>
-        <UsageCount Value="182"/>
+        <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\mapper\mapper.pas"/>
         <UnitName Value="mapper"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="315"/>
-        <CursorPos X="12" Y="327"/>
-        <UsageCount Value="93"/>
+        <TopLine Value="1139"/>
+        <CursorPos X="3" Y="1139"/>
+        <UsageCount Value="101"/>
         <Bookmarks Count="1">
-          <Item0 X="14" Y="777" ID="1"/>
+          <Item0 X="29" Y="647" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit1>
@@ -72,30 +72,30 @@
         <WindowIndex Value="0"/>
         <TopLine Value="76"/>
         <CursorPos X="32" Y="104"/>
-        <UsageCount Value="93"/>
+        <UsageCount Value="101"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="649"/>
-        <CursorPos X="76" Y="683"/>
-        <UsageCount Value="92"/>
+        <TopLine Value="1013"/>
+        <CursorPos X="1" Y="1040"/>
+        <UsageCount Value="100"/>
+        <Bookmarks Count="1">
+          <Item0 X="20" Y="714" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\mapper\fpc_schema_reader.pas"/>
         <UnitName Value="fpc_schema_reader"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="389"/>
-        <CursorPos X="23" Y="403"/>
-        <UsageCount Value="81"/>
-        <Bookmarks Count="1">
-          <Item0 X="24" Y="65" ID="2"/>
-        </Bookmarks>
+        <TopLine Value="200"/>
+        <CursorPos X="1" Y="217"/>
+        <UsageCount Value="93"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
@@ -104,7 +104,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1012"/>
         <CursorPos X="1" Y="1046"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit5>
       <Unit6>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiVisitorDB.pas"/>
@@ -112,7 +112,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="271"/>
         <CursorPos X="3" Y="273"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="5"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\demos\bom\person_bom.pas"/>
@@ -120,193 +120,219 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="87" Y="29"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="31"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\demos\bom\jobs_bom.pas"/>
         <UnitName Value="jobs_bom"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="13"/>
       </Unit8>
       <Unit9>
         <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\packages\fcl-xml\src\dom.pp"/>
         <UnitName Value="DOM"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="40"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
         <UnitName Value="tiObject"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1413"/>
-        <CursorPos X="1" Y="1430"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <TopLine Value="422"/>
+        <CursorPos X="17" Y="439"/>
+        <UsageCount Value="31"/>
       </Unit10>
       <Unit11>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiUtils.pas"/>
         <UnitName Value="tiUtils"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="367"/>
-        <CursorPos X="10" Y="391"/>
-        <UsageCount Value="21"/>
+        <TopLine Value="64"/>
+        <CursorPos X="45" Y="384"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="M:\DelphiProjects\D2009Projects\Components\VGScene\lazarus\vgscene.pas"/>
         <UnitName Value="vgscene"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="88" Y="17"/>
-        <UsageCount Value="19"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\objpas\sysutils\sysutilh.inc"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="191"/>
         <CursorPos X="23" Y="208"/>
-        <UsageCount Value="16"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="24"/>
       </Unit13>
       <Unit14>
         <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\win32\system.pp"/>
         <UnitName Value="System"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="2" Y="40"/>
-        <UsageCount Value="16"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="24"/>
       </Unit14>
+      <Unit15>
+        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\objpas\classes\classesh.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="144"/>
+        <CursorPos X="3" Y="161"/>
+        <UsageCount Value="12"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\inc\variants.pp"/>
+        <UnitName Value="variants"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="34"/>
+        <CursorPos X="40" Y="66"/>
+        <UsageCount Value="12"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\inc\varianth.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="66"/>
+        <CursorPos X="4" Y="53"/>
+        <UsageCount Value="12"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiRTTI.pas"/>
+        <UnitName Value="tiRTTI"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="52"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit18>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="363" Column="34" TopLine="356"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="217" Column="1" TopLine="210"/>
       </Position1>
       <Position2>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="410" Column="11" TopLine="389"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="221" Column="1" TopLine="210"/>
       </Position2>
       <Position3>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="384" Column="54" TopLine="368"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="222" Column="1" TopLine="210"/>
       </Position3>
       <Position4>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="143" Column="23" TopLine="117"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="224" Column="1" TopLine="210"/>
       </Position4>
       <Position5>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="597" Column="17" TopLine="583"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="226" Column="1" TopLine="219"/>
       </Position5>
       <Position6>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="647" Column="7" TopLine="647"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="232" Column="1" TopLine="219"/>
       </Position6>
       <Position7>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="652" Column="1" TopLine="645"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="243" Column="1" TopLine="219"/>
       </Position7>
       <Position8>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="681" Column="1" TopLine="664"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="247" Column="1" TopLine="219"/>
       </Position8>
       <Position9>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="682" Column="1" TopLine="664"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="517" Column="1" TopLine="500"/>
       </Position9>
       <Position10>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="683" Column="1" TopLine="664"/>
+        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
+        <Caret Line="518" Column="1" TopLine="500"/>
       </Position10>
       <Position11>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="685" Column="1" TopLine="664"/>
+        <Caret Line="149" Column="1" TopLine="144"/>
       </Position11>
       <Position12>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="652" Column="1" TopLine="644"/>
+        <Caret Line="256" Column="1" TopLine="239"/>
       </Position12>
       <Position13>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="161" Column="1" TopLine="133"/>
+        <Filename Value="..\mapper\mapper_project_writer.pas"/>
+        <Caret Line="267" Column="1" TopLine="239"/>
       </Position13>
       <Position14>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="663" Column="1" TopLine="644"/>
+        <Caret Line="149" Column="1" TopLine="132"/>
       </Position14>
       <Position15>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="665" Column="1" TopLine="644"/>
+        <Caret Line="172" Column="1" TopLine="155"/>
       </Position15>
       <Position16>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="681" Column="1" TopLine="664"/>
+        <Caret Line="174" Column="1" TopLine="155"/>
       </Position16>
       <Position17>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="682" Column="1" TopLine="664"/>
+        <Caret Line="274" Column="1" TopLine="257"/>
       </Position17>
       <Position18>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="683" Column="1" TopLine="664"/>
+        <Caret Line="715" Column="1" TopLine="698"/>
       </Position18>
       <Position19>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="663" Column="1" TopLine="646"/>
+        <Caret Line="742" Column="37" TopLine="725"/>
       </Position19>
       <Position20>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="774" Column="25" TopLine="763"/>
+        <Caret Line="1035" Column="24" TopLine="1019"/>
       </Position20>
       <Position21>
         <Filename Value="..\mapper\mapper.pas"/>
-        <Caret Line="311" Column="3" TopLine="291"/>
+        <Caret Line="824" Column="1" TopLine="801"/>
       </Position21>
       <Position22>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="14" Column="38" TopLine="64"/>
+        <Filename Value="..\mapper\mapper.pas"/>
+        <Caret Line="159" Column="43" TopLine="154"/>
       </Position22>
       <Position23>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="774" Column="29" TopLine="748"/>
+        <Filename Value="..\mapper\mapper.pas"/>
+        <Caret Line="506" Column="17" TopLine="555"/>
       </Position23>
       <Position24>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="663" Column="1" TopLine="646"/>
+        <Caret Line="1037" Column="7" TopLine="1019"/>
       </Position24>
       <Position25>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="774" Column="24" TopLine="769"/>
+        <Caret Line="783" Column="53" TopLine="765"/>
       </Position25>
       <Position26>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="592" Column="1" TopLine="605"/>
+        <Caret Line="169" Column="22" TopLine="140"/>
       </Position26>
       <Position27>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="143" Column="21" TopLine="117"/>
+        <Caret Line="699" Column="26" TopLine="688"/>
       </Position27>
       <Position28>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="645" Column="15" TopLine="634"/>
+        <Caret Line="1697" Column="20" TopLine="1673"/>
       </Position28>
       <Position29>
         <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <Caret Line="597" Column="17" TopLine="580"/>
+        <Caret Line="1503" Column="3" TopLine="1503"/>
       </Position29>
       <Position30>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="403" Column="23" TopLine="389"/>
+        <Filename Value="..\mapper\mapper.pas"/>
+        <Caret Line="888" Column="23" TopLine="880"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -339,20 +365,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="3">
-      <Item1>
-        <Source Value="..\mapper\fpc_schema_reader.pas"/>
-        <Line Value="192"/>
-      </Item1>
-      <Item2>
-        <Source Value="..\mapper\fpc_schema_reader.pas"/>
-        <Line Value="196"/>
-      </Item2>
-      <Item3>
-        <Source Value="..\mapper\fpc_schema_reader.pas"/>
-        <Line Value="492"/>
-      </Item3>
-    </BreakPoints>
     <Exceptions Count="3">
       <Item1>
         <Name Value="EAbort"/>

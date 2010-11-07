@@ -151,13 +151,23 @@ begin
           if lPropAttr <> nil then
             begin
               if lPropAttr.NodeValue <> '' then
-                lNewProp.PropTypeName := lPropAttr.NodeValue
+                begin
+                  if Copy(lPropAttr.NodeValue, 1,1) = 'T' then
+                    lNewProp.PropType := ptEnum
+                  else
+                    lNewProp.PropType := gStrToPropType(lPropAttr.NodeValue);
+                  lNewProp.PropTypeName := lPropAttr.NodeValue
+                end
               else
-                lNewProp.PropTypeName := 'String';
+                begin
+                  lNewProp.PropType := ptString;
+                  lNewProp.PropTypeName := 'String';
+                end;
             end
           else
             begin
               lNewProp.PropTypeName := 'string';
+              lNewProp.PropType := ptString;
             end;
 
           AClass.ClassProps.Add(lNewProp);
@@ -181,8 +191,11 @@ var
   lCtr: Integer;
   lVal: TMapValidator;
   lValNode: TDomNode;
+  lValueNode: TDomNode;
   lProp: TMapClassProp;
   lValStr: string;
+  lTempStr: string;
+  lType: TMapPropType;
 begin
   if not ANode.HasChildNodes then
     exit;
@@ -195,30 +208,39 @@ begin
           lVal := TMapValidator.Create;
           lVal.ValidatorType := gStrToValType(lValNode.Attributes.GetNamedItem('type').NodeValue);
           lVal.ClassProp := lValNode.Attributes.GetNamedItem('prop').NodeValue;
-
+          lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
-              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp], False));
+              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
+              lTempStr := lProp.PropName;
+              lType := lProp.PropType;
               if lProp = nil then
                 raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
                   lVal.ClassProp);
 
-                lValStr := lValNode.ChildNodes.Item[0].NodeValue;
+                lValueNode := lValNode.ChildNodes.Item[0];
+                if lValueNode <> nil then
+                  begin
+                    lValStr := lValNode.ChildNodes.Item[0].TextContent;
 
-              case lProp.PropType of
-                ptAnsiString, ptString:
-                  lVal.Value := lValStr;
-                ptBoolean:
-                  lVal.Value := StrtoBool(lValStr);
-                ptInt64, ptInteger:
-                  lVal.Value := StrToInt(lValStr);
-                ptDateTime:
-                  lVal.Value := tiIntlDateStorAsDateTime(lValStr);
-                ptEnum:;
-                ptFloat:
-                  lVal.Value := StrToFloat(lValStr);
-              end;
+                    case lProp.PropType of
+                      ptAnsiString, ptString:
+                        lVal.Value := lValStr;
+                      ptBoolean:
+                        lVal.Value := StrtoBool(lValStr);
+                      ptInt64, ptInteger:
+                        lVal.Value := StrToInt(lValStr);
+                      ptDateTime:
+                        lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                      ptEnum:;
+                      ptFloat:
+                        lVal.Value := StrToFloat(lValStr);
+                    end;
+                  end;
+
             end;
+
+          AClass.Validators.Add(lVal);
         end;
     end;
 

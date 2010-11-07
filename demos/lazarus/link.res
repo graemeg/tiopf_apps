@@ -412,6 +412,7 @@ M:\lazarus\components\tiOPF2\Compilers\FPC\lib\i386-win32\tiFilteredObjectList.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\fpc_schema_reader.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\mapper\compilers\lib\i386-win32\mapper_project_writer.o
 M:\lazarus_current\lazarus\packager\units\i386-win32\lazaruspackageintf.o
+M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\dateutils.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\sysinitpas.o
 )
 GROUP(

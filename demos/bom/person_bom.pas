@@ -64,6 +64,7 @@ type
   public
     procedure   Read; override;
     procedure   Save; override;
+    function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
     property    PersonType: TPersonType read FPersonType write SetPersonType;
     property    FirstName: string read FFirstName write SetFirstName;
@@ -91,38 +92,6 @@ type
     function    FindByGender(const AGender: TGenderType): integer;
     { Returns Number of objects retrieved. }
     function    FindByFirstNameMatch(const AName: string): integer;
-  end;
-  
-  { Generated Class: TCustom}
-  TCustom = class(TtiObject)
-  protected
-    FName: string;
-    FAddress: string;
-    FAddress2: string;
-    procedure SetName(const AValue: string); virtual;
-    procedure SetAddress(const AValue: string); virtual;
-    procedure SetAddress2(const AValue: string); virtual;
-  public
-    procedure   Read; override;
-    procedure   Save; override;
-  published
-    property    Name: string read FName write SetName;
-    property    Address: string read FAddress write SetAddress;
-    property    Address2: string read FAddress2 write SetAddress2;
-  end;
-  
-  { List of TCustom.  TtiMappedFilteredObjectList descendant. }
-  TCustomList = class(TtiMappedFilteredObjectList)
-  protected
-    procedure   SetItems(i: integer; const AValue: TCustom); reintroduce;
-    function    GetItems(i: integer): TCustom; reintroduce;
-  public
-    property    Items[i:integer] : TCustom read GetItems write SetItems;
-    procedure   Add(AObject: TCustom); reintroduce;
-    procedure   Read; override;
-    procedure   Save; override;
-    { Return count (1) if successful. }
-    function    FindByOID(const AOID: string): integer;
   end;
   
   { Read Visitor for TPerson }
@@ -206,71 +175,6 @@ type
     procedure   SetupParams; override;
   end;
   
-  { Read Visitor for TCustom }
-  TCustom_Read = class(TtiVisitorSelect)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-    procedure   MapRowToObject; override;
-  end;
-  
-  { Create Visitor for TCustom }
-  TCustom_Create = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
-  { Update Visitor for TCustom }
-  TCustom_Save = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
-  { Delete Visitor for TCustom }
-  TCustom_Delete = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
-  { List Read Visitor for TCustomList }
-  TCustomList_Read = class(TtiVisitorSelect)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   MapRowToObject; override;
-  end;
-  
-  { List Create Visitor for TCustomList }
-  TCustomList_Create = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
-  { List Update Visitor for TCustomList }
-  TCustomList_Save = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
-  { List Delete Visitor for TCustomList }
-  TCustomList_Delete = class(TtiVisitorUpdate)
-  protected
-    function    AcceptVisitor: Boolean; override;
-    procedure   Init; override;
-    procedure   SetupParams; override;
-  end;
-  
 
   { Visitor Manager Registrations }
   procedure RegisterVisitors;
@@ -299,17 +203,6 @@ begin
     'person','PersonType', 'person_type');
   GTIOPFManager.ClassDBMappingMgr.RegisterCollection(TPersonList, TPerson);
   
-  { Automap registrations for TCustom }
-  GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TCustom, 
-    'person', 'OID', 'OID', [pktDB]);
-  GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TCustom,
-    'person','Name', 'cust_name');
-  GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TCustom,
-    'person','Address', 'address');
-  GTIOPFManager.ClassDBMappingMgr.RegisterMapping(TCustom,
-    'person','Address2', 'address2');
-  GTIOPFManager.ClassDBMappingMgr.RegisterCollection(TCustomList, TCustom);
-  
 end;
 
 procedure RegisterVisitors;
@@ -325,16 +218,6 @@ begin
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersoncreate', TPerson_Create);
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersonList_FindByGenderVis', TPersonList_FindByGenderVis);
   GTIOPFManager.VisitorManager.RegisterVisitor('TPersonList_FindByFirstNameMatchVis', TPersonList_FindByFirstNameMatchVis);
-  
-  { Register Visitors for TCustom }
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomList_listread', TCustomList_Read);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomList_listsave', TCustomList_Create);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomList_listsave', TCustomList_Save);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomList_listsave', TCustomList_Delete);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomread', TCustom_Read);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomsave', TCustom_Save);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomdelete', TCustom_Delete);
-  GTIOPFManager.VisitorManager.RegisterVisitor('TCustomcreate', TCustom_Create);
   
 end;
 
@@ -398,6 +281,27 @@ begin
     posUpdate: GTIOPFManager.VisitorManager.Execute('TPersonsave', self);
     posCreate: GTIOPFManager.VisitorManager.Execute('TPersoncreate', self);
   end;
+end;
+
+function TPerson.IsValid(const AErrors: TtiObjectErrors): boolean;
+var
+  lMsg: string;
+begin
+  Result := inherited IsValid(AErrors);
+  if not result then exit;
+  
+  if Age < 1 then
+    begin
+      lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, 'Age', Age);
+      AErrors.AddError(lMsg);
+    end;
+  
+  if FirstName = 'Mud Face' then
+    begin
+      lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, 'FirstName', FirstName);
+      AErrors.AddError(lMsg);
+    end;
+  
 end;
 
  {TPersonList }
@@ -466,75 +370,6 @@ begin
     ' ORDER BY PERSON.FIRST_NAME, PERSON.LAST_NAME'; 
   GTIOPFManager.VisitorManager.Execute('TPersonList_FindByFirstNameMatchVis', self);
   result := self.Count;
-end;
-
-procedure TCustom.SetName(const AValue: string);
-begin
-  if FName <> AValue then
-    FName := AValue;
-end;
-
-procedure TCustom.SetAddress(const AValue: string);
-begin
-  if FAddress <> AValue then
-    FAddress := AValue;
-end;
-
-procedure TCustom.SetAddress2(const AValue: string);
-begin
-  if FAddress2 <> AValue then
-    FAddress2 := AValue;
-end;
-
-procedure TCustom.Read;
-begin
-  GTIOPFManager.VisitorManager.Execute(ClassName + 'read', self);
-end;
-
-procedure TCustom.Save;
-begin
-  Case ObjectState of
-    posDelete: GTIOPFManager.VisitorManager.Execute('TCustomdelete', self);
-    posUpdate: GTIOPFManager.VisitorManager.Execute('TCustomsave', self);
-    posCreate: GTIOPFManager.VisitorManager.Execute('TCustomcreate', self);
-  end;
-end;
-
- {TCustomList }
-
-procedure TCustomList.Add(AObject: TCustom);
-begin
-  inherited Add(AObject);
-end;
-
-function TCustomList.GetItems(i: integer): TCustom;
-begin
-  result := inherited GetItems(i) as TCustom;
-end;
-
-procedure TCustomList.Read;
-begin
-  GTIOPFManager.VisitorManager.Execute('TCustomList_listread', self);
-end;
-
-procedure TCustomList.Save;
-begin
-  GTIOPFManager.VisitorManager.Execute('TCustomList_listsave', self);
-end;
-
-procedure TCustomList.SetItems(i: integer; const AValue: TCustom);
-begin
-  inherited SetItems(i, AValue);
-end;
-function TCustomList.FindByOID(const AOID: string): integer;
-begin
-  if self.Count > 0 then
-    self.Clear;
-    
-  Criteria.ClearAll;
-  Criteria.AddEqualTo('OID', AOID);
-  Read;
-  result := Count;
 end;
 
 { TPerson_Create }
@@ -838,8 +673,6 @@ var
   lCtr: integer;
   lParam: TSelectParam;
   lList: TtiMappedFilteredObjectList;
-  lOrdInfo: PTypeInfo;
-  lOrdDate: PTypeData;
 begin
   lList := TtiMappedFilteredObjectList(Visited);
   
@@ -873,260 +706,11 @@ var
   lCtr: integer;
   lParam: TSelectParam;
   lList: TtiMappedFilteredObjectList;
-  lOrdInfo: PTypeInfo;
-  lOrdDate: PTypeData;
 begin
   lList := TtiMappedFilteredObjectList(Visited);
   
   lParam := TSelectParam(lList.Params.FindByProps(['ParamName'], ['AName']));
   Query.ParamAsString['user_first'] := lParam.Value;
-end;
-
-{ TCustom_Create }
-function TCustom_Create.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posCreate;
-end;
-
-procedure TCustom_Create.Init;
-begin
-  Query.SQLText := 
-    'INSERT INTO person(' + 
-    ' OID, ' + 
-    ' cust_name, ' + 
-    ' address, ' + 
-    ' address2' + 
-    ') VALUES (' +
-    ' :OID, ' +
-    ' :cust_name, ' + 
-    ' :address, ' + 
-    ' :address2' + 
-    ') ';
-end;
-
-procedure TCustom_Create.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-  Query.ParamAsString['cust_name'] := lObj.Name;
-  Query.ParamAsString['address'] := lObj.Address;
-  Query.ParamAsString['address2'] := lObj.Address2;
-end;
-
-{ TCustom_Save }
-function TCustom_Save.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posUpdate;
-end;
-
-procedure TCustom_Save.Init;
-begin
-  Query.SQLText := 
-    'UPDATE person SET ' +
-    ' cust_name = :cust_name, ' + 
-    ' address = :address, ' + 
-    ' address2 = :address2 ' + 
-    'WHERE OID = :OID' ;
-end;
-
-procedure TCustom_Save.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-  Query.ParamAsString['cust_name'] := lObj.Name;
-  Query.ParamAsString['address'] := lObj.Address;
-  Query.ParamAsString['address2'] := lObj.Address2;
-end;
-
-{ TCustom_Read }
-function TCustom_Read.AcceptVisitor: Boolean;
-begin
-  result := (Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean);
-end;
-
-procedure TCustom_Read.Init;
-begin
-  Query.SQLText := 
-    'SELECT ' + 
-    ' OID, ' +
-    ' cust_name, ' + 
-    ' address, ' + 
-    ' address2 ' + 
-    'FROM  person WHERE OID = :OID' ;
-end;
-
-procedure TCustom_Read.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-end;
-
-procedure TCustom_Read.MapRowToObject;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignFromTIQuery('OID',Query);
-  lObj.Name := Query.FieldAsString['cust_name'];
-  lObj.Address := Query.FieldAsString['address'];
-  lObj.Address2 := Query.FieldAsString['address2'];
-end;
-
-{ TCustom_Delete }
-function TCustom_Delete.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posDelete;
-end;
-
-procedure TCustom_Delete.Init;
-begin
-  Query.SQLText := 
-    'DELETE FROM person ' +
-    'WHERE OID = :OID';
-end;
-
-procedure TCustom_Delete.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-end;
-
-{ TCustomList_Read }
-function TCustomList_Read.AcceptVisitor: Boolean;
-begin
-  result := (Visited.ObjectState = posEmpty);
-end;
-
-procedure TCustomList_Read.Init;
-var
-  lFiltered: ItiFiltered;
-  lWhere: string;
-  lOrder: string;
-  lSQL: string;
-begin
-  if Supports(Visited, ItiFiltered, lFiltered) then
-  begin
-    if lFiltered.GetCriteria.HasCriteria then
-      lWhere := ' WHERE ' + tiCriteriaAsSQL(lFiltered.GetCriteria)
-    else
-      lWhere := '';
-    if lFiltered.GetCriteria.hasOrderBy then
-      lOrder := tiCriteriaOrderByAsSQL(lFiltered.GetCriteria)
-    else
-      lOrder := '';
-  end;
-  
-  lSQL := 
-    'SELECT ' + 
-    ' OID, ' +
-    ' cust_name, ' + 
-    ' address, ' + 
-    ' address2 ' + 
-    'FROM  person %s %s ;';
-  
-  Query.SQLText := gFormatSQL(Format(lSQL, [lWhere, lOrder]), TCustom);
-  
-end;
-
-procedure TCustomList_Read.MapRowToObject;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom.Create;
-  lObj.OID.AssignFromTIQuery('OID',Query);
-  lObj.Name := Query.FieldAsString['cust_name'];
-  lObj.Address := Query.FieldAsString['address'];
-  lObj.Address2 := Query.FieldAsString['address2'];
-  lObj.ObjectState := posClean;
-  TtiObjectList(Visited).Add(lObj);
-end;
-
-{ TCustomList_Create }
-function TCustomList_Create.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posCreate;
-end;
-
-procedure TCustomList_Create.Init;
-begin
-  Query.SQLText := 
-    'INSERT INTO person(' + 
-    ' OID, ' + 
-    ' cust_name, ' + 
-    ' address, ' + 
-    ' address2' + 
-    ') VALUES (' +
-    ' :OID, ' +
-    ' :cust_name, ' + 
-    ' :address, ' + 
-    ' :address2' + 
-    ') ';
-end;
-
-procedure TCustomList_Create.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-  Query.ParamAsString['cust_name'] := lObj.Name;
-  Query.ParamAsString['address'] := lObj.Address;
-  Query.ParamAsString['address2'] := lObj.Address2;
-end;
-
-{ TCustomList_Delete }
-function TCustomList_Delete.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posDelete;
-end;
-
-procedure TCustomList_Delete.Init;
-begin
-  Query.SQLText := 
-    'DELETE FROM person ' +
-    'WHERE OID = :OID';
-end;
-
-procedure TCustomList_Delete.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-end;
-{ TCustomList_Save }
-function TCustomList_Save.AcceptVisitor: Boolean;
-begin
-  result := Visited.ObjectState = posUpdate;
-end;
-
-procedure TCustomList_Save.Init;
-begin
-  Query.SQLText := 
-    'UPDATE person SET ' +
-    ' cust_name = :cust_name, ' + 
-    ' address = :address, ' + 
-    ' address2 = :address2 ' + 
-    'WHERE OID = :OID' ;
-end;
-
-procedure TCustomList_Save.SetupParams;
-var
-  lObj: TCustom;
-begin
-  lObj := TCustom(Visited);
-  lObj.OID.AssignToTIQuery('OID',Query);
-  Query.ParamAsString['cust_name'] := lObj.Name;
-  Query.ParamAsString['address'] := lObj.Address;
-  Query.ParamAsString['address2'] := lObj.Address2;
 end;
 
 initialization

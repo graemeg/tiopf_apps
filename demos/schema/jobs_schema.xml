@@ -39,7 +39,7 @@
                     </mapping>   
                     <!-- Selections are used to create custom methods of the TtiObjectList to retrieve custom queries. -->
                     <selections>
-                        <select type="func" name="FindJobsForUser">
+                        <select type="func" name="FindByUser">
                             <params>                                
                                 <item name="AUser" type="string" pass-by="const" sql-param="user_oid"/>
                             </params>
@@ -91,7 +91,29 @@
                     <mapping table="user_job_relation" pk="OID" pk-field="OID" oid-type="string">                        
                         <prop-map prop="JobOID" field="job_oid" type="string"/>
                         <prop-map prop="UserOID" field="user_oid" type="string"/>                        
-                    </mapping>                                        
+                    </mapping>
+                    <selections> 
+                        <select type="func" name="FindByUser">                        
+                            <params>
+                                <!-- Notice extra attribute "type-name".  Enums just have this extra attribute. -->
+                                <item name="AUserOID" type="string" pass-by="const" sql-param="user_oid"/>                                                           
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        USER_JOB_RELATION 
+                                    WHERE 
+                                        USER_JOB_RELATION.USER_OID = :USER_OID                                                                      
+                                ]]>
+                            </sql>                            
+                        </select>                                        
+                    </selections>
+                    
+                    <validators>
+                        <item type="required" prop="JobOID"/>                        
+                    </validators>                    
                 </class>
                                               
             </classes>

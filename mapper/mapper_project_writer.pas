@@ -10,7 +10,9 @@ interface
 uses
   Classes
   ,SysUtils
+  ,dateutils
   ,mapper
+  ,tiUtils
   ;
 
 type
@@ -21,7 +23,6 @@ type
     procedure SetBaseDir(const AValue: string);
   protected
     procedure   PrepareUnitList(AList: TStringList);
-//    procedure   WriteProjectUnits;
     procedure   WriteUnitEnums(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteSingleUnitEnum(ASL: TStringList; AEnumDef: TMapEnum);
     procedure   WriteUnitClasses(ASL: TStringList; AUnitDef: TMapUnitDef);
@@ -94,8 +95,10 @@ type
     procedure   WriteClassListSelectMethodImp(ASL: TStringList; AClassDef: TMapClassDef;
       ASelect: TClassMappingSelect);
     // Validators
-    procedure   WriteClassValidatorIntf(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteClassValidatorImp(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteClassIsValidIntf(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteClassIsValidImp(ASL: TStringList; AClassDef: TMapClassDef);
+    function    DoGetValidatorTestString(const APropName: string; const APropType: TMapPropType;
+      const AValType: TValidatorType; AValue: Variant): string;
   public
     property    BaseDir: string read FBaseDir write SetBaseDir;
     procedure   WriteUnit(AUnit: TMapUnitDef; ASL: TStringList); virtual;
@@ -105,6 +108,20 @@ type
     constructor Create(AProject: TMapProject); override;
     destructor  Destroy; override;
   end;
+
+  TDateTimeParts = record
+    Year: word;
+    Month: word;
+    Day: word;
+    Hour: word;
+    Minute: word;
+    Second: word;
+    MSecond: word;
+  end;
+
+const
+  SOME_VALUE = 'this value';
+
 
 implementation
 
@@ -118,6 +135,142 @@ end;
 destructor TMapperProjectWriter.Destroy;
 begin
   inherited Destroy;
+end;
+
+function TMapperProjectWriter.DoGetValidatorTestString(const APropName: string;
+  const APropType: TMapPropType; const AValType: TValidatorType; AValue: Variant): string;
+var
+  lStubIf: string;
+  lDateTime: TDateTime;
+  lParts: TDateTimeParts;
+begin
+  lStubIf := 'if ' + APropName;
+
+  case AValType of
+    vtGreater:
+      begin
+        case APropType of
+          ptInteger, ptInt64:
+            result := lStubIf + ' <= ' + IntToStr(AValue) + ' then';
+          ptDateTime:
+            begin
+              lDateTime := AValue;
+              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+                lParts.Second, lParts.MSecond);
+              lStubIf := lStubIf + ' <= EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
+                IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+                IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptFloat:
+              result := lStubIf + ' <= ' + FormatFloat('#0.00', AValue) + ' then';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+    vtGreaterEqual:
+      begin
+        case APropType of
+          ptInteger, ptInt64:
+            result := lStubIf + ' < ' + IntToStr(AValue) + ' then';
+          ptDateTime:
+            begin
+              lDateTime := AValue;
+              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+                lParts.Second, lParts.MSecond);
+              lStubIf := lStubIf + ' < EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
+                IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+                IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptFloat:
+              result := lStubIf + ' < ' + FormatFloat('#0.00', AValue) + ' then';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+    vtLess:
+      begin
+        case APropType of
+          ptInteger, ptInt64:
+            result := lStubIf + ' >= ' + IntToStr(AValue) + ' then';
+          ptDateTime:
+            begin
+              lDateTime := AValue;
+              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+                lParts.Second, lParts.MSecond);
+              lStubIf := lStubIf + ' >= EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
+                IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+                IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptFloat:
+              result := lStubIf + ' >= ' + FormatFloat('#0.00', AValue) + ' then';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+    vtLessEqual:
+      begin
+        case APropType of
+          ptInteger, ptInt64:
+            result := lStubIf + ' > ' + IntToStr(AValue) + ' then';
+          ptDateTime:
+            begin
+              lDateTime := AValue;
+              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+                lParts.Second, lParts.MSecond);
+              lStubIf := lStubIf + ' > EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
+                IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+                IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptFloat:
+              result := lStubIf + ' > ' + FormatFloat('#0.00', AValue) + ' then';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+    vtNotEqual:
+      begin
+        case APropType of
+          ptInteger, ptInt64:
+            result := lStubIf + ' = ' + IntToStr(AValue) + ' then';
+          ptDateTime:
+            begin
+              lDateTime := AValue;
+              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+                lParts.Second, lParts.MSecond);
+              lStubIf := lStubIf + ' = EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
+                IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+                IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptFloat:
+              result := lStubIf + ' = ' + FormatFloat('#0.00', AValue) + ' then';
+          ptString:
+              result := lStubIf + ' = ' + QuotedStr(AValue) + ' then';
+          ptBoolean:
+              result := lStubIf + ' = ' + BoolToStr(AValue, True) + ' then';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+    vtRequired:
+      begin
+        case APropType of
+          ptDateTime:
+            begin
+              //lDateTime := AValue;
+              //DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+              //  lParts.Second, lParts.MSecond);
+              //lStubIf := lStubIf + ' EncodeDate(' + IntToStr(lParts.Year) + ', ' +
+              //  IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
+              //  IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
+            end;
+          ptString:
+              result := lStubIf + ' = '''' then ';
+          else
+            Raise Exception.Create('Operation not valid for type');
+        end;
+      end;
+
+  end;
 end;
 
 procedure TMapperProjectWriter.PrepareUnitList(AList: TStringList);
@@ -525,16 +678,127 @@ begin
     end;
 end;
 
-procedure TMapperProjectWriter.WriteClassValidatorImp(ASL: TStringList;
+procedure TMapperProjectWriter.WriteClassIsValidImp(ASL: TStringList;
   AClassDef: TMapClassDef);
+var
+  lValList: TMapValidatorList;
+  lVal: TMapValidator;
+  lCtr: Integer;
+  lProp: TMapClassProp;
+  lIfStub: string;
 begin
 
+  if AClassDef.Validators.Count = 0 then
+    exit;
+
+  WriteLine('function ' + AClassDef.BaseClassName + '.IsValid(const AErrors: TtiObjectErrors): boolean;', ASL);
+  WriteLine('var', ASL);
+    IncTab;
+      WriteLine('lMsg: string;', ASL);
+    DecTab;
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('Result := inherited IsValid(AErrors);', ASL);
+      WriteLine('if not result then exit;', ASL);
+
+      WriteBreak(ASL);
+
+      for lCtr := 0 to AClassDef.Validators.Count - 1 do
+        begin
+          lVal := AClassDef.Validators.Items[lCtr];
+          lProp := TMapClassProp(AClassDef.ClassProps.FindByProps(['PropName'], [lVal.ClassProp], false));
+          lIfStub := DoGetValidatorTestString(lVal.ClassProp, lProp.PropType, lVal.ValidatorType, lVal.Value);
+
+          case lVal.ValidatorType of
+            vtRequired:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, ''' + lProp.PropName + ''');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+            vtGreater:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      incTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterValidatorMsg(self, ''' + lProp.PropName + ''', ' +
+                          lProp.PropName + ');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+            vtGreaterEqual:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, ''' + lProp.PropName + ''', ' +
+                          lProp.PropName + ');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+            vtLess:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanValidatorMsg(self, ''' + lProp.PropName + ''', ' +
+                          lProp.PropName + ');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+            vtLessEqual:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanOrEqualValidatorMsg(self, ''' + lProp.PropName + ''', ' +
+                          lProp.PropName + ');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+            vtNotEqual:
+              begin
+                WriteLine(lIfStub, ASL);
+                  IncTab;
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, ''' + lProp.PropName + ''', ' +
+                          lProp.PropName + ');', ASL);
+                        WriteLine('AErrors.AddError(lMsg);', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  DecTab;
+              end;
+          end;
+          WriteBreak(ASL);
+        end;
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
 end;
 
-procedure TMapperProjectWriter.WriteClassValidatorIntf(ASL: TStringList;
+procedure TMapperProjectWriter.WriteClassIsValidIntf(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
-
+  WriteLine('function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteClassVisitorIntfs(ASL: TStringList;
@@ -636,8 +900,6 @@ begin
       WriteLine('lCtr: integer;', ASL);
       WriteLine('lParam: TSelectParam;', ASL);
       WriteLine('lList: TtiMappedFilteredObjectList;', ASL);
-      WriteLine('lOrdInfo: PTypeInfo;', ASL);
-      WriteLine('lOrdDate: PTypeData;', ASL);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -775,6 +1037,7 @@ begin
       WriteLine(',tiObject', ASL);
       if Project.HasCustomSelects then
         WriteLine(',typinfo', ASL);
+
       WriteLine(',tiAutoMap', ASL);
       WriteLine(',tiOPFManager', ASL);
       WriteLine(',tiVisitorDB', ASL);
@@ -898,6 +1161,8 @@ begin
       WriteLine('result := Count;', ASL);
     DecTab;
   WriteLine('end;', ASL);
+
+
 
 
 
@@ -1213,6 +1478,8 @@ begin
     IncTab;
       WriteClassIntfReadMethod(ASL, AClassDef);
       WriteClassIntfSaveMethod(ASL, AClassDef);
+      if AClassDef.Validators.Count > 0 then
+        WriteClassIsValidIntf(ASL, AClassDef);
     DecTab;
 
   WriteLine('published', ASL);
@@ -1364,6 +1631,7 @@ begin
           WriteClassImpSettersGetters(ASL, lClassDef);
           WriteClassImpReadMethod(ASL, lClassDef);
           WriteClassImpSavemethod(ASL, lClassDef);
+          WriteClassIsValidImp(ASL, lClassDef);
           WriteListClassImp(ASL, lClassDef);
           WriteClassSelectsImps(ASL, lClassDef);
         end;

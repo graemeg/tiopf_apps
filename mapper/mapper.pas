@@ -11,6 +11,7 @@ uses
   Classes
   ,SysUtils
   ,contnrs
+  ,variants
   ,tiObject
   ,tiRTTI
   ,tiAutoMap
@@ -74,6 +75,14 @@ type
   {: Describes validators types. }
   TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
     vtNotEqual, vtRegExp);
+
+
+  // -----------------------------------------------------------------
+  //  Method Objects
+  // -----------------------------------------------------------------
+
+  //TListSortCompare = function (Item1, Item2: Pointer): Integer;
+  TGetValidatorErrorString = function(const AValType: TValidatorType): string;
 
   // -----------------------------------------------------------------
   //  Class Objects
@@ -494,6 +503,7 @@ type
     property    UnitEnums: TMapEnumList read FUnitEnums;
     property    References: TStringList read FReferences;
   public
+    function    HasValidators: boolean;
     constructor Create; override;
     destructor  Destroy; override;
   end;
@@ -595,6 +605,7 @@ type
     procedure SetObjClass(const AValue: TtiObjectClass);
     procedure SetSQL(const AValue: String);
   public
+    //function IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
     property    SQL: String read FSQL write SetSQL;
     property    ObjClass: TtiObjectClass read FObjClass write SetObjClass;
     property    EnumType: TEnumType read FEnumType write SetEnumType;
@@ -629,6 +640,27 @@ type
     destructor  Destroy; override;
   end;
 
+  {: Class for creating validator error strings. }
+  TValidatorStringGenerator = class(TtiObject)
+  public
+    class function GetValueAsString(AObject: TtiObject; const APropName: string; AValue: Variant): string;
+    class function CreateRequiredValidatorMsg(AObject: TtiObject; const APropName: string): string; virtual;
+    class function CreateGreaterValidatorMsg(AObject: TtiObject; const APropName: string;
+      AValue: Variant): string; virtual;
+    class function CreateGreaterOrEqualValidatorMsg(AObject: TtiObject; const APropName: string;
+      AValue: Variant): string; virtual;
+    class function CreateLessThanValidatorMsg(AObject: TtiObject; const APropName: string;
+      AValue: Variant): string; virtual;
+    class function CreateLessThanOrEqualValidatorMsg(AObject: TtiObject; const APropName: string;
+      AValue: Variant): string; virtual;
+    class function CreateNotEqualToValidatorMsg(AObject: TtiObject; const APropName: string;
+      AValue: Variant): string; virtual;
+  end;
+
+  {: Class of  }
+  TValidatorStringGeneratorClass = class of TValidatorStringGenerator;
+
+
   procedure RegisterMappings;
 
   procedure gSetSchemaReaderClass(const AClass: TMapSchemaReaderClass);
@@ -639,6 +671,13 @@ type
   function  gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
   function  gStrToValType(const AString: string): TValidatorType;
   function  GetabsolutePath(Source, Relative: string): string;
+
+  // -----------------------------------------------------------------
+  //  Glob vars
+  // -----------------------------------------------------------------
+
+var
+  ValidatorStringClass: TValidatorStringGeneratorClass;
 
 implementation
 
@@ -754,7 +793,6 @@ begin
     Result := Result + s;
     st.Free;
 end;
-
 
 procedure RegisterMappings;
 begin
@@ -1092,6 +1130,22 @@ begin
   FUnitEnums.Free;
   FReferences.Free;
   inherited Destroy;
+end;
+
+function TMapUnitDef.HasValidators: boolean;
+var
+  lClassCtr: integer;
+begin
+  result := false;
+
+  for lClassCtr := 0 to UnitClasses.Count - 1 do
+    begin
+      if UnitClasses.Items[lClassCtr].Validators.Count > 0 then
+        begin
+          result := true;
+          exit;
+        end;
+    end;
 end;
 
 procedure TMapUnitDef.SetUnitName(const AValue: string);
@@ -2070,6 +2124,98 @@ procedure TMapValidatorList.SetItems(i: integer; const AValue: TMapValidator);
 begin
   inherited SetItems(i, AValue);
 end;
+
+{ TValidatorStringGenerator }
+{
+  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
+    vtNotEqual, vtRegExp);
+}
+
+
+class function TValidatorStringGenerator.CreateGreaterOrEqualValidatorMsg(
+  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+var
+  lType: TtiTypeKind;
+  lValue: string;
+const
+  MSG = 'Value of %s must be greater than or equal to ';
+begin
+  lType := tiGetSimplePropType(AObject, APropName);
+  if lType = tiTKInteger then
+    lValue := IntToStr(AValue)
+  else
+    lValue := formatFloat('#0.00', AValue);
+
+  result := format(MSG, [APropName]) + lValue;
+
+end;
+
+class function TValidatorStringGenerator.CreateGreaterValidatorMsg(
+  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+const
+  MSG = 'Value of %s must be greater than %s.';
+begin
+  result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
+end;
+
+class function TValidatorStringGenerator.CreateLessThanOrEqualValidatorMsg(
+  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+const
+  MSG = 'Value of %s must be greater than or equal to %s.';
+begin
+  result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
+end;
+
+class function TValidatorStringGenerator.CreateLessThanValidatorMsg(
+  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+const
+  MSG = 'Value of %s must be less than or equal to %s.';
+begin
+  result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
+end;
+
+class function TValidatorStringGenerator.CreateNotEqualToValidatorMsg(
+  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+const
+  MSG = 'Value of %s must not equal to %s.';
+begin
+  result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
+end;
+
+class function TValidatorStringGenerator.CreateRequiredValidatorMsg(
+  AObject: TtiObject; const APropName: string): string;
+const
+  MSG = '%s must have a value.';
+begin
+  result := format(MSG, [APropName]);
+end;
+
+class function TValidatorStringGenerator.GetValueAsString(AObject: TtiObject;
+  const APropName: string; AValue: Variant): string;
+var
+  lType: TtiTypeKind;
+  lValue: string;
+begin
+  lType := tiGetSimplePropType(AObject, APropName);
+
+  case lType of
+    tiTKInteger:
+      result := IntToStr(AValue);
+    tiTKBinary:
+      result := BoolToStr(AValue, true);
+    tiTKDateTime:
+      result := DateToStr(AValue);
+    tiTKFloat:
+      result := FormatFloat('#0.00', AValue);
+    tiTKString:
+      result := AValue;
+    else
+      raise Exception.Create('Value out of range');
+  end;
+end;
+
+initialization
+  ValidatorStringClass := TValidatorStringGenerator;
 
 end.
 

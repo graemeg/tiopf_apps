@@ -98,27 +98,21 @@
                                 ]]>
                             </sql>                            
                         </select>                      
-                    </selections>                                                                                                   
-                </class>
-                
-                <!-- Customer Class -->                                                                                  
-                <class                                  
-                    base-class="TCustom"
-                    base-class-parent="TtiObject"                                                                            
-                    auto-map="true"                      
-                    auto-create-list="true">
-                    <!-- Class properties -->
-                    <class-props>                                               
-                        <prop name="Name" type="string"/>                        
-                        <prop name="Address" type="string"/>
-                        <prop name="Address2" type="string"/>                        
-                    </class-props>
-                    <!-- Mapping into the tiOPF framework -->
-                    <mapping table="person" pk="OID" pk-field="OID" oid-type="string">                        
-                        <prop-map prop="Name" field="cust_name" type="string"/>
-                        <prop-map prop="Address" field="address" type="string"/>
-                        <prop-map prop="Address2" field="address2"  type="string"/>                                                                                            
-                    </mapping>    
+                    </selections>  
+                    <!-- 
+                        Validators hook into the TtiObject.IsValid method.
+                        Valid "type" attributes are "required", "greater",
+                        "greater-equal", "less", "less-equal" and "not-equal".
+                        There are plans to include a "reg-exp" option at some point.
+                    -->
+                    <validators>
+                        <item prop="Age" type="greater-equal">
+                            <value>1</value>
+                        </item>
+                        <item prop="FirstName" type="not-equal">
+                            <value>Mud Face</value>
+                        </item>
+                    </validators>                                                                                                 
                 </class>
             </classes>
         </unit>

@@ -24,19 +24,97 @@ const
   JOB_OID = 'E2385E40-70F4-4ECE-A752-3A242EE84165';
   JOB2_OID = '28DEF125-B498-4814-B410-F915681EBC55';
   USER_OID = '8AC4AAEE-F6EC-4FF9-89CD-FBEF375C0259';
-
+  USER2_OID = 'C2FA8BA3-1CEF-4BAB-8C31-22B53FA52AB6';
 implementation
 
 procedure TTestMapper.AllTogetherNow;
+var
+  lPersons: TPersonList;
+  lPerson: TPerson;
+  lJobList: TJobList;
+  lJobRelList: TUserJobRelationList;
+  lRel: TUserJobRelation;
+  lJob: TJob;
+  lCtr: integer;
 begin
+  lPersons := TPersonList.create;
+  try
+    // First, change ownership of all jobs from user 1 to user 2
+    lJobRelList := TUserJobRelationList.Create;
+    try
+      // Convenience method defined in xml schema
+      lJobRelList.FindByUser(USER_OID);
 
+      for lCtr := 0 to lJobRelList.Count - 1 do
+        begin
+          lRel := lJobRelList.Items[lCtr];
+          lRel.UserOID := USER2_OID;
+        end;
+
+      lJobRelList.Save;
+    finally
+      lJobRelList.free;
+    end;
+
+    lJob := TJob.CreateNew;
+    try
+      lJob.JobName := 'Bikini Judge';
+      lJob.JobDesc := 'Enjoying lifes wonders';
+      lJob.Save;
+
+      lRel := TUserJobRelation.CreateNew;
+      try
+        lRel.UserOID := USER_OID;
+        lRel.JobOID := lJob.OID.AsString;
+        lRel.Save;
+      finally
+        lRel.Free;
+      end;
+
+    finally
+      lJob.Free;
+    end;
+
+  finally
+    lpersons.free;
+  end;
+
+  // Finally, find all jobs with status of started and changed to finished
+  lJobList := TJobList.Create;
+  try
+    lJobList.FindByStatus(jsStarted);
+    for lCtr := 0 to lJobList.Count - 1 do
+      begin
+        lJob := lJobList.Items[lCtr];
+        lJob.Status := jsFinished;
+      end;
+    lJobList.Save;
+  finally
+    lJobList.free;
+  end;
+
+  // One last thing, lets give the ultimate gift to our older persons
+  // and show how we can use the tiAutomapping registrations along with the
+  // tiCriteriaAsSQL methods to query objects.
+  lPersons := TPersonList.Create;
+  try
+    lPersons.Criteria.AddGreaterOrEqualThan('Age', 40);
+    lPersons.Read;
+    for lCtr := 0 to lPersons.Count - 1 do
+      begin
+        lPerson := lPersons.Items[lCtr];
+        lPerson.Age := lPerson.Age - 10;
+      end;
+    lPersons.Save;
+  finally
+    lPersons.Free;
+  end;
 end;
 
 procedure TTestMapper.TestCreateUserJobRelations;
 var
   lRelList: TUserJobRelationList;
   lRel: TUserJobRelation;
-  lJobList: TJobList;
 begin
   lRelList := TUserJobRelationList.Create;
   try
@@ -54,18 +132,6 @@ begin
 
   finally
     lRelList.Free;
-  end;
-
-  lJobList := TJobList.Create;
-  try
-    lJobList.FindJobsForUser(USER_OID);
-    AssertTrue('Failed Custom method FindJobsForUser', lJobList.Count > 0);
-
-    lJobList.Clear;
-    lJobList.FindByStatus(jsFinished);
-    AssertTrue('Failed Custom method FindByStatus', lJobList.Count = 1);
-  finally
-    lJobList.free;
   end;
 end;
 
