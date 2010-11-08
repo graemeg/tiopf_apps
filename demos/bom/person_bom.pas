@@ -290,15 +290,21 @@ begin
   Result := inherited IsValid(AErrors);
   if not result then exit;
   
-  if Age < 1 then
+  if Age < 18 then
     begin
       lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, 'Age', Age);
       AErrors.AddError(lMsg);
     end;
   
-  if FirstName = 'Mud Face' then
+  if FirstName = '' then 
     begin
-      lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, 'FirstName', FirstName);
+      lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, 'FirstName');
+      AErrors.AddError(lMsg);
+    end;
+  
+  if LastName = '' then 
+    begin
+      lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, 'LastName');
       AErrors.AddError(lMsg);
     end;
   

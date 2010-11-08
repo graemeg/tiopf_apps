@@ -61,8 +61,20 @@
                         <prop-map prop="Age" field="age"  type="integer"/>
                         <prop-map prop="Gender" field="gender" type="enum"/>
                         <prop-map prop="PersonType" field="person_type" type="enum"/>                                                                                        
-                    </mapping>     
-                    
+                    </mapping>    
+                    <!-- 
+                        Validators hook into the TtiObject.IsValid method.
+                        Valid "type" attributes are "required" (string only), "greater",
+                        "greater-equal", "less", "less-equal" and "not-equal".
+                        There are plans to include a "reg-exp" option at some point.
+                    -->
+                    <validators>
+                        <item prop="Age" type="greater-equal">
+                            <value>18</value>
+                        </item>
+                        <item prop="FirstName" type="required"/>
+                        <item prop="LastName" type="required"/>                                                
+                    </validators>                                      
                     <selections>
                         <select type="func" name="FindByGender">
                             <params>
@@ -98,21 +110,7 @@
                                 ]]>
                             </sql>                            
                         </select>                      
-                    </selections>  
-                    <!-- 
-                        Validators hook into the TtiObject.IsValid method.
-                        Valid "type" attributes are "required", "greater",
-                        "greater-equal", "less", "less-equal" and "not-equal".
-                        There are plans to include a "reg-exp" option at some point.
-                    -->
-                    <validators>
-                        <item prop="Age" type="greater-equal">
-                            <value>1</value>
-                        </item>
-                        <item prop="FirstName" type="not-equal">
-                            <value>Mud Face</value>
-                        </item>
-                    </validators>                                                                                                 
+                    </selections>                                                                                                        
                 </class>
             </classes>
         </unit>

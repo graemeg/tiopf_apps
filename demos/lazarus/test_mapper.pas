@@ -204,9 +204,12 @@ begin
     lPer.PersonType := ptCustomer;
     lPer.Gender := gtFemale;
 
+    { Here we test the validators support which allows to defined validators in the xml schema
+    for a class and that have the appropriate IsValid() method written out for the class using
+    the parameters from the schema.}
     AssertTrue('Validators failed', not lPer.IsValid(lErrorMsg));
 
-    // OK.  Change name to a valid name.
+    // OK.  Change name to a valid name and add the last person to the list.
     lPer.FirstName := 'Josh';
     lPersons.Add(lPer);
 
@@ -231,7 +234,8 @@ begin
 
     { Because we hook into the automapping registrations, we leverage the tiCriteriaAsSQL
     methods to create simple filter using tiCriteria but with hard coded visitors.  Allows to use
-    only object's properties for attributes.  See /demos/bom/person_bom.pas -> TPersonList_Read.init method. }
+    object's property names that typically on work for AutoMap visitors for attributes.
+    See /demos/bom/person_bom.pas -> TPersonList_Read.init method. }
     lPersons.Clear;
     lPersons.Criteria.AddEqualTo('FirstName', 'Abby');
     lPersons.Read;

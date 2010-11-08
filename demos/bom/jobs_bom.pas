@@ -51,6 +51,7 @@ type
   public
     procedure   Read; override;
     procedure   Save; override;
+    function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
     property    JobName: string read FJobName write SetJobName;
     property    JobDesc: string read FJobDesc write SetJobDesc;
@@ -355,6 +356,22 @@ begin
   end;
 end;
 
+function TJob.IsValid(const AErrors: TtiObjectErrors): boolean;
+var
+  lMsg: string;
+begin
+  Result := inherited IsValid(AErrors);
+  if not result then exit;
+  
+  if JobName = '' then 
+    begin
+      lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, 'JobName');
+      AErrors.AddError(lMsg);
+    end;
+  
+  result := AErrors.Count = 0;
+end;
+
  {TJobList }
 
 procedure TJobList.Add(AObject: TJob);
@@ -459,6 +476,12 @@ begin
   if JobOID = '' then 
     begin
       lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, 'JobOID');
+      AErrors.AddError(lMsg);
+    end;
+  
+  if UserOID = '' then 
+    begin
+      lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, 'UserOID');
       AErrors.AddError(lMsg);
     end;
   

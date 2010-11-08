@@ -37,6 +37,9 @@
                         <prop-map prop="JobDesc" field="job_desc"/>
                         <prop-map prop="Status" field="job_status" type="enum"/>                        
                     </mapping>   
+                    <validators>
+                        <item type="required" prop="JobName"/>                                                
+                    </validators>   
                     <!-- Selections are used to create custom methods of the TtiObjectList to retrieve custom queries. -->
                     <selections>
                         <select type="func" name="FindByUser">
@@ -112,7 +115,8 @@
                     </selections>
                     
                     <validators>
-                        <item type="required" prop="JobOID"/>                        
+                        <item type="required" prop="JobOID"/>
+                        <item type="required" prop="UserOID"/>                        
                     </validators>                    
                 </class>
                                               
