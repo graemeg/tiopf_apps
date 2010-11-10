@@ -30,7 +30,6 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="-f &quot;M:\LazarusProjects\poker_clock\schema\main_schema.xml&quot;"/>
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
@@ -48,7 +47,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
-        <CursorPos X="16" Y="79"/>
+        <CursorPos X="17" Y="61"/>
         <UsageCount Value="201"/>
         <Loaded Value="True"/>
       </Unit0>
