@@ -50,11 +50,10 @@
         <Filename Value="maptest.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="maptest"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="26" Y="21"/>
+        <CursorPos X="13" Y="14"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -62,10 +61,11 @@
         <Filename Value="test_mapper.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="test_mapper"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="31"/>
-        <CursorPos X="16" Y="234"/>
+        <TopLine Value="190"/>
+        <CursorPos X="37" Y="210"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -112,8 +112,8 @@
         <UnitName Value="person_bom"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="287"/>
-        <CursorPos X="12" Y="308"/>
+        <TopLine Value="284"/>
+        <CursorPos X="1" Y="312"/>
         <UsageCount Value="72"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -247,124 +247,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="207" Column="1" TopLine="184"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="291" Column="1" TopLine="283"/>
       </Position1>
       <Position2>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="290" Column="1" TopLine="283"/>
+        <Caret Line="293" Column="1" TopLine="283"/>
       </Position2>
       <Position3>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="291" Column="1" TopLine="283"/>
+        <Caret Line="299" Column="1" TopLine="283"/>
       </Position3>
       <Position4>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="293" Column="1" TopLine="283"/>
+        <Caret Line="301" Column="1" TopLine="283"/>
       </Position4>
       <Position5>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="299" Column="1" TopLine="283"/>
+        <Caret Line="302" Column="1" TopLine="283"/>
       </Position5>
       <Position6>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="301" Column="1" TopLine="283"/>
+        <Caret Line="305" Column="1" TopLine="283"/>
       </Position6>
       <Position7>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="302" Column="1" TopLine="283"/>
+        <Caret Line="306" Column="1" TopLine="283"/>
       </Position7>
       <Position8>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="305" Column="1" TopLine="284"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2925" Column="1" TopLine="2908"/>
       </Position8>
       <Position9>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="207" Column="1" TopLine="184"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2927" Column="1" TopLine="2908"/>
       </Position9>
       <Position10>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="290" Column="1" TopLine="283"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2928" Column="1" TopLine="2908"/>
       </Position10>
       <Position11>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="291" Column="1" TopLine="283"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2931" Column="1" TopLine="2908"/>
       </Position11>
       <Position12>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="293" Column="1" TopLine="283"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2933" Column="1" TopLine="2908"/>
       </Position12>
       <Position13>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="299" Column="1" TopLine="283"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="210" Column="1" TopLine="202"/>
       </Position13>
       <Position14>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="301" Column="1" TopLine="283"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="211" Column="1" TopLine="202"/>
       </Position14>
       <Position15>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="302" Column="1" TopLine="283"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="213" Column="1" TopLine="202"/>
       </Position15>
       <Position16>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="305" Column="1" TopLine="283"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="238" Column="5" TopLine="217"/>
       </Position16>
       <Position17>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="306" Column="1" TopLine="283"/>
+        <Caret Line="290" Column="1" TopLine="283"/>
       </Position17>
       <Position18>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <Caret Line="2925" Column="1" TopLine="2908"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="291" Column="1" TopLine="283"/>
       </Position18>
       <Position19>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <Caret Line="2927" Column="1" TopLine="2908"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="293" Column="1" TopLine="283"/>
       </Position19>
       <Position20>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <Caret Line="2928" Column="1" TopLine="2908"/>
+        <Filename Value="..\bom\jobs_bom.pas"/>
+        <Caret Line="304" Column="48" TopLine="218"/>
       </Position20>
       <Position21>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <Caret Line="2931" Column="1" TopLine="2908"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="308" Column="12" TopLine="284"/>
       </Position21>
       <Position22>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <Caret Line="2933" Column="1" TopLine="2908"/>
+        <Filename Value="test_mapper.pas"/>
+        <Caret Line="210" Column="1" TopLine="190"/>
       </Position22>
       <Position23>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="210" Column="1" TopLine="202"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="293" Column="1" TopLine="284"/>
       </Position23>
       <Position24>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="211" Column="1" TopLine="202"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="299" Column="1" TopLine="284"/>
       </Position24>
       <Position25>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="213" Column="1" TopLine="202"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="305" Column="1" TopLine="284"/>
       </Position25>
       <Position26>
-        <Filename Value="test_mapper.pas"/>
-        <Caret Line="238" Column="5" TopLine="217"/>
+        <Filename Value="..\bom\person_bom.pas"/>
+        <Caret Line="311" Column="1" TopLine="284"/>
       </Position26>
       <Position27>
         <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="290" Column="1" TopLine="283"/>
+        <Caret Line="312" Column="1" TopLine="284"/>
       </Position27>
       <Position28>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="291" Column="1" TopLine="283"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2925" Column="1" TopLine="2908"/>
       </Position28>
       <Position29>
-        <Filename Value="..\bom\person_bom.pas"/>
-        <Caret Line="293" Column="1" TopLine="283"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2931" Column="1" TopLine="2908"/>
       </Position29>
       <Position30>
-        <Filename Value="..\bom\jobs_bom.pas"/>
-        <Caret Line="304" Column="48" TopLine="218"/>
+        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
+        <Caret Line="2933" Column="1" TopLine="2908"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -392,7 +392,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="4">
       <Item1>
         <Source Value="..\..\mapper\fpc_schema_reader.pas"/>
         <Line Value="524"/>
@@ -401,6 +401,14 @@
         <Source Value="..\..\mapper\mapper_project_writer.pas"/>
         <Line Value="642"/>
       </Item2>
+      <Item3>
+        <Source Value="test_mapper.pas"/>
+        <Line Value="210"/>
+      </Item3>
+      <Item4>
+        <Source Value="..\bom\person_bom.pas"/>
+        <Line Value="293"/>
+      </Item4>
     </BreakPoints>
     <Exceptions Count="3">
       <Item1>

@@ -207,7 +207,7 @@ begin
     { Here we test the validators support which allows to defined validators in the xml schema
     for a class and that have the appropriate IsValid() method written out for the class using
     the parameters from the schema.}
-    AssertTrue('Validators failed', not lPer.IsValid(lErrorMsg));
+    AssertTrue('Validators failed', lPer.IsValid(lErrorMsg));
 
     // OK.  Change name to a valid name and add the last person to the list.
     lPer.FirstName := 'Josh';
