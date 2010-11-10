@@ -50,7 +50,7 @@ type
   // -----------------------------------------------------------------
 
   {: Type of class property. }
-  TMapPropType = (ptString, ptAnsiString, ptFloat, ptInteger, ptInt64,
+  TMapPropType = (ptString, ptAnsiString, ptDouble, ptSingle, ptCurrency, ptInteger, ptInt64,
     ptDateTime, ptBoolean, ptEnum);
 
   {: Type of class definition to create. }
@@ -122,6 +122,7 @@ type
     FIncludes: TStringList;
     FFileName: string;
     FMaxEditorCodeWidth: integer;
+    FOrigOutDirectory: string;
     FOutputDirectory: string;
     FProjectClasses: TMapClassDefList;
     FProjectEnums: TMapEnumList;
@@ -134,6 +135,7 @@ type
     procedure SetEnumType(const AValue: TEnumType);
     procedure SetFileName(const AValue: string);
     procedure SetMaxEditorCodeWidth(const AValue: integer);
+    procedure SetOrigOutDirectory(const AValue: string);
     procedure SetOutputDirectory(const AValue: string);
     procedure SetProjectClasses(const AValue: TMapClassDefList);
     procedure SetProjectName(const AValue: string);
@@ -143,6 +145,7 @@ type
     property    FileName: string read FFileName write SetFileName;
     property    ProjectName: string read FProjectName write SetProjectName;
     property    Includes: TStringList read FIncludes;
+    property    OrigOutDirectory: string read FOrigOutDirectory write SetOrigOutDirectory;
     property    OutputDirectory: string read FOutputDirectory write SetOutputDirectory;
     property    BaseDirectory: string read FBaseDirectory write SetBaseDirectory;
     property    TabSpaces: integer read FTabSpaces write SetTabSpaces;
@@ -670,6 +673,7 @@ type
   function  gPropTypeToStr(const APropType: TMapPropType): string;
   function  gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
   function  gStrToValType(const AString: string): TValidatorType;
+  function  gValTypeToStr(const AValType: TValidatorType): string;
   function  GetabsolutePath(Source, Relative: string): string;
 
   // -----------------------------------------------------------------
@@ -767,6 +771,22 @@ begin
     end;
 end;
 
+function gValTypeToStr(const AValType: TValidatorType): string;
+begin
+
+  case AValType of
+    vtRequired: result := 'required';
+    vtGreater: result := 'greater';
+    vtGreaterEqual: result := 'greater-equal';
+    vtLess: result := 'less';
+    vtLessEqual: result := 'less-equal';
+    vtNotEqual: result := 'not-equal';
+    vtRegExp: result := 'reg-exp';
+  else
+    Raise Exception.Create('gValTypeToStr: Value out of range');
+  end;
+end;
+
 function GetabsolutePath(Source, Relative: string): string;
 var
     i, Num, num1: integer;
@@ -839,8 +859,12 @@ begin
     result := ptBoolean
   else if lType = 'enum' then
     result := ptEnum
-  else if (lType = 'currency') or (lType = 'double') or (lType = 'extended') then
-    result := ptFloat
+  else if lType = 'currency' then
+    result := ptCurrency
+  else if lType = 'double' then
+    Result := ptCurrency
+  else if lType = 'single' then
+    result := ptSingle
   else
     raise Exception.Create('gStrToPropType: Invalid parameter: ' + AString);
 
@@ -854,6 +878,11 @@ begin
     ptInteger: result := 'Integer';
     ptAnsiString: result := 'AnsiString';
     ptBoolean: result := 'Boolean';
+    ptDateTime: Result := 'TDateTime';
+    ptSingle: result := 'Single';
+    ptDouble: result := 'Double';
+    ptCurrency: result := 'Currency';
+    ptEnum: result := 'enum';
   end;
 end;
 
@@ -885,10 +914,6 @@ var
 begin
   lStr := LowerCase(AString);
 
-  {
-  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
-    vtNotEqual, vtRegExp);
-  }
   if lStr = 'required' then
     result := vtRequired
   else if lStr = 'greater' then
@@ -904,7 +929,7 @@ begin
   else if lStr = 'req-exp' then
     result := vtRegExp
   else
-    Raise Exception.Create('Value out of range');
+    Raise Exception.Create('gStrToValType: Value out of range');
 end;
 
 { TMapProject }
@@ -996,6 +1021,12 @@ procedure TMapProject.SetMaxEditorCodeWidth(const AValue: integer);
 begin
   if FMaxEditorCodeWidth=AValue then exit;
   FMaxEditorCodeWidth:=AValue;
+end;
+
+procedure TMapProject.SetOrigOutDirectory(const AValue: string);
+begin
+  if FOrigOutDirectory=AValue then exit;
+  FOrigOutDirectory:=AValue;
 end;
 
 procedure TMapProject.SetOutputDirectory(const AValue: string);
@@ -2021,7 +2052,7 @@ begin
           Query.ParamAsBoolean[lParam.SQLParamName] := lParam.Value;
         ptDateTime:
           Query.ParamAsDateTime[lParam.SQLParamName] := lParam.Value;
-        ptFloat:
+        ptDouble, ptCurrency, ptSingle:
           Query.ParamAsFloat[lParam.SQLParamName] := lParam.Value;
         ptInt64, ptInteger:
           Query.ParamAsInteger[lParam.SQLParamName] := lParam.Value;

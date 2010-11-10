@@ -161,10 +161,10 @@ begin
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
                 IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
             end;
-          ptFloat:
+          ptDouble, ptCurrency, ptSingle:
               result := lStubIf + ' <= ' + FormatFloat('#0.00', AValue) + ' then';
           else
-            Raise Exception.Create('Operation not valid for type');
+            Raise Exception.Create(ClassName + '.DoGetValidatorTestString: Operation not valid for type');
         end;
       end;
     vtGreaterEqual:
@@ -181,7 +181,7 @@ begin
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
                 IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
             end;
-          ptFloat:
+          ptDouble, ptCurrency, ptSingle:
               result := lStubIf + ' < ' + FormatFloat('#0.00', AValue) + ' then';
           else
             Raise Exception.Create('Operation not valid for type');
@@ -201,10 +201,10 @@ begin
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
                 IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
             end;
-          ptFloat:
+          ptDouble, ptCurrency, ptSingle:
               result := lStubIf + ' >= ' + FormatFloat('#0.00', AValue) + ' then';
           else
-            Raise Exception.Create('Operation not valid for type');
+            Raise Exception.Create(ClassName + '.DoGetValidatorTestString: Operation not valid for type');
         end;
       end;
     vtLessEqual:
@@ -221,10 +221,10 @@ begin
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
                 IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
             end;
-          ptFloat:
+          ptDouble, ptCurrency, ptSingle:
               result := lStubIf + ' > ' + FormatFloat('#0.00', AValue) + ' then';
           else
-            Raise Exception.Create('Operation not valid for type');
+            Raise Exception.Create(ClassName + '.DoGetValidatorTestString: Operation not valid for type');
         end;
       end;
     vtNotEqual:
@@ -241,14 +241,14 @@ begin
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
                 IntToStr(lParts.Minute) + ', ' + IntToStr(lParts.Second) + ', ' + IntToStr(lParts.MSecond) + ' then';
             end;
-          ptFloat:
+          ptDouble, ptCurrency, ptSingle:
               result := lStubIf + ' = ' + FormatFloat('#0.00', AValue) + ' then';
           ptString:
               result := lStubIf + ' = ' + QuotedStr(AValue) + ' then';
           ptBoolean:
               result := lStubIf + ' = ' + BoolToStr(AValue, True) + ' then';
           else
-            Raise Exception.Create('Operation not valid for type');
+            Raise Exception.Create(ClassName + '.DoGetValidatorTestString: Operation not valid for type');
         end;
       end;
     vtRequired:
@@ -256,6 +256,7 @@ begin
         case APropType of
           ptDateTime:
             begin
+              raise Exception.Create(ClassName + '.DoGetValidatorTestString: TDateTime not support for vtRequired')
               //lDateTime := AValue;
               //DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
               //  lParts.Second, lParts.MSecond);
@@ -266,7 +267,7 @@ begin
           ptString:
               result := lStubIf + ' = '''' then ';
           else
-            Raise Exception.Create('Operation not valid for type');
+            Raise Exception.Create(ClassName + '.DoGetValidatorTestString: Operation not valid for type (' + APropName + ')');
         end;
       end;
 
@@ -555,7 +556,9 @@ begin
             ptString, ptAnsiString: lParamStr := 'ptString';
             ptBoolean: lParamStr := 'ptBoolean';
             ptDateTime: lParamStr := 'ptDateTime';
-            ptFloat: lParamStr := 'ptFloat';
+            ptDouble: lParamStr := 'ptFloat';
+            ptSingle: lParamStr := 'ptSingle';
+            ptCurrency: lParamStr := 'ptCurrency';
             ptInt64, ptInteger: lParamStr := 'ptInteger';
             ptEnum: lParamStr := 'ptEnum';
           end;
@@ -707,6 +710,12 @@ begin
         begin
           lVal := AClassDef.Validators.Items[lCtr];
           lProp := TMapClassProp(AClassDef.ClassProps.FindByProps(['PropName'], [lVal.ClassProp], false));
+
+          if lProp = nil then
+            raise Exception.Create(ClassName + '.WriteClassIsValidImp: Validator defined for property ' +
+              lVal.ClassProp + ' but no property with that name is registered to class ' +
+              AClassDef.BaseClassName + '.');
+
           lIfStub := DoGetValidatorTestString(lVal.ClassProp, lProp.PropType, lVal.ValidatorType, lVal.Value);
 
           case lVal.ValidatorType of
@@ -920,7 +929,7 @@ begin
               WriteLine('Query.ParamAsBoolean[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
             ptDateTime:
               WriteLine('Query.ParamAsDateTime[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
-            ptFloat:
+            ptDouble, ptCurrency, ptSingle:
               WriteLine('Query.ParamAsFloat[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
             ptInteger, ptInt64:
               WriteLine('Query.ParamAsInteger[''' + lParam.SQLParamName + '''] := lParam.Value;', ASL);
@@ -1229,7 +1238,7 @@ begin
             WriteLine('tiSetProperty(lObj, ''' + lPropMap.PropName + ''', Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
         ptDateTime:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsDatetime[''' + lPropMap.FieldName + '''];', ASL);
-        ptFloat:
+        ptDouble, ptCurrency, ptSingle:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsFloat[''' + lPropMap.FieldName + '''];', ASL);
         ptInt64, ptInteger:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsInteger[''' + lPropMap.FieldName + '''];', ASL);
@@ -1262,7 +1271,7 @@ begin
             WriteLine('tiSetProperty(lObj, ''' + lPropMap.PropName + ''', Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
         ptDateTime:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsDatetime[''' + lPropMap.FieldName + '''];', ASL);
-        ptFloat:
+        ptDouble, ptCurrency, ptSingle:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsFloat[''' + lPropMap.FieldName + '''];', ASL);
         ptInt64, ptInteger:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsInteger[''' + lPropMap.FieldName + '''];', ASL);
@@ -1425,7 +1434,7 @@ begin
         ptDateTime:
           WriteLine('Query.ParamAsDateTime[''' + lPropMap.FieldName + '''] := ' +
           'lObj.' + lPropMap.PropName + ';', ASL);
-        ptFloat:
+        ptDouble, ptCurrency, ptSingle:
           WriteLine('Query.ParamAsFloat[''' + lPropMap.FieldName + '''] := ' +
             'lObj.' + lPropMap.PropName + ';', ASL);
         ptInt64, ptInteger:

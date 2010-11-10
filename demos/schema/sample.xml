@@ -6,6 +6,7 @@
     project-name="MyProject"
     enum-type="int"
     outputdir="../bom"
+    make-laz-pkg="true"
     >
     
     <!-- Includes are added to this schema before build-time. -->

@@ -39,6 +39,7 @@ var
   lProj: TMapProject;
   lPath: string;
   lSL: TStringList;
+  lProjWriter: TProjectWriter;
 begin
 
   if not HasOption('f','file') then
@@ -69,6 +70,13 @@ begin
         end;
 
       lWriter.WriteProject(lProj.OutputDirectory);
+
+      //lProjWriter := TProjectWriter.Create;
+      //try
+      //  lProjWriter.WriteProject(lProj, lProj.OutputDirectory, 'backup.xml');
+      //finally
+      //  lProjWriter.Free;
+      //end;
 
       WriteLn('Operation was successful');
       WriteProjectStats(lProj);
