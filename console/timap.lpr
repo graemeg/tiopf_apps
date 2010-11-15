@@ -6,8 +6,7 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, mapper, mapper_project_writer, fpc_schema_reader,
-  fpc_schema_writer;
+  Classes, SysUtils, CustApp, mapper, fpc_schema_writer;
 
 type
 

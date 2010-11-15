@@ -1,0 +1,90 @@
+inherited ProjectInfoEdit: TProjectInfoEdit
+  Left = 589
+  Height = 159
+  Top = 281
+  Width = 358
+  Caption = 'Project Properties'
+  ClientHeight = 159
+  ClientWidth = 358
+  OnClose = FormClose
+  inherited btnCancel: TButton
+    Left = 111
+    Height = 26
+    Top = 95
+    Width = 72
+    TabOrder = 4
+    Visible = False
+  end
+  inherited btnOK: TButton
+    Left = 273
+    Height = 26
+    Top = 127
+    Width = 72
+    Caption = 'Close'
+    OnClick = btnOKClick
+    TabOrder = 3
+  end
+  inherited btnSaveNew: TButton
+    Left = 55
+    Top = 103
+    TabOrder = 5
+    Visible = False
+  end
+  object ProjectNameLabel: TLabel[3]
+    Left = 8
+    Height = 16
+    Top = 19
+    Width = 73
+    Caption = 'Project Name'
+    ParentColor = False
+  end
+  object ProjectNameEdit: TEdit[4]
+    Left = 9
+    Height = 23
+    Top = 40
+    Width = 216
+    TabOrder = 0
+  end
+  object EnumTypeCombo: TComboBox[5]
+    Left = 241
+    Height = 23
+    Top = 40
+    Width = 104
+    ItemHeight = 15
+    ItemIndex = 0
+    Items.Strings = (
+      'int'
+      'string'
+    )
+    Style = csDropDownList
+    TabOrder = 1
+    Text = 'int'
+  end
+  object EnumTypeLabel: TLabel[6]
+    Left = 241
+    Height = 16
+    Top = 19
+    Width = 84
+    Caption = 'Enum Handling'
+    ParentColor = False
+  end
+  object OutputDirLabel: TLabel[7]
+    Left = 9
+    Height = 16
+    Top = 72
+    Width = 134
+    Caption = 'Relative Output Directory'
+    ParentColor = False
+  end
+  object OutputDirEdit: TEdit[8]
+    Left = 10
+    Height = 23
+    Top = 93
+    Width = 216
+    TabOrder = 2
+  end
+  inherited pmCloseMenu: TPopupMenu[9]
+    left = 264
+    top = 80
+  end
+end

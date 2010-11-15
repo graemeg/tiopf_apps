@@ -1,0 +1,18 @@
+object BaseFormView: TBaseFormView
+  Left = 503
+  Height = 240
+  Top = 299
+  Width = 320
+  Caption = 'BaseFormView'
+  LCLVersion = '0.9.29'
+  object pmCloseMenu: TPopupMenu
+    left = 16
+    top = 16
+    object mnuCloseTab: TMenuItem
+      Caption = 'Close this View'
+    end
+    object mnuCloseOthers: TMenuItem
+      Caption = 'Close All Views'
+    end
+  end
+end

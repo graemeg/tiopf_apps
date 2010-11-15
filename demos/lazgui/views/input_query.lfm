@@ -1,0 +1,83 @@
+object InputQuery: TInputQuery
+  Left = 520
+  Height = 127
+  Top = 291
+  Width = 281
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  ClientHeight = 127
+  ClientWidth = 281
+  Position = poMainFormCenter
+  LCLVersion = '0.9.29'
+  object ButtonPanel: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 87
+    Width = 269
+    TabOrder = 4
+    ShowButtons = [pbOK, pbCancel]
+  end
+  object MessageLabel: TLabel
+    Left = 6
+    Height = 16
+    Top = 6
+    Width = 269
+    Align = alTop
+    BorderSpacing.Around = 6
+    Caption = 'Message Not Set'
+    ParentColor = False
+    WordWrap = True
+  end
+  object eInput: TEdit
+    Left = 10
+    Height = 23
+    Top = 40
+    Width = 261
+    TabOrder = 0
+    Visible = False
+  end
+  object cboInput: TComboBox
+    Left = 10
+    Height = 23
+    Top = 40
+    Width = 263
+    ItemHeight = 15
+    TabOrder = 2
+    Visible = False
+  end
+  object DateTimePicker: TZVDateTimePicker
+    Left = 72
+    Height = 23
+    Top = 40
+    Width = 139
+    CenturyFrom = 1941
+    MaxDate = 2958465
+    MinDate = -53780
+    TabOrder = 1
+    TrailingSeparator = False
+    TextForNullDate = 'NULL'
+    LeadingZeros = True
+    Visible = False
+    Kind = dtkDateTime
+    TimeFormat = tf24
+    TimeDisplay = tdHMS
+    DateMode = dmComboBox
+    Date = 40493
+    Time = 0.82674503471935
+    UseDefaultSeparators = True
+  end
+  object CalcEdit: TCalcEdit
+    Left = 72
+    Height = 23
+    Top = 40
+    Width = 139
+    CalculatorLayout = clSimple
+    AsFloat = 0
+    AsInteger = 0
+    ButtonWidth = 23
+    NumGlyphs = 0
+    MaxLength = 0
+    TabOrder = 3
+    Visible = False
+  end
+end

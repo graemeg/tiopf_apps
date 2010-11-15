@@ -1,0 +1,100 @@
+inherited BaseListView: TBaseListView
+  Left = 470
+  Height = 579
+  Top = 154
+  Width = 692
+  Caption = 'BaseListView'
+  ClientHeight = 579
+  ClientWidth = 692
+  object List: TListView[0]
+    Left = 10
+    Height = 478
+    Top = 32
+    Width = 677
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    Columns = <>
+    ItemIndex = -1
+    TabOrder = 0
+  end
+  object btnClose: TButton[1]
+    Left = 606
+    Height = 33
+    Hint = 'Close this View (ESC)'
+    Top = 536
+    Width = 81
+    Anchors = [akRight, akBottom]
+    Caption = 'Close'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 1
+  end
+  object btnEdit: TButton[2]
+    Left = 98
+    Height = 25
+    Hint = 'Edit Selected (CTRL-E)'
+    Top = 520
+    Width = 81
+    Anchors = [akLeft, akBottom]
+    Caption = 'Edit'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 2
+  end
+  object btnDelete: TButton[3]
+    Left = 186
+    Height = 25
+    Hint = 'Delete Selected (CTRL-D)'
+    Top = 520
+    Width = 81
+    Anchors = [akLeft, akBottom]
+    Caption = 'Delete'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 3
+  end
+  object btnNew: TButton[4]
+    Left = 10
+    Height = 25
+    Hint = 'Create New (CTRL-N)'
+    Top = 520
+    Width = 81
+    Anchors = [akLeft, akBottom]
+    Caption = 'New'
+    ParentShowHint = False
+    ShowHint = True
+    TabOrder = 4
+  end
+  object lblCount: TLabel[5]
+    Left = 10
+    Height = 13
+    Top = 8
+    Width = 670
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
+    Layout = tlCenter
+    ParentColor = False
+  end
+  inherited pmCloseMenu: TPopupMenu[6]
+    left = 48
+  end
+  object pmShorts: TPopupMenu[7]
+    left = 320
+    top = 200
+    object mnuNew: TMenuItem
+      Caption = 'New'
+      ImageIndex = 0
+    end
+    object mnuEdit: TMenuItem
+      Caption = 'Edit'
+      ImageIndex = 1
+    end
+    object mnuDelete: TMenuItem
+      Caption = 'Delete'
+      ImageIndex = 2
+    end
+    object mnuFilter: TMenuItem
+      Caption = 'Filter'
+      ImageIndex = 3
+    end
+  end
+end

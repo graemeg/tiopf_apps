@@ -56,7 +56,8 @@ type
     procedure   WriteClassSelections(AClassDef: TMapClassDef; AClassNode: TDOMElement);
 
   public
-    procedure   WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string =''); virtual;
+    procedure   WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string); virtual; overload;
+    procedure   WriteProject(Aproject: TMapProject; const AFilePath: string); virtual; overload;
     destructor  Destroy; override;
   end;
 
@@ -114,16 +115,28 @@ var
   lCtr: integer;
   lNode: TDomNode;
   lMapNode: TDomNode;
+  lMapPropNode: TDOMNode;
   lNewMapProp: TPropMapping;
+  lLastGood: string;
 begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
       lNode := ANode.Item[lCtr];
       if lNode.NodeType <> COMMENT_NODE then
         begin
+          lMapPropNOde := lNode.Attributes.GetNamedItem('field');
+          if lMapPropNode = nil then
+            begin
+              WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
+              Raise Exception.Create(ClassName + '.ReadClassMapping: Mapping node Attribute "field" not found ' +
+                'reading schema for ' + AClass.BaseClassName);
+            end;
+
           lNewMapProp := TPropMapping.create;
           lNewMapProp.FieldName := lNode.Attributes.GetNamedItem('field').NodeValue;
           lNewMapProp.PropName := lNode.Attributes.GetNamedItem('prop').NodeValue;
+
+          lLastGood := lNewMapProp.PropName;
 
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
@@ -332,6 +345,10 @@ var
   lPath: string;
 begin
   FProject := AProject;
+
+  FProject.Units.Clear;
+  FProject.Includes.Clear;
+
   LoadXMLDoc(AFileName);
 
   lNode := FXML.DocumentElement;
@@ -443,6 +460,7 @@ begin
   lUnitList := FXML.DocumentElement.FindNode('project-units').ChildNodes;
   ReadProjectUnits(lUnitList);
 
+  FProject.FileName := AFileName;
 
 end;
 
@@ -827,16 +845,17 @@ begin
 
 end;
 
-procedure TProjectWriter.WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string ='');
+procedure TProjectWriter.WriteProject(Aproject: TMapProject;
+  const AFilePath: string);
 var
   lDocElem: TDOMElement;
   lNewElem: TDOMElement;
+  lDir: string;
 begin
   if FDoc <> nil then
     begin
       FreeAndNil(FDoc);
     end;
-  FDirectory := ExcludeTrailingPathDelimiter(ADirectory);
 
   FWriterProject := AProject;
 
@@ -856,10 +875,29 @@ begin
 
   WriteProjectUnits(FWriterProject, lDocElem);
 
+  WriteXMLFile(FDoc, AFilePath);
+
+end;
+
+procedure TProjectWriter.WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string);
+begin
+  if FDoc <> nil then
+    begin
+      FreeAndNil(FDoc);
+    end;
+
+  FWriterProject := AProject;
+
+  FDoc := TXMLDocument.Create;
+
+  FDirectory := ExcludeTrailingPathDelimiter(ADirectory);
+
+  FDirectory := ExcludeTrailingPathDelimiter(ExtractFileDir(AFileName));
+
   if AFileName <> '' then
-    WriteXMLFile(FDoc, FDirectory + PathDelim + AFileName)
+    WriteProject(AProject, FDirectory + PathDelim + AFileName)
   else
-    WriteXMLFile(FDoc, FDirectory + PathDelim + FWriterProject.ProjectName + '.xml');
+    WriteProject(AProject, FDirectory + PathDelim + FWriterProject.ProjectName + '.xml');
 end;
 
 procedure TProjectWriter.WriteProjectUnits(AProject: TMapProject;
@@ -868,6 +906,7 @@ var
   lCtr: integer;
   lUnit: TMapUnitDef;
   lUnitsElem: TDOMElement;
+  lNewUnitNode: TDOMElement;
 begin
   lUnitsElem := FDoc.CreateElement('project-units');
   FDoc.DocumentElement.AppendChild(lUnitsElem);
@@ -875,7 +914,10 @@ begin
   for lCtr := 0 to FWriterProject.Units.Count - 1 do
     begin
       lUnit := FWriterProject.Units.Items[lCtr];
-      WriteUnit(lUnit, lUnitsElem);
+      lNewUnitNode := FDoc.CreateElement('unit');
+      lNewUnitNode.SetAttribute('name', lUnit.UnitName);
+      WriteUnit(lUnit, lNewUnitNode);
+      lUnitsElem.AppendChild(lNewUnitNode);
     end;
 end;
 
@@ -916,7 +958,7 @@ begin
 
   WriteUnitEnums(AUnitDef, AUnitNode);
 
-  WriteUnitClasses(AUnitDef, AUnitNode);
+  WriteUnitClasses(AUnitDef, lClassesNode);
 
 end;
 
@@ -954,6 +996,8 @@ begin
     begin
       lEnum := AUnitDef.UnitEnums.Items[lCtr];
       lEnumEl := FDoc.CreateElement('enum');
+      lValuesEl := FDoc.CreateElement('values');
+      lEnumEl.AppendChild(lValuesEl);
       lEnumEl.SetAttribute('name', lEnum.EnumName);
       // items of enum
       for lItemCtr := 0 to lEnum.Values.Count - 1 do
@@ -963,7 +1007,8 @@ begin
           lSingleValNode.SetAttribute('name', lEnumVal.EnumValueName);
           if lEnumVal.EnumValue >= 0 then
             lSingleValNode.SetAttribute('value', IntToStr(lEnumVal.EnumValue));
-          lEnumEl.AppendChild(lSingleValNode);
+          // Append to <values> node
+          lValuesEl.AppendChild(lSingleValNode);
         end;
 
       lEnumsNode.AppendChild(lEnumEl);

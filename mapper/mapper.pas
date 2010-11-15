@@ -160,6 +160,7 @@ type
     property    ProjectEnums: TMapEnumList read FProjectEnums;
     function    FindEnumForPropName(const AUnitName: string; const AClassName: string; const APropName: string): TMapEnum;
     function    HasCustomSelects: boolean;
+    procedure   ClearAll;
     constructor Create; override;
     destructor  Destroy; override;
   end;
@@ -362,12 +363,15 @@ type
     FParams: TSelectParamList;
     FSQL: TStringList;
     procedure SetName(const AValue: string);
+  protected
+    function    GetCaption: string; override;
   public
     property    Params: TSelectParamList read FParams;
     property    SQL: TStringList read FSQL;
-    property    Name: string read FName write SetName;
     constructor Create; override;
     destructor  Destroy; override;
+  published
+    property    Name: string read FName write SetName;
   end;
 
   TClassMappingSelectList = class(TBaseMapObjectList)
@@ -462,16 +466,6 @@ type
     procedure SetForwardDeclare(const AValue: boolean);
     procedure SetORMClassName(const AValue: string);
   public
-    property    BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
-    property    BaseClassName: string read FBaseClassName write SetBaseClassName;
-    property    BaseClassParent: string read FBaseClassParent write SetBaseClassParent;
-    property    ORMClassName: string read FORMClassName write SetORMClassName;
-    property    AutoCreateBase: boolean read FAutoCreateBase write SetAutoCreateBase;
-    property    AutoMap: boolean read FAutoMap write SetAutoMap;
-    property    AutoCreateListClass: boolean read FAutoCreateListClass write SetAutoCreateListClass;
-    property    Crud: string read FCrud write SetCrud;
-    property    DefType: TClassDefType read FDefType write SetDefType;
-    property    ForwardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
     // Object Props
     property    ClassProps: TMapClassPropList read FClassProps write SetClassProps;
     property    ClassMapping: TClassMapping read FClassMapping;
@@ -480,6 +474,17 @@ type
 
     constructor Create; override;
     destructor  Destroy; override;
+  published
+    property    AutoCreateBase: boolean read FAutoCreateBase write SetAutoCreateBase;
+    property    AutoCreateListClass: boolean read FAutoCreateListClass write SetAutoCreateListClass;
+    property    AutoMap: Boolean read FAutoMap write SetAutoMap;
+    property    BaseClassName: string read FBaseClassName write SetBaseClassName;
+    property    BaseClassParent: string read FBaseClassParent write SetBaseClassParent;
+    property    BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
+    property    Crud: string read FCrud write SetCrud;
+    property    DefType: TClassDefType read FDefType write SetDefType;
+    property    FowardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
+    property    ORMClassName: string read FORMClassName write SetORMClassName;
   end;
 
   TMapClassDefList = class(TBaseMapObjectList)
@@ -933,6 +938,14 @@ begin
 end;
 
 { TMapProject }
+
+procedure TMapProject.ClearAll;
+begin
+  FIncludes.Clear;
+  FUnits.Clear;
+  ProjectClasses.Clear;
+  FProjectEnums.Clear;
+end;
 
 constructor TMapProject.Create;
 begin
@@ -1957,6 +1970,26 @@ begin
   FSQL.Free;
   FParams.Free;
   inherited Destroy;
+end;
+
+function TClassMappingSelect.GetCaption: string;
+var
+  lCtr: integer;
+  lParams: string;
+  lPar: TSelectParam;
+begin
+  lParams := '';
+  result := FName + '(';
+  for lCtr := 0 to FParams.Count - 1 do
+    begin
+      lPar := FParams.Items[lCtr];
+      if lParams = '' then
+        lParams := lPar.ParamName + ': ' + lPar.ParamTypeName
+      else
+        lParams := lParams + ', ' + lPar.ParamName + ':' + lPar.ParamTypeName;
+    end;
+  result := result + lParams + ')';
+
 end;
 
 procedure TClassMappingSelect.SetName(const AValue: string);

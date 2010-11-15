@@ -1,0 +1,238 @@
+inherited ClassEditView: TClassEditView
+  Left = 437
+  Height = 499
+  Top = 206
+  Width = 656
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSizeable
+  Caption = 'Edit Class Definition'
+  ClientHeight = 499
+  ClientWidth = 656
+  OnClose = FormClose
+  Visible = True
+  inherited btnCancel: TButton
+    Left = 598
+    Top = 457
+  end
+  inherited btnOK: TButton
+    Left = 543
+    Top = 457
+  end
+  inherited btnSaveNew: TButton
+    Left = 488
+    Top = 457
+  end
+  object MainPanel: TPanel[3]
+    Left = 0
+    Height = 499
+    Top = 0
+    Width = 656
+    Align = alClient
+    BevelOuter = bvNone
+    ClientHeight = 499
+    ClientWidth = 656
+    TabOrder = 3
+    object PageControl1: TPageControl
+      Left = 0
+      Height = 348
+      Top = 112
+      Width = 656
+      ActivePage = tsProps
+      Align = alBottom
+      Anchors = [akTop, akLeft, akRight, akBottom]
+      TabIndex = 0
+      TabOrder = 0
+      object tsProps: TTabSheet
+        Caption = 'Class Properties'
+        ClientHeight = 320
+        ClientWidth = 648
+        object lvProps: TListView
+          Left = 4
+          Height = 302
+          Top = 8
+          Width = 638
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          Columns = <>
+          ItemIndex = -1
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+        end
+      end
+      object tsMappings: TTabSheet
+        Caption = 'Class Mappings'
+        ClientHeight = 419
+        ClientWidth = 767
+        object lvMappings: TListView
+          Left = 4
+          Height = 401
+          Top = 8
+          Width = 757
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          Columns = <          
+            item
+              Caption = 'Property'
+              Width = 120
+            end          
+            item
+              Caption = 'Field'
+              Width = 120
+            end          
+            item
+              Caption = 'Type'
+              Width = 120
+            end>
+          ItemIndex = -1
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+        end
+      end
+      object tsValidators: TTabSheet
+        Caption = 'Class Validators'
+        ClientHeight = 419
+        ClientWidth = 767
+        object lvValiadators: TListView
+          Left = 4
+          Height = 401
+          Top = 8
+          Width = 757
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          Columns = <          
+            item
+              Caption = 'Property'
+              Width = 100
+            end          
+            item
+              Caption = 'Type'
+              Width = 130
+            end          
+            item
+              Caption = 'Value'
+              Width = 140
+            end>
+          ItemIndex = -1
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+        end
+      end
+      object tsSelections: TTabSheet
+        Caption = 'Selections'
+        ClientHeight = 320
+        ClientWidth = 648
+        object lvSelects: TListView
+          Left = 4
+          Height = 302
+          Top = 8
+          Width = 638
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          Columns = <          
+            item
+              Caption = 'Select Name'
+              Width = 10
+            end>
+          ItemIndex = -1
+          ReadOnly = True
+          RowSelect = True
+          TabOrder = 0
+          ViewStyle = vsReport
+        end
+      end
+    end
+    object eClassName: TEdit
+      Left = 8
+      Height = 23
+      Top = 24
+      Width = 208
+      TabOrder = 1
+    end
+    object lblClassName: TLabel
+      Left = 8
+      Height = 16
+      Top = 8
+      Width = 63
+      Caption = 'Class Name'
+      ParentColor = False
+    end
+    object cboClassParent: TComboBox
+      Left = 232
+      Height = 23
+      Top = 24
+      Width = 232
+      ItemHeight = 15
+      Items.Strings = (
+        'TtiObject'
+      )
+      TabOrder = 2
+    end
+    object lblClassName1: TLabel
+      Left = 232
+      Height = 16
+      Top = 8
+      Width = 65
+      Caption = 'Class Parent'
+      ParentColor = False
+    end
+    object ckAutoMap: TCheckBox
+      Left = 8
+      Height = 19
+      Hint = 'Checking this will cause the class to be registered with auto mapping to'#13#10'store meta data for custom queries.'
+      Top = 56
+      Width = 253
+      Caption = 'Register Class with Auto-mapping/tiCriteria '
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
+    object ckCreateList: TCheckBox
+      Left = 8
+      Height = 19
+      Top = 80
+      Width = 306
+      Caption = 'Automatically create TtiFilteredObjectList for this class'
+      TabOrder = 4
+    end
+    object BottomPanel: TPanel
+      Left = 0
+      Height = 39
+      Top = 460
+      Width = 656
+      Align = alBottom
+      ClientHeight = 39
+      ClientWidth = 656
+      TabOrder = 5
+      object btnClose: TButton
+        Left = 563
+        Height = 25
+        Top = 7
+        Width = 89
+        Anchors = [akRight, akBottom]
+        Caption = 'Close'
+        TabOrder = 0
+      end
+    end
+  end
+  inherited pmCloseMenu: TPopupMenu[4]
+    left = 584
+    top = 56
+  end
+  object synXML: TSynXMLSyn[5]
+    DefaultFilter = 'XML Document (*.xml,*.xsd,*.xsl,*.xslt,*.dtd)|*.xml;*.xsd;*.xsl;*.xslt;*.dtd'
+    Enabled = False
+    ElementAttri.Foreground = clPurple
+    ElementAttri.Style = []
+    AttributeAttri.Foreground = clOlive
+    AttributeValueAttri.Foreground = clBlue
+    AttributeValueAttri.Style = []
+    CDATAAttri.Foreground = clBlack
+    CommentAttri.Background = 16053492
+    CommentAttri.Foreground = clBlack
+    WantBracesParsed = False
+    left = 528
+    top = 56
+  end
+end
