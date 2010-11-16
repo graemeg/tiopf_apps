@@ -1,7 +1,7 @@
 inherited ClassEditView: TClassEditView
-  Left = 437
+  Left = 504
   Height = 499
-  Top = 206
+  Top = 200
   Width = 656
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSizeable

@@ -57,7 +57,7 @@
         <PackageName Value="LCL"/>
       </Item7>
     </RequiredPackages>
-    <Units Count="53">
+    <Units Count="55">
       <Unit0>
         <Filename Value="mapgui.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -65,7 +65,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="90" Y="27"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="160"/>
       </Unit0>
       <Unit1>
         <Filename Value="main_form.pas"/>
@@ -73,12 +73,11 @@
         <ComponentName Value="MainForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="main_form"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="125"/>
-        <CursorPos X="71" Y="127"/>
-        <UsageCount Value="156"/>
+        <CursorPos X="91" Y="126"/>
+        <UsageCount Value="160"/>
         <Loaded Value="True"/>
       </Unit1>
       <Unit2>
@@ -87,15 +86,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="184"/>
         <CursorPos X="49" Y="200"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit2>
       <Unit3>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\mvc_base.pas"/>
         <UnitName Value="mvc_base"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="748"/>
-        <CursorPos X="1" Y="767"/>
-        <UsageCount Value="55"/>
+        <TopLine Value="77"/>
+        <CursorPos X="3" Y="40"/>
+        <UsageCount Value="56"/>
+        <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="views\base_edit_view.pas"/>
@@ -106,7 +107,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="3" Y="12"/>
-        <UsageCount Value="156"/>
+        <UsageCount Value="160"/>
       </Unit4>
       <Unit5>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\vcl_controllers.pas"/>
@@ -114,15 +115,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="812"/>
         <CursorPos X="1" Y="829"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit5>
       <Unit6>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\lcl_controllers.pas"/>
         <UnitName Value="lcl_controllers"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="941"/>
-        <CursorPos X="88" Y="970"/>
-        <UsageCount Value="44"/>
+        <TopLine Value="789"/>
+        <CursorPos X="3" Y="791"/>
+        <UsageCount Value="45"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="M:\lazarus\components\tiOPF2\Compilers\FPC\tiOPF.pas"/>
@@ -130,7 +133,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
       </Unit7>
       <Unit8>
         <Filename Value="M:\lazarus\components\tiEventMVC\mvc_events.pas"/>
@@ -138,7 +141,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit8>
       <Unit9>
         <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\packages\fcl-xml\fpmake.pp"/>
@@ -146,15 +149,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="29" Y="14"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit9>
       <Unit10>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\widget_controllers.pas"/>
         <UnitName Value="widget_controllers"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="416"/>
-        <CursorPos X="1" Y="428"/>
-        <UsageCount Value="24"/>
+        <TopLine Value="21"/>
+        <CursorPos X="17" Y="38"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="views\base_form_view.pas"/>
@@ -166,7 +171,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="3" Y="11"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="154"/>
       </Unit11>
       <Unit12>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\poker\manager\controllers\app_ctrl.pas"/>
@@ -174,7 +179,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="36"/>
         <CursorPos X="47" Y="25"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit12>
       <Unit13>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\poker\manager\models\app_mdl.pas"/>
@@ -182,7 +187,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="86" Y="40"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit13>
       <Unit14>
         <Filename Value="views\base_list_view.pas"/>
@@ -193,7 +198,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="32" Y="1"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="154"/>
       </Unit14>
       <Unit15>
         <Filename Value="controllers\base_edit_ctrl.pas"/>
@@ -202,7 +207,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="50" Y="27"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="154"/>
       </Unit15>
       <Unit16>
         <Filename Value="controllers\base_list_view_ctrl.pas"/>
@@ -211,7 +216,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="428"/>
         <CursorPos X="1" Y="457"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="154"/>
       </Unit16>
       <Unit17>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\GetTextFactory\language_factory.pas"/>
@@ -219,7 +224,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="27" Y="21"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
       </Unit17>
       <Unit18>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\mvc_criteria.pas"/>
@@ -227,7 +232,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="34" Y="185"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="0"/>
       </Unit18>
       <Unit19>
         <Filename Value="events\event_const.pas"/>
@@ -236,14 +241,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="4" Y="9"/>
-        <UsageCount Value="149"/>
+        <UsageCount Value="153"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\..\mapper\fpc_schema_reader.pas"/>
         <UnitName Value="fpc_schema_reader"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="837"/>
-        <CursorPos X="1" Y="854"/>
+        <TopLine Value="167"/>
+        <CursorPos X="33" Y="181"/>
         <UsageCount Value="13"/>
       </Unit20>
       <Unit21>
@@ -252,15 +257,17 @@
         <WindowIndex Value="0"/>
         <TopLine Value="223"/>
         <CursorPos X="3" Y="192"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="1"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\..\mapper\mapper.pas"/>
         <UnitName Value="mapper"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="942"/>
-        <CursorPos X="3" Y="944"/>
-        <UsageCount Value="36"/>
+        <TopLine Value="235"/>
+        <CursorPos X="16" Y="252"/>
+        <UsageCount Value="38"/>
+        <Loaded Value="True"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\..\mapper\mapper_project_writer.pas"/>
@@ -268,14 +275,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\..\readme.txt"/>
         <WindowIndex Value="0"/>
         <TopLine Value="222"/>
         <CursorPos X="26" Y="230"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit24>
       <Unit25>
@@ -283,7 +290,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1080"/>
         <CursorPos X="29" Y="1080"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="2"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit25>
       <Unit26>
@@ -293,16 +300,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="3" Y="76"/>
-        <UsageCount Value="130"/>
+        <UsageCount Value="134"/>
       </Unit26>
       <Unit27>
         <Filename Value="controllers\app_ctl.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="app_ctl"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="131"/>
-        <CursorPos X="35" Y="151"/>
-        <UsageCount Value="126"/>
+        <TopLine Value="1"/>
+        <CursorPos X="4" Y="11"/>
+        <UsageCount Value="130"/>
       </Unit27>
       <Unit28>
         <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\mvc_events.pas"/>
@@ -310,14 +317,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="0"/>
       </Unit28>
       <Unit29>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\customform.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="822"/>
         <CursorPos X="1" Y="839"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="8"/>
       </Unit29>
       <Unit30>
         <Filename Value="commands\app_cmds.pas"/>
@@ -326,7 +333,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="588"/>
         <CursorPos X="87" Y="602"/>
-        <UsageCount Value="123"/>
+        <UsageCount Value="127"/>
       </Unit30>
       <Unit31>
         <Filename Value="views\edit_class_view.pas"/>
@@ -334,10 +341,12 @@
         <ComponentName Value="ClassEditView"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="edit_class_view"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="27"/>
-        <CursorPos X="18" Y="57"/>
-        <UsageCount Value="123"/>
+        <TopLine Value="26"/>
+        <CursorPos X="61" Y="28"/>
+        <UsageCount Value="127"/>
+        <Loaded Value="True"/>
       </Unit31>
       <Unit32>
         <Filename Value="language_strings.pas"/>
@@ -346,7 +355,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="64" Y="9"/>
-        <UsageCount Value="122"/>
+        <UsageCount Value="126"/>
       </Unit32>
       <Unit33>
         <Filename Value="M:\lazarus\components\tiOPF2\GUI\tiDialogs.pas"/>
@@ -354,7 +363,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="49" Y="87"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit33>
       <Unit34>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
@@ -370,7 +379,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="262"/>
         <CursorPos X="18" Y="271"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit35>
       <Unit36>
         <Filename Value="views\input_query.pas"/>
@@ -381,7 +390,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="43"/>
         <CursorPos X="58" Y="50"/>
-        <UsageCount Value="107"/>
+        <UsageCount Value="111"/>
       </Unit36>
       <Unit37>
         <Filename Value="M:\lazarus_current\lazarus\lcl\forms.pp"/>
@@ -389,7 +398,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="82"/>
         <CursorPos X="25" Y="18"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="10"/>
       </Unit37>
       <Unit38>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiRTTI.pas"/>
@@ -397,21 +406,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="158"/>
         <CursorPos X="1" Y="186"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="6"/>
       </Unit38>
       <Unit39>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\listitem.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="572"/>
         <CursorPos X="1" Y="592"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit39>
       <Unit40>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\menuitem.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="853"/>
         <CursorPos X="1" Y="870"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="3"/>
       </Unit40>
       <Unit41>
         <Filename Value="views\project_info_view.pas"/>
@@ -419,26 +428,30 @@
         <ComponentName Value="ProjectInfoEdit"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="project_info_view"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="20"/>
-        <CursorPos X="38" Y="50"/>
-        <UsageCount Value="83"/>
+        <CursorPos X="25" Y="44"/>
+        <UsageCount Value="87"/>
+        <Loaded Value="True"/>
       </Unit41>
       <Unit42>
         <Filename Value="controllers\proj_settings_ctrl.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="proj_settings_ctrl"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="55"/>
-        <CursorPos X="25" Y="63"/>
-        <UsageCount Value="82"/>
+        <TopLine Value="45"/>
+        <CursorPos X="19" Y="41"/>
+        <UsageCount Value="86"/>
+        <Loaded Value="True"/>
       </Unit42>
       <Unit43>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\canvas.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1428"/>
         <CursorPos X="1" Y="1445"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="7"/>
       </Unit43>
       <Unit44>
         <Filename Value="events\app_events.pas"/>
@@ -447,42 +460,42 @@
         <WindowIndex Value="0"/>
         <TopLine Value="7"/>
         <CursorPos X="34" Y="34"/>
-        <UsageCount Value="76"/>
+        <UsageCount Value="80"/>
       </Unit44>
       <Unit45>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\control.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1604"/>
         <CursorPos X="1" Y="1621"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="5"/>
       </Unit45>
       <Unit46>
         <Filename Value="M:\lazarus_current\lazarus\lcl\interfaces\win32\win32callback.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2433"/>
         <CursorPos X="1" Y="2450"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit46>
       <Unit47>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\buttoncontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="10"/>
         <CursorPos X="1" Y="22"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit47>
       <Unit48>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\buttons.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="312"/>
         <CursorPos X="1" Y="342"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit48>
       <Unit49>
         <Filename Value="M:\lazarus_current\lazarus\lcl\include\wincontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="5145"/>
         <CursorPos X="1" Y="5162"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit49>
       <Unit50>
         <Filename Value="M:\lazarus_current\lazarus\lcl\lclmessageglue.pas"/>
@@ -490,16 +503,19 @@
         <WindowIndex Value="0"/>
         <TopLine Value="115"/>
         <CursorPos X="1" Y="123"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="4"/>
       </Unit50>
       <Unit51>
         <Filename Value="controllers\edit_class_ctrl.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="edit_class_ctrl"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
-        <CursorPos X="33" Y="63"/>
-        <UsageCount Value="40"/>
+        <TopLine Value="180"/>
+        <CursorPos X="16" Y="188"/>
+        <UsageCount Value="44"/>
+        <Loaded Value="True"/>
       </Unit51>
       <Unit52>
         <Filename Value="M:\lazarus\components\tiOPF2\Core\tiBaseObject.pas"/>
@@ -509,32 +525,132 @@
         <CursorPos X="1" Y="95"/>
         <UsageCount Value="16"/>
       </Unit52>
+      <Unit53>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ClassPropEditView"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="edit_class_prop_view"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="8"/>
+        <CursorPos X="25" Y="38"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="prop_edit_ctrl"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="52"/>
+        <CursorPos X="20" Y="56"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit54>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="25" HistoryIndex="24">
       <Position1>
         <Filename Value="main_form.pas"/>
-        <Caret Line="86" Column="1" TopLine="76"/>
+        <Caret Line="97" Column="3" TopLine="72"/>
       </Position1>
       <Position2>
         <Filename Value="main_form.pas"/>
-        <Caret Line="84" Column="33" TopLine="76"/>
+        <Caret Line="127" Column="3" TopLine="107"/>
       </Position2>
       <Position3>
         <Filename Value="main_form.pas"/>
-        <Caret Line="84" Column="41" TopLine="76"/>
+        <Caret Line="149" Column="71" TopLine="147"/>
       </Position3>
       <Position4>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="97" Column="3" TopLine="72"/>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position4>
       <Position5>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="127" Column="3" TopLine="107"/>
+        <Filename Value="..\..\mapper\mapper.pas"/>
+        <Caret Line="944" Column="3" TopLine="942"/>
       </Position5>
       <Position6>
-        <Filename Value="main_form.pas"/>
-        <Caret Line="149" Column="71" TopLine="147"/>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position6>
+      <Position7>
+        <Filename Value="..\..\mapper\mapper.pas"/>
+        <Caret Line="265" Column="43" TopLine="244"/>
+      </Position7>
+      <Position8>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="33" Column="23" TopLine="11"/>
+      </Position8>
+      <Position9>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="15" Column="14" TopLine="11"/>
+      </Position9>
+      <Position10>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="34" Column="70" TopLine="11"/>
+      </Position10>
+      <Position11>
+        <Filename Value="..\..\mapper\mapper.pas"/>
+        <Caret Line="1" Column="1" TopLine="82"/>
+      </Position11>
+      <Position12>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="18" Column="21" TopLine="1"/>
+      </Position12>
+      <Position13>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="19" Column="21" TopLine="1"/>
+      </Position13>
+      <Position14>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="20" Column="21" TopLine="1"/>
+      </Position14>
+      <Position15>
+        <Filename Value="views\edit_class_prop_view.pas"/>
+        <Caret Line="19" Column="21" TopLine="1"/>
+      </Position15>
+      <Position16>
+        <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\mvc_base.pas"/>
+        <Caret Line="767" Column="1" TopLine="748"/>
+      </Position16>
+      <Position17>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="59" Column="27" TopLine="49"/>
+      </Position17>
+      <Position18>
+        <Filename Value="controllers\edit_class_ctrl.pas"/>
+        <Caret Line="32" Column="51" TopLine="19"/>
+      </Position18>
+      <Position19>
+        <Filename Value="controllers\edit_class_ctrl.pas"/>
+        <Caret Line="194" Column="101" TopLine="171"/>
+      </Position19>
+      <Position20>
+        <Filename Value="controllers\edit_class_ctrl.pas"/>
+        <Caret Line="184" Column="21" TopLine="183"/>
+      </Position20>
+      <Position21>
+        <Filename Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\lcl_controllers.pas"/>
+        <Caret Line="513" Column="28" TopLine="504"/>
+      </Position21>
+      <Position22>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="29" Column="57" TopLine="20"/>
+      </Position22>
+      <Position23>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="59" Column="3" TopLine="45"/>
+      </Position23>
+      <Position24>
+        <Filename Value="controllers\prop_edit_ctrl.pas"/>
+        <Caret Line="100" Column="20" TopLine="79"/>
+      </Position24>
+      <Position25>
+        <Filename Value="views\project_info_view.pas"/>
+        <Caret Line="50" Column="38" TopLine="19"/>
+      </Position25>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -582,7 +698,7 @@
       </Item2>
       <Item3>
         <Source Value="M:\DelphiProjects\D2009Projects\projects\CustomComponents\tiEventMVC\lcl_controllers.pas"/>
-        <Line Value="957"/>
+        <Line Value="999"/>
       </Item3>
     </BreakPoints>
     <Exceptions Count="3">

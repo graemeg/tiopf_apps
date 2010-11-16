@@ -172,7 +172,9 @@ begin
           // Read only?
           lPropAttr := lPropNode.Attributes.GetNamedItem('read-only');
           if lPropAttr <> nil then
-            lNewProp.IsReadOnly := StrToBool(lPropAttr.NodeValue);
+            lNewProp.IsReadOnly := StrToBool(lPropAttr.NodeValue)
+          else
+            lNewProp.IsReadOnly := false;
 
           // Property type?
           lPropAttr := lPropNode.Attributes.GetNamedItem('type');

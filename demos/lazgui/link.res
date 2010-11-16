@@ -114,6 +114,8 @@ M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\input_qu
 M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\project_info_view.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\app_events.o
 M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\edit_class_ctrl.o
+M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\edit_class_prop_view.o
+M:\LazarusProjects\custom_comps\tiOPFMapper\demos\lazgui\lib\i386-win32\prop_edit_ctrl.o
 M:\lazarus_current\lazarus\lcl\units\i386-win32\interfacebase.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\types.o
 M:\lazarus_current\lazarus\fpc\2.4.0\units\i386-win32\rtl\classes.o

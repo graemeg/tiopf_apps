@@ -27,6 +27,9 @@ type
     procedure   DoTearDownMediators; override;
     procedure   SetActive(const AValue: Boolean); override;
     procedure   HandleCloseButtonClick(Sender: TObject);
+    procedure   HandleEditProp(Sender: TObject);
+    procedure   HandleCreateProp(Sender: TObject);
+    procedure   HandleDeleteProp(Sender: TObject);
   public
     procedure   Update(ASubject: TtiObject; AOperation: TNotifyOperation);
        overload; override;
@@ -41,6 +44,8 @@ implementation
 uses
   lcl_controllers
   ,app_events
+  ,edit_class_prop_view
+  ,prop_edit_ctrl
   ;
 
 { TClassEditController }
@@ -172,6 +177,48 @@ end;
 procedure TClassEditController.HandleCloseButtonClick(Sender: TObject);
 begin
   gEventManager.DispatchEvent(TRemoveSubControllerEvent.Create(self, 'edit' + Model.BaseClassName));
+end;
+
+procedure TClassEditController.HandleCreateProp(Sender: TObject);
+var
+  lCtrl: TClassPropEditController;
+  lListCtrl: TListViewController;
+  lClassProp: TMapClassProp;
+begin
+  lListCtrl := TListViewController(Controllers.FindByName('class_edit_props'));
+  if lListCtrl <>nil then
+    begin
+      lClassProp := TMapClassProp(lListCtrl.SelectedItem);
+      if lClassProp = nil then
+        exit;
+      lCtrl := TClassPropEditController.Create(lClassProp, TClassPropEditView.Create(View));
+      lCtrl.Init;
+      lCtrl.Active := true;
+    end;
+end;
+
+procedure TClassEditController.HandleDeleteProp(Sender: TObject);
+begin
+
+end;
+
+procedure TClassEditController.HandleEditProp(Sender: TObject);
+var
+  lCtrl: TClassPropEditController;
+  lListCtrl: TListViewController;
+  lClassProp: TMapClassProp;
+begin
+  lListCtrl := TListViewController(Controllers.FindByName('class_edit_props'));
+  if lListCtrl <>nil then
+    begin
+      lClassProp := TMapClassProp(lListCtrl.SelectedItem);
+      if lClassProp = nil then
+        exit;
+      lCtrl := TClassPropEditController.Create(lClassProp, TClassPropEditView.Create(View));
+      lCtrl.Init;
+      lCtrl.Active := true;
+    end;
+
 end;
 
 function TClassEditController.Model: TMapClassDef;

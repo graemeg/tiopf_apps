@@ -14,7 +14,8 @@ uses
   base_list_view_ctrl, base_edit_view, laz_timvc, base_form_view,
   base_list_view, event_const, laz_timapper, app_model, app_ctl,
   proj_settings_ctrl, app_cmds, edit_class_view, language_strings, input_query,
-  project_info_view, app_events, edit_class_ctrl;
+  project_info_view, app_events, edit_class_ctrl, edit_class_prop_view, 
+prop_edit_ctrl;
 
 {$R *.res}
 
