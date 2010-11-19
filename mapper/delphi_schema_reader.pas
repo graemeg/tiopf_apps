@@ -4,6 +4,7 @@ interface
 uses
   Classes
   ,SysUtils
+  ,Variants
   ,tiUtils
   ,mapper
   ,OmniXML
@@ -33,7 +34,28 @@ type
     procedure   ReadClassValidators(AClass: TMapClassDef; ANode: IXMLNode);
   public
     procedure   ReadSchema(AProject: TMapProject; const AFileName: string = ''); overload; override;
-    constructor Create;
+    constructor Create; override;
+    destructor  Destroy; override;
+  end;
+
+  TProjectWriter = class(TBaseMapObject)
+  protected
+    FDirectory: String;
+    FWriterProject: TMapProject;
+    FDoc: TXMLDocument;
+    procedure   WriteProjectUnits(AProject: TMapProject; ADocElem: IXMLElement);
+    procedure   WriteUnit(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
+    procedure   WriteUnitEnums(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
+    procedure   WriteUnitClasses(AUnitDef: TMapUnitDef; AClassesNode: IXMLElement);
+    procedure   WriteSingleUnitClass(AClassDef: TMapClassDef; AClassesNode: IXMLElement);
+    procedure   WriteClassProps(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+    procedure   WriteClassValidators(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+    procedure   WriteClassMappings(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+    procedure   WriteClassSelections(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+
+  public
+    procedure   WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string); overload; virtual;
+    procedure   WriteProject(Aproject: TMapProject; const AFilePath: string); overload; virtual;
     destructor  Destroy; override;
   end;
 
@@ -227,7 +249,7 @@ begin
                       ptDateTime:
                         lVal.Value := tiIntlDateStorAsDateTime(lValStr);
                       ptEnum:;
-                      ptFloat:
+                      ptDouble, ptSingle, ptCurrency:
                         lVal.Value := StrToFloat(lValStr);
                     end;
                   end;
@@ -620,5 +642,341 @@ begin
     end;
 
 end;
+
+{ TProjectWriter }
+
+destructor TProjectWriter.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TProjectWriter.WriteClassMappings(AClassDef: TMapClassDef;
+  AClassNode: IXMLElement);
+var
+  lCtr: integer;
+  lMapProp: TPropMapping;
+  lNewMapNode: IXMLElement;
+  lNewMapPropNode: IXMLElement;
+begin
+
+  lNewMapNode := FDoc.CreateElement('mapping');
+  AClassNode.AppendChild(lNewMapNode);
+
+  lNewMapNode.SetAttribute('table', AClassDef.ClassMapping.TableName);
+  lNewMapNode.SetAttribute('pk', AClassDef.ClassMapping.PKName);
+  lNewMapNode.SetAttribute('pk-field', AClassDef.ClassMapping.PKField);
+
+  case AClassDef.ClassMapping.OIDType of
+    otString: lNewMapNode.SetAttribute('oid-type', 'string');
+    otInt: lNewMapNode.SetAttribute('oid-type', 'int');
+  end;
+
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
+    begin
+      lMapProp := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      lNewMapPropNode := FDoc.CreateElement('prop-map');
+      lNewMapPropNode.SetAttribute('prop', lMapProp.PropName);
+      lNewMapPropNode.SetAttribute('field', lMapProp.FieldName);
+      lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropType));
+      lNewMapNode.AppendChild(lNewMapPropNode);
+    end;
+
+
+end;
+
+procedure TProjectWriter.WriteClassProps(AClassDef: TMapClassDef;
+  AClassNode: IXMLElement);
+var
+  lNewPropNode: IXMLElement;
+  lClassPropsNode: IXMLElement;
+  lCtr: integer;
+  lProp: TMapClassProp;
+begin
+
+  lClassPropsNode := FDoc.CreateElement('class-props');
+  AClassNode.AppendChild(lClassPropsNode);
+
+  for lCtr := 0 to AClassDef.ClassProps.Count - 1 do
+    begin
+      lProp := AClassDef.ClassProps.Items[lCtr];
+      lNewPropNode := FDoc.CreateElement('prop');
+      lNewPropNode.SetAttribute('name', lProp.PropName);
+      if lProp.PropType = ptEnum then
+        lNewPropNode.SetAttribute('type', lProp.PropTypeName)
+      else
+        lNewPropNode.SetAttribute('type', gPropTypeToStr(lProp.PropType));
+
+      lClassPropsNode.AppendChild(lNewPropNode);
+    end;
+
+end;
+
+procedure TProjectWriter.WriteClassSelections(AClassDef: TMapClassDef;
+  AClassNode: IXMLElement);
+var
+  lCtr, lParamCtr: integer;
+  lSelect: TClassMappingSelect;
+  lParam: TSelectParam;
+  lNewSelNode: IXMLElement;
+  lNewSelectionsNode: IXMLElement;
+  lNewParamsNode: IXMLElement;
+  lNewParam: IXMLElement;
+  lNewCDATA: IXMLCDATASection;
+  lNewSQLNode: IXMLElement;
+begin
+
+  lNewSelectionsNode := FDoc.CreateElement('selections');
+  AClassNode.AppendChild(lNewSelectionsNode);
+
+  for lCtr := 0 to AClassDef.Selections.Count - 1 do
+    begin
+      lSelect := AClassDef.Selections.Items[lCtr];
+      lNewSelNode := FDoc.CreateElement('select');
+      lNewSelNode.SetAttribute('name', lSelect.Name);
+      // SQL
+      lNewSQLNode := FDoc.CreateElement('sql');
+      lNewCDATA := FDoc.CreateCDATASection(WrapText(lSelect.SQL.Text, 40));
+      lNewSQLNode.AppendChild(lNewCDATA);
+      lNewSelNode.AppendChild(lNewSQLNode);
+
+      // Params Node
+      lNewParamsNode := FDoc.CreateElement('params');
+      lNewSelNode.AppendChild(lNewParamsNode);
+
+      // Add params to Params node
+      for lParamCtr := 0 to lSelect.Params.Count - 1 do
+        begin
+          lParam := lSelect.Params.Items[lParamCtr];
+          lNewParam := FDoc.CreateElement('param');
+          lNewParam.SetAttribute('name', lParam.ParamName);
+          lNewParam.SetAttribute('pass-by', lParam.PassBy);
+          lNewParam.SetAttribute('sql-param', lParam.SQLParamName);
+          if lParam.ParamType = ptEnum then
+            begin
+              lNewParam.SetAttribute('type', 'enum');
+              lNewParam.SetAttribute('type-name', lParam.ParamTypeName);
+            end
+          else
+            begin
+              lNewParam.SetAttribute('type', gPropTypeToStr(lParam.ParamType));
+            end;
+          lNewParamsNode.AppendChild(lNewParam);
+        end;
+      // finally add the selection node to the <selections> node.
+      lNewSelectionsNode.AppendChild(lNewSelNode);
+    end;
+
+end;
+
+procedure TProjectWriter.WriteClassValidators(AClassDef: TMapClassDef;
+  AClassNode: IXMLElement);
+var
+  lVal: TMapValidator;
+  lNewValidatorsNode: IXMLElement;
+  lNewValNode: IXMLElement;
+  lNewValItemNode: IXMLElement;
+  lNewValueNode: IXMLElement;
+  lCtr, lItemCtr: integer;
+begin
+
+  lNewValidatorsNode := FDoc.CreateElement('validators');
+  AClassNode.AppendChild(lNewValidatorsNode);
+
+  for lCtr := 0 to AClassDef.Validators.Count - 1 do
+    begin
+      lVal := AClassDef.Validators.Items[lCtr];
+      lNewValNode := FDoc.CreateElement('item');
+      lNewValNode.SetAttribute('prop', lVal.ClassProp);
+      lNewValNode.SetAttribute('type', gValTypeToStr(lVal.ValidatorType));
+      if not VarIsNull(lVal.Value) then
+        begin
+          lNewValueNode := FDoc.CreateElement('value');
+          lNewValueNode.Text := lVal.Value;
+          lNewValNode.AppendChild(lNewValueNode);
+        end;
+      lNewValidatorsNode.AppendChild(lNewValNode);
+    end;
+
+end;
+
+procedure TProjectWriter.WriteProject(Aproject: TMapProject;
+  const AFilePath: string);
+var
+  lDocElem: IXMLElement;
+  lNewElem: IXMLElement;
+  lDir: string;
+begin
+  if FDoc <> nil then
+    begin
+      FDoc := nil;
+    end;
+
+  FWriterProject := AProject;
+
+  FDoc := TXMLDocument.Create;
+
+  // Setup the <project> root node
+  lDocElem := FDoc.CreateElement('project');
+  lDocElem.SetAttribute('tab-spaces', IntToStr(FWriterProject.TabSpaces));
+  lDocElem.SetAttribute('begin-end-tabs', IntToStr(FWriterProject.BeginEndTabs));
+  lDocElem.SetAttribute('visibility-tabs', IntToStr(FWriterProject.VisibilityTabs));
+  lDocElem.SetAttribute('project-name', FWriterProject.ProjectName);
+  lDocElem.SetAttribute('outputdir', FWriterProject.OrigOutDirectory);
+  lDocElem.SetAttribute('enum-type', 'int');
+  FDoc.AppendChild(lDocElem);
+
+
+
+  WriteProjectUnits(FWriterProject, lDocElem);
+
+  XMLSaveToFile(FDoc, AFilePath, ofIndent);
+
+end;
+
+procedure TProjectWriter.WriteProject(AProject: TMapProject; const ADirectory,
+  AFileName: string);
+begin
+  if FDoc <> nil then
+    begin
+      FreeAndNil(FDoc);
+    end;
+
+  FWriterProject := AProject;
+
+  FDoc := TXMLDocument.Create;
+
+  FDirectory := ExcludeTrailingPathDelimiter(ADirectory);
+
+  FDirectory := ExcludeTrailingPathDelimiter(ExtractFileDir(AFileName));
+
+  if AFileName <> '' then
+    WriteProject(AProject, FDirectory + PathDelim + AFileName)
+  else
+    WriteProject(AProject, FDirectory + PathDelim + FWriterProject.ProjectName + '.xml');
+
+end;
+
+procedure TProjectWriter.WriteProjectUnits(AProject: TMapProject;
+  ADocElem: IXMLElement);
+var
+  lCtr: integer;
+  lUnit: TMapUnitDef;
+  lUnitsElem: IXMLElement;
+  lNewUnitNode: IXMLElement;
+begin
+  lUnitsElem := FDoc.CreateElement('project-units');
+  FDoc.DocumentElement.AppendChild(lUnitsElem);
+
+  for lCtr := 0 to FWriterProject.Units.Count - 1 do
+    begin
+      lUnit := FWriterProject.Units.Items[lCtr];
+      lNewUnitNode := FDoc.CreateElement('unit');
+      lNewUnitNode.SetAttribute('name', lUnit.UnitName);
+      WriteUnit(lUnit, lNewUnitNode);
+      lUnitsElem.AppendChild(lNewUnitNode);
+    end;
+
+end;
+
+procedure TProjectWriter.WriteSingleUnitClass(AClassDef: TMapClassDef;
+  AClassesNode: IXMLElement);
+var
+  lNewClassNode: IXMLElement;
+begin
+  lNewClassNode := FDoc.CreateElement('class');
+  AClassesNode.AppendChild(lNewClassNode);
+
+  lNewClassNode.SetAttribute('base-class', AClassDef.BaseClassName);
+  lNewClassNode.SetAttribute('base-class-parent', AClassDef.BaseClassParent);
+  lNewClassNode.SetAttribute('auto-map', LowerCase(BoolToStr(AClassDef.AutoMap, true)));
+  lNewClassNode.SetAttribute('auto-create-list', LowerCase(BoolToStr(AClassDef.AutoCreateListClass, true)));
+
+  WriteClassProps(AClassDef, lNewClassNode);
+  WriteClassValidators(AClassDef, lNewClassNode);
+  WriteClassMappings(AClassDef, lNewClassNode);
+  WriteClassSelections(AClassDef, lNewClassNode);
+
+
+end;
+
+procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef;
+  AUnitNode: IXMLElement);
+var
+  lCtr: integer;
+  lEnumNode: IXMLElement;
+  lClassesNode: IXMLElement;
+  lEnum: TMapEnum;
+  lClass: TMapClassDef;
+begin
+  lEnumNode := FDoc.CreateElement('enums');
+  AUnitNode.AppendChild(lEnumNode);
+
+  lClassesNode := FDoc.CreateElement('classes');
+  AUnitNode.AppendChild(lClassesNode);
+
+  WriteUnitEnums(AUnitDef, AUnitNode);
+
+  WriteUnitClasses(AUnitDef, lClassesNode);
+
+end;
+
+procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef;
+  AClassesNode: IXMLElement);
+var
+  lCtr: integer;
+  lClassDef: TMapClassDef;
+  lClassesNode: IXMLNode;
+begin
+  for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
+    begin
+      lClassDef := AUnitDef.UnitClasses.Items[lCtr];
+      WriteSingleUnitClass(lClassDef, AClassesNode);
+    end;
+
+end;
+
+procedure TProjectWriter.WriteUnitEnums(AUnitDef: TMapUnitDef;
+  AUnitNode: IXMLElement);
+var
+  lEnumsNode: IXMLNode;
+  lEnumEl: IXMLElement;
+  lValuesEl: IXMLElement;
+  lSingleValNode: IXMLElement;
+  lItemEl: IXMLElement;
+  lCtr: integer;
+  lItemCtr: integer;
+  lEnum: TMapEnum;
+  lEnumVal: TMapEnumValue;
+
+begin
+  lEnumsNode := AUnitNode.SelectSingleNode('enums');
+
+  for lCtr := 0 to AUnitDef.UnitEnums.Count - 1 do
+    begin
+      lEnum := AUnitDef.UnitEnums.Items[lCtr];
+      lEnumEl := FDoc.CreateElement('enum');
+      lValuesEl := FDoc.CreateElement('values');
+      lEnumEl.AppendChild(lValuesEl);
+      lEnumEl.SetAttribute('name', lEnum.EnumName);
+      // items of enum
+      for lItemCtr := 0 to lEnum.Values.Count - 1 do
+        begin
+          lEnumVal := lEnum.Values.Items[lItemCtr];
+          lSingleValNode := FDoc.CreateElement('item');
+          lSingleValNode.SetAttribute('name', lEnumVal.EnumValueName);
+          if lEnumVal.EnumValue >= 0 then
+            lSingleValNode.SetAttribute('value', IntToStr(lEnumVal.EnumValue));
+          // Append to <values> node
+          lValuesEl.AppendChild(lSingleValNode);
+        end;
+
+      lEnumsNode.AppendChild(lEnumEl);
+    end;
+
+end;
+
+initialization
+  gSetSchemaReaderClass(TOmniXMLSchemaReader);
 
 end.
