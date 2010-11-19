@@ -562,36 +562,6 @@ type
     destructor  Destroy; override;
   end;
 
-    {: Base ORM Class }
-  TORMObject = class(TBaseMapObject)
-  private
-    FDirty: boolean;
-    FState: TORMObjectState;
-    procedure SetDirty(const AValue: boolean);
-    procedure SetState(const AValue: TORMObjectState);
-  public
-    function    GetByPK(const APKValue: variant): TObject; virtual; abstract;
-    {: Returns a TClassMapping object describing the object's mapping to the backend. }
-    class function  GetMapping: TClassMapping; virtual; abstract;
-  published
-    property    State: TORMObjectState read FState write SetState;
-    property    Dirty: boolean read FDirty write SetDirty;
-  end;
-
-  TORMObjectList = class(TBaseMapObjectList)
-  private
-    FListState: TORMListState;
-    procedure SetListState(const AValue: TORMListState);
-  protected
-    function    GetItems(i: Integer): TORMObject; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TORMObject); reintroduce;
-  public
-    property    ListState: TORMListState read FListState write SetListState;
-    property    Items[Index: Integer]: TORMObject read GetItems write SetItems; default;
-    function    Add(AObject: TORMObject): Integer; reintroduce;
-    procedure   Clear; override;
-  end;
-
   {: TtiFilteredObjectList descendant with extra properties to facility custom searching/queries. }
   TtiMappedFilteredObjectList = class(TtiFilteredObjectList)
   private
@@ -1725,74 +1695,6 @@ end;
 procedure TMapSchemaWriter.WriteBreak(AList: TStringList);
 begin
   WriteLine('', AList);
-end;
-
-{ TORMObjectList }
-
-function TORMObjectList.Add(AObject: TORMObject): Integer;
-begin
-  result := inherited Add(AObject);
-end;
-
-procedure TORMObjectList.Clear;
-begin
-  inherited Clear;
-  FListState := lsEmpty;
-end;
-
-function TORMObjectList.GetItems(i: Integer): TORMObject;
-begin
-  result := TORMObject(inherited GetItems(i));
-end;
-
-procedure TORMObjectList.SetItems(i: Integer; AObject: TORMObject);
-begin
-  inherited SetItems(i, AObject);
-end;
-
-procedure TORMObjectList.SetListState(const AValue: TORMListState);
-begin
-  if FListState=AValue then exit;
-  FListState:=AValue;
-end;
-
-{ TORMObject }
-
-procedure TORMObject.SetDirty(const AValue: boolean);
-begin
-  //if AValue then
-  //begin   // Dirty set to True
-  //  case State of
-  //    posEmpty  : begin
-  //                   ObjectState := posCreate   ;
-  //                   {$IFDEF OID_AS_INT64}
-  //                     if OID = cNullOIDInteger then
-  //                       OID:= OIDGenerator.NextOID;
-  //                   {$ELSE}
-  //                     if OID.IsNull then
-  //                       OIDGenerator.AssignNextOID(OID);
-  //                   {$ENDIF}
-  //                 end;
-  //    posPK     : ObjectState := posUpdate   ;
-  //    posCreate :; // Do nothing
-  //    posUpdate :; // Do nothing
-  //    posDelete :; // Do nothing
-  //    posDeleted :; // Do nothing
-  //    posClean  : ObjectState := posUpdate;
-  //  else
-  //    raise EtiOPFInternalException.Create(cErrorInvalidObjectState);
-  //  end;
-  //end
-  //else
-  //begin   // Dirty set to False
-  //  ObjectState := posClean;
-  //end;
-end;
-
-procedure TORMObject.SetState(const AValue: TORMObjectState);
-begin
-  if FState=AValue then exit;
-  FState:=AValue;
 end;
 
 { TSelectParam }
