@@ -221,7 +221,7 @@ type
     procedure   SetItems(i: Integer;  AObject: TMapEnumValue); reintroduce;
   public
     property    Items[Index: Integer]: TMapEnumValue read GetItems write SetItems; default;
-    function    Add(AObject: TMapEnumValue): Integer; reintroduce; overload;
+    function    Add(AObject: TMapEnumValue): Integer; overload; reintroduce;
     function    Add(const AName: string; const AValue: integer = -1): integer; overload;
   end;
 
@@ -272,7 +272,7 @@ type
     procedure   SetItems(i: Integer;  AObject: TMapClassProp); reintroduce;
   public
     property    Items[Index: Integer]: TMapClassProp read GetItems write SetItems; default;
-    function    Add(AObject: TMapClassProp): Integer; reintroduce; overload;
+    function    Add(AObject: TMapClassProp): Integer; overload; reintroduce;
     function    Add(const AName: string; const APropType: TMapPropType): integer; overload;
     function    FindByName(const AName: string): TMapClassProp;
   end;
@@ -1696,21 +1696,25 @@ end;
 
 procedure TMapSchemaWriter.SetOnWriteClass(const AValue: TOnWriteClassIntf);
 begin
+  if FOnWriteClass=AValue then exit;
   FOnWriteClass:=AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteEnum(const AValue: TOnWriteEnum);
 begin
+  if FOnWriteEnum=AValue then exit;
   FOnWriteEnum:=AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteMapping(const AValue: TOnWriteMapping);
 begin
+  if FOnWriteMapping=AValue then exit;
   FOnWriteMapping:=AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteUnit(const AValue: TOnWriteUnit);
 begin
+  if FOnWriteUnit=AValue then exit;
   FOnWriteUnit:=AValue;
 end;
 
