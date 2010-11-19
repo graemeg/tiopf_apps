@@ -91,26 +91,16 @@ type
   {: Base Mapper Object. }
   {$M+}
   TBaseMapObject = class(TtiObject)
-  private
-    FObservers: TList;
-  public
-    procedure   Subscribe(AObject: TBaseMapObject); virtual;
-    procedure   Unsubscribe(AObject: TBaseMapObject); virtual;
-    procedure   Notify(AObject: TBaseMapObject); virtual;
-    procedure   NotifyObservers;
-
-    constructor Create; virtual;
-    destructor  Destroy; override;
   end;
   {$M-}
 
   TBaseMapObjectList = class(TtiObjectList)
   protected
-    function    GetItems(i: Integer): TBaseMapObject; virtual;
-    procedure   SetItems(i: Integer;  AObject: TBaseMapObject); virtual;
+    function    GetItems(i: Integer): TBaseMapObject; reintroduce;
+    procedure   SetItems(i: Integer;  AObject: TBaseMapObject); reintroduce;
   public
     property    Items[Index: Integer]: TBaseMapObject read GetItems write SetItems; default;
-    function    Add(AObject: TBaseMapObject): Integer; virtual;
+    function    Add(AObject: TBaseMapObject): Integer; reintroduce;
   end;
 
   {: Base project class. }
@@ -1803,75 +1793,6 @@ procedure TORMObject.SetState(const AValue: TORMObjectState);
 begin
   if FState=AValue then exit;
   FState:=AValue;
-end;
-
-{ TBaseMapObject }
-
-constructor TBaseMapObject.Create;
-begin
-
-end;
-
-destructor TBaseMapObject.Destroy;
-begin
-  if Assigned(FObservers) then
-    FObservers.Free;
-  inherited Destroy;
-end;
-
-procedure TBaseMapObject.Notify(AObject: TBaseMapObject);
-begin
-  // dummy method
-end;
-
-procedure TBaseMapObject.NotifyObservers;
-var
-  ObjectIndex: Integer;
-  Observer: TBaseMapObject;
-  lObserverList: TList;
-begin
-  if not Assigned(FObservers) then
-    exit;
-
-  lObserverList := TList.Create;
-  try
-    LObserverList.Assign(FObservers);
-    for ObjectIndex := 0 to LObserverList.Count - 1 do
-    begin
-      // FObserverList is freed when empty.
-      if not Assigned(FObservers) then
-        break;
-      Observer := TBaseMapObject(LObserverList.Items[ObjectIndex]);
-      if Assigned(Observer) and
-         ((ObjectIndex = 0) or (FObservers.IndexOf(Observer) <> -1)) then
-        Observer.Notify(self);
-    end;
-  finally
-    LObserverList.Free;
-  end;
-end;
-
-procedure TBaseMapObject.Subscribe(AObject: TBaseMapObject);
-begin
-  if not assigned(FObservers) then
-    FObservers := TList.Create;
-
-  if FObservers.IndexOf(AObject) < 0 then
-    FObservers.Add(AObject);
-end;
-
-procedure TBaseMapObject.Unsubscribe(AObject: TBaseMapObject);
-begin
-  if not Assigned(FObservers) then
-    exit;
-
-  if FObservers.IndexOf(AObject) < 0 then
-    exit;
-
-  FObservers.Remove(AObject);
-
-  if FObservers.Count = 0 then
-    FObservers.Free;
 end;
 
 { TSelectParam }
