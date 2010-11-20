@@ -73,7 +73,6 @@ function TOmniXMLSchemaReader.CreateSQLSelectList(
 var
   lCtr: integer;
   lPropMap: TPropMapping;
-  lMapping: TClassMapping;
 begin
   result := AClassDef.ClassMapping.TableName + '.OID ';
 
@@ -121,7 +120,7 @@ begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
       lNode := ANode.Item[lCtr];
-      if lNode.NodeType <> COMMENT_NODE then
+      if lNode.NodeType = ELEMENT_NODE then
         begin
           lNewMapProp := TPropMapping.create;
           lNewMapProp.FieldName := lNode.Attributes.GetNamedItem('field').NodeValue;
@@ -154,7 +153,7 @@ begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
       lPropNode := ANode.Item[lCtr];
-      if lPropNode.NodeType <> COMMENT_NODE then
+      if lPropNode.NodeType = ELEMENT_NODE then
         begin
           lNewProp := TMapClassProp.create;
 
@@ -219,7 +218,7 @@ begin
   for lCtr := 0 to ANode.ChildNodes.Length - 1 do
     begin
       lValNode := ANode.ChildNodes.Item[lCtr];
-      if lValNode.NodeType <> COMMENT_NODE then
+      if lValNode.NodeType = ELEMENT_NODE then
         begin
           lVal := TMapValidator.Create;
           lVal.ValidatorType := gStrToValType(lValNode.Attributes.GetNamedItem('type').NodeValue);
@@ -234,10 +233,13 @@ begin
                 raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
                   lVal.ClassProp);
 
-                lValueNode := lValNode.ChildNodes.Item[0];
+                //lValueNode := lValNode.ChildNodes.Item[0];
+                lValueNode := lValNode.SelectSingleNode('value');
+
                 if lValueNode <> nil then
                   begin
-                    lValStr := lValNode.ChildNodes.Item[0].Text;
+//                    lValStr := lValNode.ChildNodes.Item[0].Text;
+                    lValStr := lValueNode.Text;
 
                     case lProp.PropType of
                       ptAnsiString, ptString:
@@ -277,10 +279,10 @@ begin
   for lCtr := 0 to AUnitList.Length - 1 do
     begin
       lUnitNode := AUnitList.Item[lCtr];
-      if lUnitNode.NodeType <> COMMENT_NODE then
+      if lUnitNode.NodeType = ELEMENT_NODE then
         begin
           lNewUnit := TMapUnitDef.Create;
-          lNewUnit.UnitName := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
+          lNewUnit.Name := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
           ReadUnitEnums(lNewUnit, lUnitNode.SelectSingleNode('enums'));
           ReadUnitClasses(lNewUnit, lUnitNode.SelectSingleNode('classes'));
 
@@ -319,7 +321,8 @@ begin
   LoadXMLDoc(AFileName);
 
   lNode := FXML.DocumentElement;
-  FProject.ProjectName := lNode.Attributes.GetNamedItem('project-name').NodeValue;
+  lAttr := lNode.Attributes.GetNamedItem('project-name');
+  FProject.ProjectName := lAttr.NodeValue;
 
   // Establish the base directory
   lDirNode := lNode.Attributes.GetNamedItem('base-directory');
@@ -396,7 +399,7 @@ begin
       for lCtr := 0 to lNodeList.Length - 1 do
         begin
           lIncNode := lNodeList.Item[lCtr];
-          if lIncNode.NodeType <> COMMENT_NODE then
+          if lIncNode.NodeType = ELEMENT_NODE then
             begin
               lIncPath := lIncNode.Attributes.GetNamedItem('file-name').NodeValue;
               FProject.Includes.Add(lIncPath);
@@ -449,7 +452,7 @@ begin
       lClassNode := lClassListNodes.Item[lCtr];
       if lClassNode <> nil then
         begin
-          if lClassNode.NodeType <> COMMENT_NODE then
+          if lClassNode.NodeType = ELEMENT_NODE then
             begin
             lNewClass := TMapClassDef.Create;
 
@@ -537,7 +540,7 @@ begin
                     for lSelectCtr := 0 to lSelListNode.ChildNodes.Length - 1 do
                       begin
                         lSelectNode := lSelListNode.ChildNodes.Item[lSelectCtr];
-                        if lSelectNode.NodeType <> COMMENT_NODE then
+                        if lSelectNode.NodeType = ELEMENT_NODE then
                           begin
                             lNewSelect := TClassMappingSelect.Create;
                             lTemp := StringReplace(lSelectNode.SelectSingleNode('sql').ChildNodes.Item[0].NodeValue, #13, '', [rfReplaceAll]);
@@ -554,7 +557,7 @@ begin
                                 for lParamsCtr := 0 to lParamListNode.ChildNodes.Length - 1 do
                                   begin
                                     lParam := lParamListNode.ChildNodes.Item[lParamsCtr];
-                                    if lParam.NodeType <> COMMENT_NODE then
+                                    if lParam.NodeType = ELEMENT_NODE then
                                       begin
                                         lNewParam := TSelectParam.Create;
                                         lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
@@ -608,7 +611,7 @@ begin
   for lCtr := 0 to lEnumList.Length - 1 do
     begin
       lEnum := lEnumList.Item[lCtr];
-      if lEnum.NodeType <> COMMENT_NODE then
+      if lEnum.NodeType = ELEMENT_NODE then
         begin
           // Crate the Enum Class Def.
           lNewEnum := TMapEnum.Create;
@@ -623,14 +626,17 @@ begin
               for lValueCtr := 0 to lEnumValuesList.Length - 1 do
                 begin
                   lEnumValueNode := lEnumValuesList.Item[lValueCtr];
-                  lNewEnumValue := TMapEnumValue.Create;
-                  lNewEnumValue.EnumValueName := lEnumValueNode.Attributes.GetNamedItem('name').NodeValue;
+                  if lEnumValueNode.NodeType = ELEMENT_NODE then
+                    begin
+                      lNewEnumValue := TMapEnumValue.Create;
+                      lNewEnumValue.EnumValueName := lEnumValueNode.Attributes.GetNamedItem('name').NodeValue;
 
-                  lAttr := lEnumValueNode.Attributes.GetNamedItem('value');
-                  if lAttr <> nil then
-                    lNewEnumValue.EnumValue := StrtoInt(lAttr.NodeValue);
+                      lAttr := lEnumValueNode.Attributes.GetNamedItem('value');
+                      if lAttr <> nil then
+                        lNewEnumValue.EnumValue := StrtoInt(lAttr.NodeValue);
 
-                  lNewEnum.Values.Add(lNewEnumValue);
+                      lNewEnum.Values.Add(lNewEnumValue);
+                    end;
                 end;
             end;
 

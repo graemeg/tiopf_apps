@@ -492,10 +492,10 @@ type
     FReferences: TStringList;
     FUnitClasses: TMapClassDefList;
     FUnitEnums: TMapEnumList;
-    FUnitName: string;
+    FName: string;
     procedure SetUnitName(const AValue: string);
   published
-    property    UnitName: string read FUnitName write SetUnitName;
+    property    Name: string read FName write SetUnitName;
     // Object properties
     property    UnitClasses: TMapClassDefList read FUnitClasses;
     property    UnitEnums: TMapEnumList read FUnitEnums;
@@ -1154,8 +1154,8 @@ end;
 
 procedure TMapUnitDef.SetUnitName(const AValue: string);
 begin
-  if FUnitName=AValue then exit;
-  FUnitName:=AValue;
+  if FName=AValue then exit;
+  FName:=AValue;
 end;
 
 { TMapEnumValue }
@@ -1607,7 +1607,7 @@ begin
 
   for lCtr := 0 to Count - 1 do
     begin
-      if LowerCase(Items[lCtr].UnitName) = lName then
+      if LowerCase(Items[lCtr].Name) = lName then
         begin
           result := Items[lCtr];
           exit;
