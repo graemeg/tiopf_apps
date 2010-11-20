@@ -243,7 +243,7 @@ type
   private
     FIsReadOnly: boolean;
     FPropName: string;
-    FPropType: TMapPropType;
+    FPropertyType: TMapPropType;
     FPropTypeName: string;
     procedure SetIsReadOnly(const AValue: boolean);
     procedure SetPropName(const AValue: string);
@@ -251,7 +251,7 @@ type
     procedure SetPropTypeName(const AValue: string);
   published
     property    PropName: string read FPropName write SetPropName;
-    property    PropType: TMapPropType read FPropType write SetPropType;
+    property    PropertyType: TMapPropType read FPropertyType write SetPropType;
     property    PropTypeName: string read FPropTypeName write SetPropTypeName;
     property    IsReadOnly: boolean read FIsReadOnly write SetIsReadOnly;
   end;
@@ -271,14 +271,14 @@ type
   private
     FFieldName: string;
     FPropName: string;
-    FPropType: TMapPropType;
+    FPropertyType: TMapPropType;
     procedure SetFieldName(const AValue: string);
     procedure SetPropName(const AValue: string);
     procedure SetPropType(const AValue: TMapPropType);
   published
     property    PropName: string read FPropName write SetPropName;
     property    FieldName: string read FFieldName write SetFieldName;
-    property    PropType: TMapPropType read FPropType write SetPropType;
+    property    PropertyType: TMapPropType read FPropertyType write SetPropType;
   end;
 
   TPropMappingList = class(TBaseMapObjectList)
@@ -1376,8 +1376,8 @@ end;
 
 procedure TMapClassProp.SetPropType(const AValue: TMapPropType);
 begin
-  if FPropType=AValue then exit;
-  FPropType:=AValue;
+  if FPropertyType=AValue then exit;
+  FPropertyType:=AValue;
 end;
 
 procedure TMapClassProp.SetPropTypeName(const AValue: string);
@@ -1395,7 +1395,7 @@ var
 begin
   lProp := TMapClassProp.create;
   lProp.PropName := AName;
-  lProp.PropType := APropType;
+  lProp.PropertyType := APropType;
   result := self.Add(lProp);
 end;
 
@@ -1501,8 +1501,8 @@ end;
 
 procedure TPropMapping.SetPropType(const AValue: TMapPropType);
 begin
-  if FPropType=AValue then exit;
-  FPropType:=AValue;
+  if FPropertyType=AValue then exit;
+  FPropertyType:=AValue;
 end;
 
 { TPropMappingList }

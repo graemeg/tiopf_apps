@@ -716,7 +716,7 @@ begin
               lVal.ClassProp + ' but no property with that name is registered to class ' +
               AClassDef.BaseClassName + '.');
 
-          lIfStub := DoGetValidatorTestString(lVal.ClassProp, lProp.PropType, lVal.ValidatorType, lVal.Value);
+          lIfStub := DoGetValidatorTestString(lVal.ClassProp, lProp.PropertyType, lVal.ValidatorType, lVal.Value);
 
           case lVal.ValidatorType of
             vtRequired:
@@ -1223,7 +1223,7 @@ begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
-      case lPropMap.PropType of
+      case lPropMap.PropertyType of
         ptString, ptAnsiString:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
         ptBoolean:
@@ -1256,7 +1256,7 @@ begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
-      case lPropMap.PropType of
+      case lPropMap.PropertyType of
         ptString, ptAnsiString:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
         ptBoolean:
@@ -1417,7 +1417,7 @@ begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
-      case lPropMap.PropType of
+      case lPropMap.PropertyType of
         ptString, ptAnsiString:
           WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
             'lObj.' + lPropMap.PropName + ';', ASL);

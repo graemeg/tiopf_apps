@@ -129,11 +129,11 @@ begin
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
             begin
-              lNewMapProp.PropType := gStrToPropType('string');
+              lNewMapProp.PropertyType := gStrToPropType('string');
             end
           else
             begin
-              lNewMapProp.PropType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
+              lNewMapProp.PropertyType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
             end;
 
           AClass.ClassMapping.PropMappings.Add(lNewMapProp);
@@ -171,21 +171,21 @@ begin
               if lPropAttr.NodeValue <> '' then
                 begin
                   if Copy(lPropAttr.NodeValue, 1,1) = 'T' then
-                    lNewProp.PropType := ptEnum
+                    lNewProp.PropertyType := ptEnum
                   else
-                    lNewProp.PropType := gStrToPropType(lPropAttr.NodeValue);
+                    lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
                   lNewProp.PropTypeName := lPropAttr.NodeValue
                 end
               else
                 begin
-                  lNewProp.PropType := ptString;
+                  lNewProp.PropertyType:= ptString;
                   lNewProp.PropTypeName := 'String';
                 end;
             end
           else
             begin
               lNewProp.PropTypeName := 'string';
-              lNewProp.PropType := ptString;
+              lNewProp.PropertyType := ptString;
             end;
 
           AClass.ClassProps.Add(lNewProp);
@@ -228,7 +228,7 @@ begin
             begin
               lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
               lTempStr := lProp.PropName;
-              lType := lProp.PropType;
+              lType := lProp.PropertyType;
               if lProp = nil then
                 raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
                   lVal.ClassProp);
@@ -241,7 +241,7 @@ begin
 //                    lValStr := lValNode.ChildNodes.Item[0].Text;
                     lValStr := lValueNode.Text;
 
-                    case lProp.PropType of
+                    case lProp.PropertyType of
                       ptAnsiString, ptString:
                         lVal.Value := lValStr;
                       ptBoolean:
@@ -684,7 +684,7 @@ begin
       lNewMapPropNode := FDoc.CreateElement('prop-map');
       lNewMapPropNode.SetAttribute('prop', lMapProp.PropName);
       lNewMapPropNode.SetAttribute('field', lMapProp.FieldName);
-      lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropType));
+      lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropertyType));
       lNewMapNode.AppendChild(lNewMapPropNode);
     end;
 
@@ -708,10 +708,10 @@ begin
       lProp := AClassDef.ClassProps.Items[lCtr];
       lNewPropNode := FDoc.CreateElement('prop');
       lNewPropNode.SetAttribute('name', lProp.PropName);
-      if lProp.PropType = ptEnum then
+      if lProp.PropertyType = ptEnum then
         lNewPropNode.SetAttribute('type', lProp.PropTypeName)
       else
-        lNewPropNode.SetAttribute('type', gPropTypeToStr(lProp.PropType));
+        lNewPropNode.SetAttribute('type', gPropTypeToStr(lProp.PropertyType));
 
       lClassPropsNode.AppendChild(lNewPropNode);
     end;
