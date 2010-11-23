@@ -46,34 +46,34 @@ type
   TPerson = class(TtiObject)
   protected
     FPersonType: TPersonType;
-    FFirstName: string;
-    FLastName: string;
+    FFirstName: String;
+    FLastName: String;
     FAge: Integer;
     FGender: TGenderType;
     FIsActive: Boolean;
     FActiveDate: TDateTime;
-    FEmail: string;
+    FEmail: String;
     procedure SetPersonType(const AValue: TPersonType); virtual;
-    procedure SetFirstName(const AValue: string); virtual;
-    procedure SetLastName(const AValue: string); virtual;
+    procedure SetFirstName(const AValue: String); virtual;
+    procedure SetLastName(const AValue: String); virtual;
     procedure SetAge(const AValue: Integer); virtual;
     procedure SetGender(const AValue: TGenderType); virtual;
     procedure SetIsActive(const AValue: Boolean); virtual;
     procedure SetActiveDate(const AValue: TDateTime); virtual;
-    procedure SetEmail(const AValue: string); virtual;
+    procedure SetEmail(const AValue: String); virtual;
   public
     procedure   Read; override;
     procedure   Save; override;
     function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
     property    PersonType: TPersonType read FPersonType write SetPersonType;
-    property    FirstName: string read FFirstName write SetFirstName;
-    property    LastName: string read FLastName write SetLastName;
+    property    FirstName: String read FFirstName write SetFirstName;
+    property    LastName: String read FLastName write SetLastName;
     property    Age: Integer read FAge write SetAge;
     property    Gender: TGenderType read FGender write SetGender;
     property    IsActive: Boolean read FIsActive write SetIsActive;
     property    ActiveDate: TDateTime read FActiveDate write SetActiveDate;
-    property    Email: string read FEmail write SetEmail;
+    property    Email: String read FEmail write SetEmail;
   end;
   
   { List of TPerson.  TtiMappedFilteredObjectList descendant. }
@@ -89,9 +89,9 @@ type
     { Return count (1) if successful. }
     function    FindByOID(const AOID: string): integer;
     { Returns Number of objects retrieved. }
-    function    FindByGender(const AGender: TGenderType): integer;
+    function    FindByGender(const AGender: enum): integer;
     { Returns Number of objects retrieved. }
-    function    FindByFirstNameMatch(const AName: string): integer;
+    function    FindByFirstNameMatch(const AName: String): integer;
   end;
   
   { Read Visitor for TPerson }
@@ -227,13 +227,13 @@ begin
     FPersonType := AValue;
 end;
 
-procedure TPerson.SetFirstName(const AValue: string);
+procedure TPerson.SetFirstName(const AValue: String);
 begin
   if FFirstName <> AValue then
     FFirstName := AValue;
 end;
 
-procedure TPerson.SetLastName(const AValue: string);
+procedure TPerson.SetLastName(const AValue: String);
 begin
   if FLastName <> AValue then
     FLastName := AValue;
@@ -263,7 +263,7 @@ begin
     FActiveDate := AValue;
 end;
 
-procedure TPerson.SetEmail(const AValue: string);
+procedure TPerson.SetEmail(const AValue: String);
 begin
   if FEmail <> AValue then
     FEmail := AValue;
@@ -348,7 +348,7 @@ begin
   result := Count;
 end;
 
-function TPersonList.FindByGender(const AGender: TGenderType): integer;
+function TPersonList.FindByGender(const AGender: enum): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -356,14 +356,19 @@ begin
   Params.Clear;
   AddParam('AGender', 'gender_type', ptEnum, AGender);
   self.SQL := 
-    ' SELECT PERSON.OID , PERSON.FIRST_NAME, PERSON.LAST_NAME,  ' + 
-    ' PERSON.AGE, PERSON.GENDER, PERSON.PERSON_TYPE FROM  ' + 
-    ' PERSON WHERE PERSON.GENDER = :gender_type'; 
+    '  ' + 
+    ' SELECT  ' + 
+    '   PERSON.OID , PERSON.FIRST_NAME, PERSON.LAST_NAME, PERSON.AGE, PERSON.GENDER, PERSON.PERSON_TYPE ' + 
+    ' FROM  ' + 
+    '     PERSON ' + 
+    ' WHERE  ' + 
+    '     PERSON.GENDER = :gender_type ' + 
+    '                                 '; 
   GTIOPFManager.VisitorManager.Execute('TPersonList_FindByGenderVis', self);
   result := self.Count;
 end;
 
-function TPersonList.FindByFirstNameMatch(const AName: string): integer;
+function TPersonList.FindByFirstNameMatch(const AName: String): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -371,10 +376,17 @@ begin
   Params.Clear;
   AddParam('AName', 'user_first', ptString, AName);
   self.SQL := 
-    ' SELECT PERSON.OID , PERSON.FIRST_NAME, PERSON.LAST_NAME,  ' + 
-    ' PERSON.AGE, PERSON.GENDER, PERSON.PERSON_TYPE FROM  ' + 
-    ' PERSON WHERE PERSON.FIRST_NAME STARTING WITH :USER_FIRST  ' + 
-    ' ORDER BY PERSON.FIRST_NAME, PERSON.LAST_NAME'; 
+    '  ' + 
+    ' SELECT  ' + 
+    '   PERSON.OID , PERSON.FIRST_NAME, PERSON.LAST_NAME, PERSON.AGE, PERSON.GENDER, PERSON.PERSON_TYPE ' + 
+    ' FROM  ' + 
+    '     PERSON ' + 
+    ' WHERE  ' + 
+    '     PERSON.FIRST_NAME STARTING WITH :USER_FIRST ' + 
+    ' ORDER BY ' + 
+    '     PERSON.FIRST_NAME, ' + 
+    '     PERSON.LAST_NAME                                        ' + 
+    '                                 '; 
   GTIOPFManager.VisitorManager.Execute('TPersonList_FindByFirstNameMatchVis', self);
   result := self.Count;
 end;
@@ -684,7 +696,7 @@ begin
   lList := TtiMappedFilteredObjectList(Visited);
   
   lParam := TSelectParam(lList.Params.FindByProps(['ParamName'], ['AGender']));
-  Query.ParamAsInteger['gender_type'] := Integer(TGenderType(lParam.Value));
+  Query.ParamAsInteger['gender_type'] := Integer(enum(lParam.Value));
 end;
 
 { TPersonList_FindByFirstNameMatchVis }

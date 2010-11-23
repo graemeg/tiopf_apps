@@ -22,6 +22,7 @@ type
     FBaseDir: string;
     procedure SetBaseDir(const AValue: string);
   protected
+    function    CreateSQLFieldList(AClassDef: TMapClassDef): string;
     procedure   PrepareUnitList(AList: TStringList);
     procedure   WriteUnitEnums(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteSingleUnitEnum(ASL: TStringList; AEnumDef: TMapEnum);
@@ -130,6 +131,23 @@ implementation
 constructor TMapperProjectWriter.Create(AProject: TMapProject);
 begin
   inherited Create(AProject);
+end;
+
+function TMapperProjectWriter.CreateSQLFieldList(
+  AClassDef: TMapClassDef): string;
+var
+  lCtr: integer;
+  lPropMap: TPropMapping;
+begin
+  result := AClassDef.ClassMapping.TableName + '.OID ';
+
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
+    begin
+      lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      result := result + ', ' + AClassDef.ClassMapping.TableName + '.' + lPropMap.FieldName;
+    end;
+
+  result := UpperCase(result);
 end;
 
 destructor TMapperProjectWriter.Destroy;
@@ -515,6 +533,7 @@ var
   lParam: TSelectParam;
   lTempStr: string;
   lSL: TStringList;
+  lSQL: string;
 begin
 
   lParamSig := '';
@@ -578,7 +597,11 @@ begin
 
           lSL := TStringList.create;
           try
-            lSL.Text := WrapText(ASelect.SQL, 50);
+            lSQL := ASelect.SQL;
+            if POS('${field_list}', lSQL) > 0 then
+              lSL.Text := StringReplace(lSQL, '${field_list}', CreateSQLFieldList(AClassDef), [rfReplaceAll])
+            else
+              lSL.Text := WrapText(ASelect.SQL, 50);
             for lCtr := 0 to lSL.Count -1 do
               begin
                 if lCtr < (lSL.Count -1) then
@@ -709,7 +732,7 @@ begin
       for lCtr := 0 to AClassDef.Validators.Count - 1 do
         begin
           lVal := AClassDef.Validators.Items[lCtr];
-          lProp := TMapClassProp(AClassDef.ClassProps.FindByProps(['PropName'], [lVal.ClassProp], false));
+          lProp := TMapClassProp(AClassDef.ClassProps.FindByProps(['Name'], [lVal.ClassProp], false));
 
           if lProp = nil then
             raise Exception.Create(ClassName + '.WriteClassIsValidImp: Validator defined for property ' +

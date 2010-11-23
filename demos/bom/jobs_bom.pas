@@ -42,19 +42,19 @@ type
   { Generated Class: TJob}
   TJob = class(TtiObject)
   protected
-    FJobName: string;
-    FJobDesc: string;
+    FJobName: String;
+    FJobDesc: String;
     FStatus: TJobStatus;
-    procedure SetJobName(const AValue: string); virtual;
-    procedure SetJobDesc(const AValue: string); virtual;
+    procedure SetJobName(const AValue: String); virtual;
+    procedure SetJobDesc(const AValue: String); virtual;
     procedure SetStatus(const AValue: TJobStatus); virtual;
   public
     procedure   Read; override;
     procedure   Save; override;
     function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
-    property    JobName: string read FJobName write SetJobName;
-    property    JobDesc: string read FJobDesc write SetJobDesc;
+    property    JobName: String read FJobName write SetJobName;
+    property    JobDesc: String read FJobDesc write SetJobDesc;
     property    Status: TJobStatus read FStatus write SetStatus;
   end;
   
@@ -71,25 +71,25 @@ type
     { Return count (1) if successful. }
     function    FindByOID(const AOID: string): integer;
     { Returns Number of objects retrieved. }
-    function    FindByUser(const AUser: string): integer;
+    function    FindByUser(const AUser: String): integer;
     { Returns Number of objects retrieved. }
-    function    FindByStatus(const AStatus: TJobStatus): integer;
+    function    FindByStatus(const AStatus: enum): integer;
   end;
   
   { Generated Class: TUserJobRelation}
   TUserJobRelation = class(TtiObject)
   protected
-    FJobOID: string;
-    FUserOID: string;
-    procedure SetJobOID(const AValue: string); virtual;
-    procedure SetUserOID(const AValue: string); virtual;
+    FJobOID: String;
+    FUserOID: String;
+    procedure SetJobOID(const AValue: String); virtual;
+    procedure SetUserOID(const AValue: String); virtual;
   public
     procedure   Read; override;
     procedure   Save; override;
     function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
-    property    JobOID: string read FJobOID write SetJobOID;
-    property    UserOID: string read FUserOID write SetUserOID;
+    property    JobOID: String read FJobOID write SetJobOID;
+    property    UserOID: String read FUserOID write SetUserOID;
   end;
   
   { List of TUserJobRelation.  TtiMappedFilteredObjectList descendant. }
@@ -105,7 +105,7 @@ type
     { Return count (1) if successful. }
     function    FindByOID(const AOID: string): integer;
     { Returns Number of objects retrieved. }
-    function    FindByUser(const AUserOID: string): integer;
+    function    FindByUser(const AUserOID: String): integer;
   end;
   
   { Read Visitor for TJob }
@@ -324,13 +324,13 @@ begin
   
 end;
 
-procedure TJob.SetJobName(const AValue: string);
+procedure TJob.SetJobName(const AValue: String);
 begin
   if FJobName <> AValue then
     FJobName := AValue;
 end;
 
-procedure TJob.SetJobDesc(const AValue: string);
+procedure TJob.SetJobDesc(const AValue: String);
 begin
   if FJobDesc <> AValue then
     FJobDesc := AValue;
@@ -409,7 +409,7 @@ begin
   result := Count;
 end;
 
-function TJobList.FindByUser(const AUser: string): integer;
+function TJobList.FindByUser(const AUser: String): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -417,15 +417,22 @@ begin
   Params.Clear;
   AddParam('AUser', 'user_oid', ptString, AUser);
   self.SQL := 
-    ' SELECT JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS  ' + 
-    ' FROM JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID  ' + 
-    ' = USER_JOB_RELATION.JOB_OID WHERE USER_JOB_RELATION.USER_OID  ' + 
-    ' = :user_oid ORDER BY JOBS.JOB_NAME'; 
+    '  ' + 
+    ' SELECT  ' + 
+    '   JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS ' + 
+    ' FROM  ' + 
+    '     JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID =  ' + 
+    '     USER_JOB_RELATION.JOB_OID ' + 
+    ' WHERE  ' + 
+    '     USER_JOB_RELATION.USER_OID = :user_oid ' + 
+    ' ORDER BY  ' + 
+    '     JOBS.JOB_NAME ' + 
+    '                                 '; 
   GTIOPFManager.VisitorManager.Execute('TJobList_FindByUserVis', self);
   result := self.Count;
 end;
 
-function TJobList.FindByStatus(const AStatus: TJobStatus): integer;
+function TJobList.FindByStatus(const AStatus: enum): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -433,20 +440,27 @@ begin
   Params.Clear;
   AddParam('AStatus', 'status', ptEnum, AStatus);
   self.SQL := 
-    ' SELECT JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS  ' + 
-    ' FROM JOBS WHERE JOBS.JOB_STATUS = :STATUS ORDER BY  ' + 
-    ' JOBS.JOB_NAME'; 
+    '  ' + 
+    ' SELECT  ' + 
+    '  JOBS.OID , JOBS.JOB_NAME, JOBS.JOB_DESC, JOBS.JOB_STATUS ' + 
+    ' FROM  ' + 
+    '  JOBS  ' + 
+    ' WHERE  ' + 
+    '  JOBS.JOB_STATUS = :STATUS ' + 
+    ' ORDER BY  ' + 
+    '  JOBS.JOB_NAME ' + 
+    '                                 '; 
   GTIOPFManager.VisitorManager.Execute('TJobList_FindByStatusVis', self);
   result := self.Count;
 end;
 
-procedure TUserJobRelation.SetJobOID(const AValue: string);
+procedure TUserJobRelation.SetJobOID(const AValue: String);
 begin
   if FJobOID <> AValue then
     FJobOID := AValue;
 end;
 
-procedure TUserJobRelation.SetUserOID(const AValue: string);
+procedure TUserJobRelation.SetUserOID(const AValue: String);
 begin
   if FUserOID <> AValue then
     FUserOID := AValue;
@@ -525,7 +539,7 @@ begin
   result := Count;
 end;
 
-function TUserJobRelationList.FindByUser(const AUserOID: string): integer;
+function TUserJobRelationList.FindByUser(const AUserOID: String): integer;
 begin
   if self.Count > 0 then
     self.Clear;
@@ -533,9 +547,14 @@ begin
   Params.Clear;
   AddParam('AUserOID', 'user_oid', ptString, AUserOID);
   self.SQL := 
-    ' SELECT USER_JOB_RELATION.OID , USER_JOB_RELATION.JOB_OID,  ' + 
-    ' USER_JOB_RELATION.USER_OID FROM USER_JOB_RELATION WHERE  ' + 
-    ' USER_JOB_RELATION.USER_OID = :USER_OID'; 
+    '  ' + 
+    ' SELECT  ' + 
+    '   USER_JOB_RELATION.OID , USER_JOB_RELATION.JOB_OID, USER_JOB_RELATION.USER_OID ' + 
+    ' FROM  ' + 
+    '     USER_JOB_RELATION  ' + 
+    ' WHERE  ' + 
+    '     USER_JOB_RELATION.USER_OID = :USER_OID                                                                       ' + 
+    '                                 '; 
   GTIOPFManager.VisitorManager.Execute('TUserJobRelationList_FindByUserVis', self);
   result := self.Count;
 end;
@@ -846,7 +865,7 @@ begin
   lList := TtiMappedFilteredObjectList(Visited);
   
   lParam := TSelectParam(lList.Params.FindByProps(['ParamName'], ['AStatus']));
-  Query.ParamAsInteger['status'] := Integer(TJobStatus(lParam.Value));
+  Query.ParamAsInteger['status'] := Integer(enum(lParam.Value));
 end;
 
 { TUserJobRelation_Create }

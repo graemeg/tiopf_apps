@@ -191,6 +191,9 @@ begin
 
   if Assigned(FOnProjectLoaded) then
     FOnProjectLoaded(Self);
+
+  // Update last directory used
+  FLastDirectoryUsed := ExtractFilePath(AFile);
 end;
 
 procedure TAppModel.SaveProject;
