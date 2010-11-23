@@ -578,7 +578,7 @@ begin
 
           lSL := TStringList.create;
           try
-            lSL.Text := WrapText(ASelect.SQL.Text, 50);
+            lSL.Text := WrapText(ASelect.SQL, 50);
             for lCtr := 0 to lSL.Count -1 do
               begin
                 if lCtr < (lSL.Count -1) then
@@ -725,7 +725,7 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, ''' + lProp.PropName + ''');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, ''' + lProp.Name + ''');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -737,8 +737,8 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       incTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterValidatorMsg(self, ''' + lProp.PropName + ''', ' +
-                          lProp.PropName + ');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                          lProp.Name + ');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -750,8 +750,8 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, ''' + lProp.PropName + ''', ' +
-                          lProp.PropName + ');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                          lProp.Name + ');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -763,8 +763,8 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanValidatorMsg(self, ''' + lProp.PropName + ''', ' +
-                          lProp.PropName + ');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                          lProp.Name + ');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -776,8 +776,8 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanOrEqualValidatorMsg(self, ''' + lProp.PropName + ''', ' +
-                          lProp.PropName + ');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                          lProp.Name + ');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -789,8 +789,8 @@ begin
                   IncTab;
                     WriteLine('begin', ASL);
                       IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, ''' + lProp.PropName + ''', ' +
-                          lProp.PropName + ');', ASL);
+                        WriteLine('lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                          lProp.Name + ');', ASL);
                         WriteLine('AErrors.AddError(lMsg);', ASL);
                       DecTab;
                     WriteLine('end;', ASL);
@@ -1289,13 +1289,13 @@ begin
   for lCtr := 0 to AClassDef.ClassProps.Count -1 do
     begin
       lMap := AClassDef.ClassProps.Items[lCtr];
-      WriteLine('procedure ' + AClassDef.BaseClassName + '.Set' + lMap.PropName +
+      WriteLine('procedure ' + AClassDef.BaseClassName + '.Set' + lMap.Name +
         '(const AValue: ' + lMap.PropTypeName + ');', ASL);
       WriteLine('begin', ASL);
       IncTab;
-        WriteLine('if F' + lMap.PropName + ' <> AValue then', ASL);
+        WriteLine('if F' + lMap.Name + ' <> AValue then', ASL);
           IncTab;
-            WriteLine('F' + lMap.PropName + ' := AValue;', ASL);
+            WriteLine('F' + lMap.Name + ' := AValue;', ASL);
           DecTab;
       DecTab;
       WriteLine('end;', ASL);
@@ -1319,7 +1319,7 @@ begin
         lSL.Clear;
         lUnit := Project.Units.Items[lCtr];
         WriteUnit(lUnit, lSL);
-        lSL.SaveToFile(BaseDir + PathDelim + lUnit.UnitName + '.pas');
+        lSL.SaveToFile(BaseDir + PathDelim + lUnit.Name + '.pas');
       end;
   finally
     lSL.free;
@@ -1340,11 +1340,11 @@ begin
       lUnit := Project.Units.Items[lCtr];
       WriteBreak(ASL);
       WriteLine('// -------------------------------------------------------------', ASL);
-      WriteLine('// Unit Definition: ' + lUnit.UnitName, ASL);
+      WriteLine('// Unit Definition: ' + lUnit.Name, ASL);
       WriteLine('// -------------------------------------------------------------', ASL);
       WriteBreak(ASL);
       WriteUnit(lUnit, ASL);
-      ASL.SaveToFile(BaseDir + PathDelim + lUnit.UnitName + '.pas');
+      ASL.SaveToFile(BaseDir + PathDelim + lUnit.Name + '.pas');
     end;
 
 end;
@@ -1364,14 +1364,14 @@ begin
   for lCtr := 0 to AClassDef.ClassProps.Count - 1 do
     begin
       lProp := AClassDef.ClassProps.Items[lCtr];
-      WriteLine('F' + lProp.PropName + ': ' + lProp.PropTypeName + ';', ASL);
+      WriteLine('F' + lProp.Name + ': ' + lProp.PropTypeName + ';', ASL);
     end;
 end;
 
 procedure TMapperProjectWriter.WritePropSetter(ASL: TStringList;
   APropDef: TMapClassProp);
 begin
-  WriteLine('procedure Set' + APropDef.PropName + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
+  WriteLine('procedure Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteSelectSQL(ASL: TStringList;
@@ -1454,11 +1454,11 @@ procedure TMapperProjectWriter.WriteSingleClassProp(ASL: TStringList; AClassProp
 var
   lTemp: string;
 begin
-  lTemp := 'property    ' + AClassProp.PropName + ': ' + AClassProp.PropTypeName + ' read F' +
-    AClassProp.PropName;
+  lTemp := 'property    ' + AClassProp.Name + ': ' + AClassProp.PropTypeName + ' read F' +
+    AClassProp.Name;
 
   if not AClassProp.IsReadOnly then
-    lTemp := lTemp + ' write Set' + AClassProp.PropName + ';'
+    lTemp := lTemp + ' write Set' + AClassProp.Name + ';'
   else
     lTemp := lTemp + ';';
 
@@ -1564,7 +1564,7 @@ begin
 
 
   ASL.Add(sLineBreak);
-  ASL.Add('unit ' + AUnit.UnitName + ';');
+  ASL.Add('unit ' + AUnit.Name + ';');
   ASL.Add(sLineBreak);
   ASL.Add('{$IFDEF FPC}');
   ASL.Add('{$mode objfpc}{$H+}');

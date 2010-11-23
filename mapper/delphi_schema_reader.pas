@@ -22,6 +22,7 @@ type
   private
     FProject: TMapProject;
     FXML: IXMLDocument;
+    function    FindFirstCData(ANode: IXMLNode): IXMLText;
     function    CreateSQLSelectList(AClassDef: TMapClassDef): string;
     function    ExtractBaseClassName(const AName: string): string;
     procedure   LoadXMLDoc(const AFile: string);
@@ -42,7 +43,7 @@ type
   protected
     FDirectory: String;
     FWriterProject: TMapProject;
-    FDoc: TXMLDocument;
+    FDoc: IXMLDocument;
     procedure   WriteProjectUnits(AProject: TMapProject; ADocElem: IXMLElement);
     procedure   WriteUnit(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
     procedure   WriteUnitEnums(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
@@ -60,6 +61,7 @@ type
   end;
 
 implementation
+
 
 { TOmniXMLSchemaReader }
 
@@ -98,6 +100,24 @@ begin
     result := Copy(AName, 2, Length(AName) -1)
   else
     result := AName;
+end;
+
+function TOmniXMLSchemaReader.FindFirstCData(ANode: IXMLNode): IXMLText;
+var
+  lCtr: Integer;
+  lNode: IXMLNode;
+begin
+  result := nil;
+
+  for lCtr := 0 to ANode.ChildNodes.Length - 1 do
+    begin
+      lNode := ANode.ChildNodes.Item[lCtr];
+      if lNode.NodeType = CDATA_SECTION_NODE then
+        begin
+          Result := IXMLText(lNode);
+          exit;
+        end;
+    end;
 end;
 
 procedure TOmniXMLSchemaReader.LoadXMLDoc(const AFile: string);
@@ -153,11 +173,12 @@ begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
       lPropNode := ANode.Item[lCtr];
+
       if lPropNode.NodeType = ELEMENT_NODE then
         begin
           lNewProp := TMapClassProp.create;
 
-          lNewProp.PropName := lPropNode.Attributes.GetNamedItem('name').NodeValue;
+          lNewProp.Name := lPropNode.Attributes.GetNamedItem('name').NodeValue;
 
           // Read only?
           lPropAttr := lPropNode.Attributes.GetNamedItem('read-only');
@@ -170,7 +191,8 @@ begin
             begin
               if lPropAttr.NodeValue <> '' then
                 begin
-                  if Copy(lPropAttr.NodeValue, 1,1) = 'T' then
+                  if (Copy(lPropAttr.NodeValue, 1,1) = 'T') and
+                    (LowerCase(lPropAttr.NodeValue) <> 'tdatetime') then
                     lNewProp.PropertyType := ptEnum
                   else
                     lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
@@ -190,6 +212,7 @@ begin
 
           AClass.ClassProps.Add(lNewProp);
         end;
+
     end;
 
 end;
@@ -226,19 +249,17 @@ begin
           lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
-              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
-              lTempStr := lProp.PropName;
+              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['Name'], [lVal.ClassProp]));
+              lTempStr := lProp.Name;
               lType := lProp.PropertyType;
               if lProp = nil then
                 raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
                   lVal.ClassProp);
 
-                //lValueNode := lValNode.ChildNodes.Item[0];
                 lValueNode := lValNode.SelectSingleNode('value');
 
                 if lValueNode <> nil then
                   begin
-//                    lValStr := lValNode.ChildNodes.Item[0].Text;
                     lValStr := lValueNode.Text;
 
                     case lProp.PropertyType of
@@ -249,7 +270,8 @@ begin
                       ptInt64, ptInteger:
                         lVal.Value := StrToInt(lValStr);
                       ptDateTime:
-                        lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                        //lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                        lVal.Value := StrToDateTime(lValStr);
                       ptEnum:;
                       ptDouble, ptSingle, ptCurrency:
                         lVal.Value := StrToFloat(lValStr);
@@ -293,7 +315,8 @@ begin
               for lRefCtr := 0 to lRefNodeList.ChildNodes.Length - 1 do
                 begin
                   lRefNode := lRefNodeList.ChildNodes.Item[lRefCtr];
-                  lNewUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
+                  if lRefNodeList.NodeType = ELEMENT_NODE then
+                    lNewUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
                 end;
             end;
           FProject.Units.Add(lNewUnit);
@@ -318,6 +341,8 @@ var
   lPath: string;
 begin
   FProject := AProject;
+  FProject.ClearAll;
+
   LoadXMLDoc(AFileName);
 
   lNode := FXML.DocumentElement;
@@ -344,8 +369,8 @@ begin
     begin
       if lDirNode.NodeValue <> '' then
         begin
-          lPath := FProject.BaseDirectory;
           lPath := GetabsolutePath(FProject.BaseDirectory, lNode.Attributes.GetNamedItem('outputdir').NodeValue);
+          FProject.OrigOutDirectory := lNode.Attributes.GetNamedItem('outputdir').NodeValue;
           FProject.OutputDirectory := lPath;
         end
       else
@@ -392,7 +417,10 @@ begin
     end;
 
   // Process Includes
-  lNodeList := lNode.SelectSingleNode('includes').ChildNodes;
+  if lNode.SelectSingleNode('includes') <> nil then
+    lNodeList := lNode.SelectSingleNode('includes').ChildNodes
+  else
+    lNodeList := nil;
 
   if lNodeList <> nil then
     begin
@@ -441,9 +469,11 @@ var
   lParamListNode: IXMLNode;
   lParam: IXMLNode;
   lNewParam: TSelectParam;
+  lCData: IXMLText;
   lNewSelect: TClassMappingSelect;
   lTemp: string;
   lValNode: IXMLNode;
+  lCDataCtr: Integer;
 begin
 
   lClassListNodes := ANode.ChildNodes;
@@ -520,6 +550,7 @@ begin
                 lNewClass.ClassMapping.PKName := lClassMapNode.Attributes.GetNamedItem('pk').NodeValue;
                 lNewClass.ClassMapping.TableName := lClassMapNode.Attributes.GetNamedItem('table').NodeValue;
                 lNewClass.ClassMapping.PKField := lClassMapNode.Attributes.GetNamedItem('pk-field').NodeValue;
+                lNewClass.ClassMapping.OIDType := gStrToOIDType(lClassMapNode.Attributes.GetNamedItem('oid-type').NodeValue);
                 lClassMappings := lClassMapNode.ChildNodes;
 
                 if lClassMappings <> nil then
@@ -533,6 +564,7 @@ begin
 
             // Read in any selections
             lSelListNode := lClassNode.SelectSingleNode('selections');
+
             if lSelListNode <> nil then
               begin
                 if lSelListNode.HasChildNodes then
@@ -540,16 +572,27 @@ begin
                     for lSelectCtr := 0 to lSelListNode.ChildNodes.Length - 1 do
                       begin
                         lSelectNode := lSelListNode.ChildNodes.Item[lSelectCtr];
+
                         if lSelectNode.NodeType = ELEMENT_NODE then
                           begin
+
                             lNewSelect := TClassMappingSelect.Create;
-                            lTemp := StringReplace(lSelectNode.SelectSingleNode('sql').ChildNodes.Item[0].NodeValue, #13, '', [rfReplaceAll]);
-                            lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
-                            lTemp := tiNormalizeStr(lTemp);
+
+                            lCData := FindFirstCData(lSelectNode.SelectSingleNode('sql'));
+
+                            if lCData.HasChildNodes then
+                              raise exception.Create('has children');
+
+                            lTemp := lCData.Text;
+
+                            lTemp := GetCDataChild(lSelectNode.SelectSingleNode('sql')).NodeValue;
+//                                lTemp := StringReplace(lCData.Data, #13, '', [rfReplaceAll]);
+//                                lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
                             // Change variable ${field_list} into list of field names in sql format
-                            if POS('${field_list}', lTemp) > 0 then
-                              lTemp := StringReplace(lTemp, '${field_list}', CreateSQLSelectList(lNewClass), [rfReplaceAll]);
-                            lNewSelect.SQL.Text := lTemp;
+//                            if POS('${field_list}', lTemp) > 0 then
+//                              lTemp := StringReplace(lTemp, '${field_list}', CreateSQLSelectList(lNewClass), [rfReplaceAll]);
+                            lNewSelect.SQL := lTemp;
+
                             lNewSelect.Name := lSelectNode.Attributes.GetNamedItem('name').NodeValue;
                             lParamListNode := lSelectNode.SelectSingleNode('params');
                             if (lParamListNode <> nil) and (lParamListNode.HasChildNodes) then
@@ -707,7 +750,7 @@ begin
     begin
       lProp := AClassDef.ClassProps.Items[lCtr];
       lNewPropNode := FDoc.CreateElement('prop');
-      lNewPropNode.SetAttribute('name', lProp.PropName);
+      lNewPropNode.SetAttribute('name', lProp.Name);
       if lProp.PropertyType = ptEnum then
         lNewPropNode.SetAttribute('type', lProp.PropTypeName)
       else
@@ -742,7 +785,7 @@ begin
       lNewSelNode.SetAttribute('name', lSelect.Name);
       // SQL
       lNewSQLNode := FDoc.CreateElement('sql');
-      lNewCDATA := FDoc.CreateCDATASection(WrapText(lSelect.SQL.Text, 40));
+      lNewCDATA := FDoc.CreateCDATASection(lSelect.SQL);
       lNewSQLNode.AppendChild(lNewCDATA);
       lNewSelNode.AppendChild(lNewSQLNode);
 
@@ -850,7 +893,7 @@ begin
 
   FWriterProject := AProject;
 
-  FDoc := TXMLDocument.Create;
+  FDoc := CreateXMLDoc;
 
   FDirectory := ExcludeTrailingPathDelimiter(ADirectory);
 
@@ -878,7 +921,7 @@ begin
     begin
       lUnit := FWriterProject.Units.Items[lCtr];
       lNewUnitNode := FDoc.CreateElement('unit');
-      lNewUnitNode.SetAttribute('name', lUnit.UnitName);
+      lNewUnitNode.SetAttribute('name', lUnit.Name);
       WriteUnit(lUnit, lNewUnitNode);
       lUnitsElem.AppendChild(lNewUnitNode);
     end;

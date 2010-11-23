@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+    tab-spaces="2"
+    begin-end-tabs="1"
+    visibility-tabs="0"
+    project-name="MyProject"
+    enum-type="int"
+    >
+   
+    <project-units>
+        <unit name="jobs_bom">  
+            
+            <enums>
+                <enum name="TJobStatus">
+                    <values>
+                        <item name="jsCreated"/>
+                        <item name="jsStarted"/>
+                        <item name="jsFinished"/>
+                    </values>
+                </enum>                
+            </enums>
+                        
+            <classes>   
+                <!-- Job -->             
+                <class 
+                    base-class="TJob"
+                    base-class-parent="TtiObject"                    
+                    auto-map="true"                      
+                    auto-create-list="true">
+                    <class-props>                        
+                        <prpo name="JobName"/>
+                        <prop name="JobDesc"/>  
+                        <prop name="Status" type="TJobStatus"/>                                                                      
+                    </class-props>                     
+                    <mapping table="jobs" pk="OID" pk-field="OID" oid-type="string">
+                        <prop-map prop="JobName" field="job_name"/>
+                        <prop-map prop="JobDesc" field="job_desc"/>
+                        <prop-map prop="Status" field="job_status" type="enum"/>                        
+                    </mapping>   
+                    <validators>
+                        <item type="required" prop="JobName"/>                                                
+                    </validators>   
+                    <!-- Selections are used to create custom methods of the TtiObjectList to retrieve custom queries. -->
+                    <selections>
+                        <select type="func" name="FindByUser">
+                            <params>                                
+                                <item name="AUser" type="string" pass-by="const" sql-param="user_oid"/>
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID = 
+                                        USER_JOB_RELATION.JOB_OID
+                                    WHERE 
+                                        USER_JOB_RELATION.USER_OID = :user_oid
+                                    ORDER BY 
+                                        JOBS.JOB_NAME
+                                ]]>
+                            </sql>                            
+                        </select>   
+                        <select type="func" name="FindByStatus">
+                            <params>
+                                <!-- Notice extra attribute "type-name".  Enums just have this extra attribute. -->
+                                <item name="AStatus" type="enum" type-name="TJobStatus" pass-by="const" sql-param="status"/>
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        JOBS 
+                                    WHERE 
+                                        JOBS.JOB_STATUS = :STATUS
+                                    ORDER BY 
+                                        JOBS.JOB_NAME
+                                ]]>
+                            </sql>                            
+                        </select>                      
+                    </selections>    
+                </class>
+                
+                <!-- Relation between a TUser and TJob -->
+                <class
+                    base-class="TUserJobRelation"
+                    base-class-parent="TtiObject"                
+                    auto-map="true"
+                    auto-create-list="true">
+                    <class-props>
+                        <prop name="JobOID" type="string"/>
+                        <prop name="UserOID" type="string"/>                                            
+                    </class-props>
+                    <mapping table="user_job_relation" pk="OID" pk-field="OID" oid-type="string">                        
+                        <prop-map prop="JobOID" field="job_oid" type="string"/>
+                        <prop-map prop="UserOID" field="user_oid" type="string"/>                        
+                    </mapping>
+                    <selections> 
+                        <select type="func" name="FindByUser">                        
+                            <params>
+                                <!-- Notice extra attribute "type-name".  Enums just have this extra attribute. -->
+                                <item name="AUserOID" type="string" pass-by="const" sql-param="user_oid"/>                                                           
+                            </params>
+                            <sql>
+                                <![CDATA[
+                                    SELECT 
+                                      ${field_list}
+                                    FROM 
+                                        USER_JOB_RELATION 
+                                    WHERE 
+                                        USER_JOB_RELATION.USER_OID = :USER_OID                                                                      
+                                ]]>
+                            </sql>                            
+                        </select>                                        
+                    </selections>
+                    
+                    <validators>
+                        <item type="required" prop="JobOID"/>
+                        <item type="required" prop="UserOID"/>                        
+                    </validators>                    
+                </class>
+                                              
+            </classes>
+        </unit>
+    </project-units>
+    
+</project>

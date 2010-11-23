@@ -198,9 +198,10 @@ type
     FEnumValueName: string;
     procedure SetEnumValue(const AValue: integer);
     procedure SetEnumValueName(const AValue: string);
-  public
+  published
     property    EnumValueName: string read FEnumValueName write SetEnumValueName;
     property    EnumValue: integer read FEnumValue write SetEnumValue;
+  public
     constructor Create; override;
     destructor  Destroy; override;
   end;
@@ -242,7 +243,7 @@ type
   TMapClassProp = class(TBaseMapObject)
   private
     FIsReadOnly: boolean;
-    FPropName: string;
+    FName: string;
     FPropertyType: TMapPropType;
     FPropTypeName: string;
     procedure SetIsReadOnly(const AValue: boolean);
@@ -250,7 +251,7 @@ type
     procedure SetPropType(const AValue: TMapPropType);
     procedure SetPropTypeName(const AValue: string);
   published
-    property    PropName: string read FPropName write SetPropName;
+    property    Name: string read FName write SetPropName;
     property    PropertyType: TMapPropType read FPropertyType write SetPropType;
     property    PropTypeName: string read FPropTypeName write SetPropTypeName;
     property    IsReadOnly: boolean read FIsReadOnly write SetIsReadOnly;
@@ -275,6 +276,8 @@ type
     procedure SetFieldName(const AValue: string);
     procedure SetPropName(const AValue: string);
     procedure SetPropType(const AValue: TMapPropType);
+  public
+    function    IsValid(const AErrors: TtiObjectErrors): Boolean; override;
   published
     property    PropName: string read FPropName write SetPropName;
     property    FieldName: string read FFieldName write SetFieldName;
@@ -301,12 +304,13 @@ type
     procedure SetPKField(const AValue: string);
     procedure SetPKName(const AValue: string);
     procedure SetTableName(const AValue: string);
-  public
+  published
     property    TableName: string read FTableName write SetTableName;
     property    PKName: string read FPKName write SetPKName;
     property    PKField: string read FPKField write SetPKField;
     property    PropMappings: TPropMappingList read FPropMappings;
     property    OIDType: TOIDType read FOIDType write SetOIDType;
+  public
     constructor Create; override;
     destructor  Destroy; override;
   end;
@@ -351,17 +355,18 @@ type
   private
     FName: string;
     FParams: TSelectParamList;
-    FSQL: TStringList;
+    FSQL: string;
     procedure SetName(const AValue: string);
+    procedure SetSQL(const Value: string);
   protected
     function    GetCaption: string; override;
   public
     property    Params: TSelectParamList read FParams;
-    property    SQL: TStringList read FSQL;
     constructor Create; override;
     destructor  Destroy; override;
   published
     property    Name: string read FName write SetName;
+    property    SQL: string read FSQL write SetSQL;
   end;
 
   TClassMappingSelectList = class(TBaseMapObjectList)
@@ -640,6 +645,7 @@ type
   function  gStrToValType(const AString: string): TValidatorType;
   function  gValTypeToStr(const AValType: TValidatorType): string;
   function  GetabsolutePath(Source, Relative: string): string;
+  function  gStrToOIDType(const AString: string): TOIDType;
 
   // -----------------------------------------------------------------
   //  Glob vars
@@ -653,6 +659,13 @@ implementation
 var
   mSchemaReaderClass: TMapSchemaReaderClass;
 
+function  gStrToOIDType(const AString: string): TOIDType;
+begin
+  if LowerCase(AString) = 'string' then
+    Result := otString
+  else
+    Result := otInt;
+end;
 
 function GetappearNum(sub, st: string): integer;
 var
@@ -1370,8 +1383,8 @@ end;
 
 procedure TMapClassProp.SetPropName(const AValue: string);
 begin
-  if FPropName=AValue then exit;
-  FPropName:=AValue;
+  if FName=AValue then exit;
+  FName:=AValue;
 end;
 
 procedure TMapClassProp.SetPropType(const AValue: TMapPropType);
@@ -1394,7 +1407,7 @@ var
   lProp: TMapClassProp;
 begin
   lProp := TMapClassProp.create;
-  lProp.PropName := AName;
+  lProp.Name := AName;
   lProp.PropertyType := APropType;
   result := self.Add(lProp);
 end;
@@ -1412,7 +1425,7 @@ begin
 
   for lCtr := 0 to Count - 1 do
     begin
-      if LowerCase(Items[lCtr].PropName) = LowerCase(AName) then
+      if LowerCase(Items[lCtr].Name) = LowerCase(AName) then
         begin
           result := Items[lCtr];
           exit;
@@ -1486,6 +1499,27 @@ begin
 end;
 
 { TPropMapping }
+
+function TPropMapping.IsValid(const AErrors: TtiObjectErrors): Boolean;
+begin
+  result := inherited IsValid(AErrors);
+
+  if not result then
+    exit;
+
+  if (PropName = '') or (Pos(' ', PropName) > 0)  then
+    begin
+      AErrors.AddError('PropName: Must be present and include no spaces');
+    end;
+
+  if (FieldName = '') or (Pos(' ', FieldName) > 0)  then
+    begin
+      AErrors.AddError('Database Field Name: Must be present and include no spaces');
+    end;
+
+  Result := AErrors.Count = 0;
+
+end;
 
 procedure TPropMapping.SetFieldName(const AValue: string);
 begin
@@ -1779,13 +1813,12 @@ end;
 constructor TClassMappingSelect.Create;
 begin
   inherited Create;
-  FSQL := TStringList.Create;
+  FSQL := '';
   FParams := TSelectParamList.Create;
 end;
 
 destructor TClassMappingSelect.Destroy;
 begin
-  FSQL.Free;
   FParams.Free;
   inherited Destroy;
 end;
@@ -1802,9 +1835,9 @@ begin
     begin
       lPar := FParams.Items[lCtr];
       if lParams = '' then
-        lParams := lPar.ParamName + ': ' + lPar.ParamTypeName
+        lParams := lPar.ParamName
       else
-        lParams := lParams + ', ' + lPar.ParamName + ':' + lPar.ParamTypeName;
+        lParams := lParams + ', ' + lPar.ParamName;
     end;
   result := result + lParams + ')';
 
@@ -1814,6 +1847,11 @@ procedure TClassMappingSelect.SetName(const AValue: string);
 begin
   if FName=AValue then exit;
   FName:=AValue;
+end;
+
+procedure TClassMappingSelect.SetSQL(const Value: string);
+begin
+  FSQL := Value;
 end;
 
 { TClassMappingSelectList }
@@ -1986,7 +2024,6 @@ end;
 
 procedure TMapValidator.SetValue(const AValue: variant);
 begin
-  if FValue=AValue then exit;
   FValue:=AValue;
 end;
 
