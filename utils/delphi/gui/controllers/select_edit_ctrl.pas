@@ -78,7 +78,7 @@ begin
       ColCaption := 'SQL Param';
     end;
 
-  with lListCtrl.AddNewCol('ParamType') do
+  with lListCtrl.AddNewCol('ParamTypeName') do
     begin
       Width := 100;
       ColCaption := 'Param Type';

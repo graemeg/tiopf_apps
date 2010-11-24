@@ -16,6 +16,8 @@ type
     cboParamType: TComboBox;
     cboPassBy: TComboBox;
     lblPassBy: TLabel;
+    lblParamTypeName: TLabel;
+    cboParamTypeName: TComboBox;
   private
     { Private declarations }
   public

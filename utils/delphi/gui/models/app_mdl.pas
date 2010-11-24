@@ -36,6 +36,7 @@ type
     FCurrentClasses: TMapClassDefList;
     FOnAfterAddClassDef: TNotifyEvent;
     FLastDirectoryUsed: string;
+    FOnMRUClick: TNotifyEvent;
     procedure SetProject(const AValue: TMapProject);
     procedure SetState(const AValue: TModelProjectState);
     procedure SetOnBeforeAppTerminate(const Value: TNotifyEvent);
@@ -46,6 +47,7 @@ type
     procedure SetCurrentUnit(const Value: TMapUnitDef);
     procedure SetOnAfterAddClassDef(const Value: TNotifyEvent);
     procedure SetLastDirectoryUsed(const Value: string);
+    procedure SetOnMRUClick(const Value: TNotifyEvent);
   public
     property    Project: TMapProject read FProject write SetProject;
     property    State: TModelProjectState read FState write SetState;
@@ -60,6 +62,7 @@ type
     property    OnBeforeAppTerminate: TNotifyEvent read FOnBeforeAppTerminate write SetOnBeforeAppTerminate;
     property    OnAfterProjectSaved: TNotifyEvent read FOnAfterProjectSaved write SetOnAfterProjectSaved;
     property    OnAfterAddClassDef: TNotifyEvent read FOnAfterAddClassDef write SetOnAfterAddClassDef;
+    property    OnMRUClick: TNotifyEvent read FOnMRUClick write SetOnMRUClick;
 
     procedure   ClearProject;
     procedure   UpdateUnitClasses;
@@ -258,6 +261,11 @@ begin
   FOnBeforeAppTerminate := Value;
 end;
 
+procedure TAppModel.SetOnMRUClick(const Value: TNotifyEvent);
+begin
+  FOnMRUClick := Value;
+end;
+
 procedure TAppModel.SetOnProjectLoaded(const Value: TNotifyEvent);
 begin
   FOnProjectLoaded := Value;
@@ -330,6 +338,8 @@ var
 begin
   if State = mpsClosed then
     raise Exception.Create(ClassName + '.WriteProject: No project loaded');
+
+  SaveProject;
 
   lWriter := TMapperProjectWriter.Create(Project);
   try

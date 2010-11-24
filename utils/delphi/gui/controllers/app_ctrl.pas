@@ -20,11 +20,19 @@ type
 
   {: Main application controller. }
   TAppController = class(TMVCController)
+  private
+    FOnMRLClicked: TNotifyEvent;
+    FSelectedMRU: string;
+    procedure SetOnMRLClicked(const Value: TNotifyEvent);
+    procedure SetSelectedMRU(const Value: string);
   protected
     procedure   DoCreateModel; override;
     procedure   DoCreateMediators; override;
     procedure   SetActive(const AValue: Boolean); override;
   public
+    property    SelectedMRU: string read FSelectedMRU write SetSelectedMRU;
+    property    OnMRLClicked: TNotifyEvent read FOnMRLClicked write SetOnMRLClicked;
+    procedure   HandleMRLClick(Sender: TObject);
     procedure   Update(ASubject: TtiObject; AOperation: TNotifyOperation);
        overload; override;
     function    Model: TAppModel; reintroduce;
@@ -38,6 +46,7 @@ implementation
 uses
   event_const
   ,vcl_controllers
+  ,Menus
   ;
 
 { TAppController }
@@ -119,12 +128,21 @@ begin
 
   AddController(lListCtrl);
 
+  // Native events
+
 end;
 
 procedure TAppController.DoCreateModel;
 begin
   inherited;
 
+end;
+
+procedure TAppController.HandleMRLClick(Sender: TObject);
+begin
+  FSelectedMRU := TMenuItem(Sender).Caption;
+  if Assigned(OnMRLClicked) then
+    OnMRLClicked(Self);
 end;
 
 function TAppController.Model: TAppModel;
@@ -136,6 +154,16 @@ procedure TAppController.SetActive(const AValue: Boolean);
 begin
   inherited;
 
+end;
+
+procedure TAppController.SetOnMRLClicked(const Value: TNotifyEvent);
+begin
+  FOnMRLClicked := Value;
+end;
+
+procedure TAppController.SetSelectedMRU(const Value: string);
+begin
+  FSelectedMRU := Value;
 end;
 
 procedure TAppController.Update(ASubject: TtiObject;

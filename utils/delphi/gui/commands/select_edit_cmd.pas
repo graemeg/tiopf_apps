@@ -94,6 +94,23 @@ begin
     lCtrl.ParentController := Controller;
     lCtrl.Init;
     lCtrl.Active := true;
+
+    // Check to see what user selected as type.  We have to
+    // make some manual changes if enumeration type.
+
+    if lParam.ParamType <> ptEnum then
+      begin
+        lParam.ParamTypeName := gPropTypeToStr(lParam.ParamType);
+        lParam.TypeName := lParam.ParamTypeName;
+      end
+    else
+      begin
+        lParam.TypeName := 'enum';
+        lParam.ParamTypeName := lView.cboParamType.Text;
+      end;
+
+
+
     lCtrl.Active := False;
   finally
     lCtrl.Free;
@@ -120,16 +137,30 @@ var
   lView: TParamEditView;
   lCtrl: TParamEditController;
   lListCtrl: TListViewController;
+  lParam: TSelectParam;
 begin
   lListCtrl := TListViewController(Controller.Controllers.FindByName('params_ctl'));
   if lListCtrl.SelectedItem = nil then
     Exit;
+  lParam := TSelectParam(lListCtrl.SelectedItem);
 
   lView := TParamEditView.Create(nil);
   lCtrl := TParamEditController.Create(TSelectParam(lListCtrl.SelectedItem), lView);
   try
+    lCtrl.ParentController := Controller;
     lCtrl.Init;
     lCtrl.Active := True;
+
+    if lParam.ParamType <> ptEnum then
+      begin
+        lParam.ParamTypeName := gPropTypeToStr(lParam.ParamType);
+        lParam.TypeName := lParam.ParamTypeName;
+      end
+    else
+      begin
+        lParam.TypeName := 'enum';
+        lParam.ParamTypeName := lView.cboParamType.Text;
+      end;
     lCtrl.Active := False;
   finally
     lCtrl.Free;

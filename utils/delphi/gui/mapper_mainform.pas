@@ -42,6 +42,7 @@ type
     mnuDeleteEnum: TMenuItem;
     mnuExit: TMenuItem;
     mnuGenerate: TMenuItem;
+    mnuMRU: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   public

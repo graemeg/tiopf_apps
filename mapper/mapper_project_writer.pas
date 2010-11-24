@@ -549,7 +549,7 @@ begin
         lParamSig := '(';
 
       if lParam.ParamType = ptEnum then
-        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.TypeName
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName
       else
         lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
     end;
@@ -599,9 +599,9 @@ begin
           try
             lSQL := ASelect.SQL;
             if POS('${field_list}', lSQL) > 0 then
-              lSL.Text := StringReplace(lSQL, '${field_list}', CreateSQLFieldList(AClassDef), [rfReplaceAll])
+              lSL.Text := WrapText(tiNormalizeStr(StringReplace(lSQL, '${field_list}', CreateSQLFieldList(AClassDef), [rfReplaceAll])), 50)
             else
-              lSL.Text := WrapText(ASelect.SQL, 50);
+              lSL.Text := WrapText(tiNormalizeStr(ASelect.SQL), 50);
             for lCtr := 0 to lSL.Count -1 do
               begin
                 if lCtr < (lSL.Count -1) then
@@ -677,7 +677,7 @@ begin
         lParamSig := '(';
 
       if lParam.ParamType = ptEnum then
-        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.TypeName
+        lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName
       else
         lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
     end;
@@ -959,7 +959,7 @@ begin
             ptEnum:
               begin
                 if Project.EnumType = etInt then
-                  WriteLine('Query.ParamAsInteger[''' + lParam.SQLParamName + '''] := Integer(' + lParam.TypeName +
+                  WriteLine('Query.ParamAsInteger[''' + lParam.SQLParamName + '''] := Integer(' + lParam.ParamTypeName +
                     '(lParam.Value));', ASL)
                 else
                   begin
@@ -1450,7 +1450,7 @@ begin
         ptEnum:
           if Project.EnumType = etInt then
             WriteLine('Query.ParamAsInteger[''' + lPropMap.FieldName + '''] := Integer(' +
-              'lObj.' + lPropMap.PropName + ');', ASL)
+              'lObj.' + lPropMap.PropName+ ');', ASL)
           else
             WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
             'tiGetProperty(lObj, ' + lPropMap.PropName + ');', ASL);

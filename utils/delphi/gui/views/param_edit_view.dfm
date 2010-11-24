@@ -1,12 +1,9 @@
 inherited ParamEditView: TParamEditView
-  BorderIcons = [biMinimize, biMaximize]
-  BorderStyle = bsDialog
   Caption = 'Edit Select Parameter'
-  ClientHeight = 149
+  ClientHeight = 194
   ClientWidth = 375
-  Position = poMainFormCenter
   ExplicitWidth = 381
-  ExplicitHeight = 175
+  ExplicitHeight = 220
   PixelsPerInch = 96
   TextHeight = 13
   object lblSelectName: TLabel [0]
@@ -37,10 +34,19 @@ inherited ParamEditView: TParamEditView
     Height = 13
     Caption = 'Pass Method Param By'
   end
+  object lblParamTypeName: TLabel [4]
+    Left = 8
+    Top = 100
+    Width = 164
+    Height = 13
+    Caption = 'Enum Name (Param Type = enum)'
+  end
   inherited btnOK: TButton
     Left = 282
-    Top = 115
-    TabOrder = 4
+    Top = 160
+    TabOrder = 5
+    ExplicitLeft = 282
+    ExplicitTop = 115
   end
   object eParamName: TEdit
     Left = 8
@@ -86,5 +92,24 @@ inherited ParamEditView: TParamEditView
       ''
       'const'
       'var')
+  end
+  object cboParamTypeName: TComboBox
+    Left = 8
+    Top = 119
+    Width = 174
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 4
+    Items.Strings = (
+      'ptString'
+      'ptAnsiString'
+      'ptDouble'
+      'ptSingle'
+      'ptCurrency'
+      'ptInteger'
+      'ptInt64'
+      'ptDateTime'
+      'ptBoolean'
+      'ptEnum')
   end
 end

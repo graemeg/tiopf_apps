@@ -151,6 +151,7 @@ object MainForm: TMainForm
     SimplePanel = True
   end
   object mmMain: TMainMenu
+    AutoHotkeys = maManual
     Left = 338
     Top = 71
     object mnuFile: TMenuItem
@@ -175,6 +176,9 @@ object MainForm: TMainForm
       end
       object mnuGenerate: TMenuItem
         Caption = 'Generate Project'
+      end
+      object mnuMRU: TMenuItem
+        Caption = 'Recent Projects'
       end
       object mnuExit: TMenuItem
         Caption = 'E&xit'

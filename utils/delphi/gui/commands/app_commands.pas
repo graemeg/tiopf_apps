@@ -95,6 +95,23 @@ type
     procedure   DoRemoveListeners; override;
   end;
 
+  {: Update the MRL list with the new project filename. }
+  TCmdDoUpdateMRUList = class(TAppCommand)
+  protected
+    procedure   DoExecute; override;
+  public
+    constructor Create(AController: TMVCController); override;
+  end;
+
+  {: Updates the main forms menu to show most recent projects/quick loading. }
+  TCmdDoUpdateMRUMenus = class(TAppCommand)
+  protected
+    procedure   DoExecute; override;
+    procedure   DoAddListeners; override;
+  public
+    constructor Create(AController: TMVCController); override;
+  end;
+
   {: Updates the main form when a project is loaded. }
   TCmdUpdateMainFormProjLoaded = class(TAppCommand)
   protected
@@ -235,6 +252,18 @@ type
     procedure   DoRemoveListeners; override;
   end;
 
+  // -----------------------------------------------------------------
+  //  Other/Misc
+  // -----------------------------------------------------------------
+
+  {: Load project from a MRU menu item.}
+  TCmdHandleDoProjectMRU = class(TAppCommand)
+  protected
+    procedure   DoExecute; override;
+    procedure   DoAddListeners; override;
+    procedure   DoRemoveListeners; override;
+  end;
+
 
 
 
@@ -248,6 +277,7 @@ implementation
 uses
   Dialogs
   ,Controls
+  ,Menus
   ,tiUtils
   ,event_const
   ,dialog_view
@@ -260,6 +290,8 @@ uses
   ,enum_edit_ctrl
   ,vcl_controllers
   ,app_consts
+  ,tiOPFStreamer
+  ,tiopf_super_streamer
   ;
 
 procedure RegisterCommands(AController: TMVCController);
@@ -287,6 +319,9 @@ begin
   AController.AddCommand(TCmdHandleDoEditEnum.Create(AController));
   AController.AddCommand(TCmdHandleDoDeleteEnum.Create(AController));
   AController.AddCommand(TCmdHandleDoGenerateProject.Create(AController));
+  AController.AddCommand(TCmdDoUpdateMRUMenus.Create(AController));
+  AController.AddCommand(TCmdDoUpdateMRUList.Create(AController));
+  AController.AddCommand(TCmdHandleDoProjectMRU.Create(AController));
 end;
 
 
@@ -477,6 +512,9 @@ begin
       mnuGenerate.Enabled := lProjLoaded;
       mnuOpen.Enabled := True;
       mnuNewProject.Enabled := True;
+      mnuNewEnum.Enabled := lProjLoaded;
+      mnuEditEnum.Enabled := lProjLoaded;
+      mnuDeleteEnum.Enabled := lProjLoaded;
 
       // General -->
       CurrentUnitLabel.Caption := '';
@@ -615,9 +653,11 @@ begin
       mnuDeleteClass.Enabled := lProjLoaded;
       mnuSettings.Enabled := lProjLoaded;
       mnuGenerate.Enabled := lProjLoaded;
-      mnuOpen.Enabled := True;
-      mnuNewProject.Enabled := True;
-
+      mnuOpen.Enabled := lProjLoaded;
+      mnuNewProject.Enabled := lProjLoaded;
+      mnuNewEnum.Enabled := lProjLoaded;
+      mnuEditEnum.Enabled := lProjLoaded;
+      mnuDeleteEnum.Enabled := lProjLoaded;
       CurrentUnitLabel.Caption := '';
 
       statMain.SimpleText := self.Controller.Model.Project.FileName;
@@ -735,6 +775,7 @@ begin
   lView := TClassEditView.Create(nil);
   lEditCtrl := TClassEditController.Create(lClassDef, lView);
   try
+    lEditCtrl.ParentController := Controller;
     lEditCtrl.Init;
     lEditCtrl.Active := True;
     lEditCtrl.Active := False;
@@ -1033,6 +1074,143 @@ end;
 procedure TCmdDoExistApp.DoRemoveListeners;
 begin
   Controller.View.mnuExit.OnClick := nil;
+end;
+
+{ TCmdDoUpdateMRU }
+
+constructor TCmdDoUpdateMRUMenus.Create(AController: TMVCController);
+begin
+  inherited;
+  //Group := ON_PROJ_LOADED;
+end;
+
+procedure TCmdDoUpdateMRUMenus.DoAddListeners;
+begin
+  Controller.Model.OnAppLoaded := Self.HandleNotifyEvent;
+end;
+
+procedure TCmdDoUpdateMRUMenus.DoExecute;
+var
+  lSL: TStringList;
+  lItem: TMenuItem;
+  lSubItem: TMenuItem;
+  lCtr: Integer;
+  lDir: string;
+  lFile: string;
+begin
+
+  lItem := Controller.View.mnuMRU;
+
+  lDir := tiGetUserLocalAppDataDir('mapper');
+  if not DirectoryExists(lDir) then
+    CreateDir(lDir);
+
+  lFile := lDir + PathDelim + 'mru.txt';
+
+  for lCtr := lItem.Count - 1 downto 0 do
+    begin
+      lItem.Delete(lCtr);
+    end;
+
+  lSL := TStringList.Create;
+  try
+    // create if not exist already
+    if not FileExists(lFile) then
+      lSL.SaveToFile(lFile)
+    else
+      lSL.LoadFromFile(lFile);
+
+    lItem := Controller.View.mnuMRU;
+    for lCtr := 0 to lSL.Count - 1 do
+      begin
+        lSubItem := TMenuItem.Create(lItem);
+        lSubItem.Caption := lSL[lCtr];
+        lSubItem.OnClick := Controller.HandleMRLClick;
+        lItem.Add(lSubItem);
+      end;
+  finally
+    lSL.Free;
+  end;
+
+end;
+
+{ TCmdDoUpdateMRUList }
+
+constructor TCmdDoUpdateMRUList.Create(AController: TMVCController);
+begin
+  inherited;
+  Group := ON_PROJ_LOADED;
+end;
+
+procedure TCmdDoUpdateMRUList.DoExecute;
+var
+  lSL: TStringList;
+  lCtr: Integer;
+  lDir: string;
+  lFile: string;
+  lPOS: Integer;
+begin
+
+  lDir := tiGetUserLocalAppDataDir('mapper');
+  if not DirectoryExists(lDir) then
+    CreateDir(lDir);
+
+  lFile := lDir + PathDelim + 'mru.txt';
+
+  lSL := TStringList.Create;
+  try
+    // create if not exist already
+    if not FileExists(lFile) then
+      lSL.SaveToFile(lFile)
+    else
+      lSL.LoadFromFile(lFile);
+
+    lPOS := lSL.IndexOf(Controller.Model.Project.FileName);
+    if lPOS >= 0 then
+      begin
+        if lPOS <> 0 then
+          begin
+            lSL.Delete(lPOS);
+            lSL.Insert(0, Controller.Model.Project.FileName);
+          end;
+      end
+    else
+      begin
+        lSL.Insert(0, Controller.Model.Project.FileName);
+      end;
+
+    if lSL.Count > 10 then
+      begin
+        while lSL.Count > 10 do
+          lSL.Delete(lSL.Count -1);
+
+      end;
+
+    lSL.SaveToFile(lFile);
+    Controller.Model.OnAppLoaded(Controller.Model);
+
+
+  finally
+    lSL.Free;
+  end;
+
+end;
+
+{ TCmdHandleDoProjectMRU }
+
+procedure TCmdHandleDoProjectMRU.DoAddListeners;
+begin
+  Controller.OnMRLClicked := self.HandleNotifyEvent;
+end;
+
+procedure TCmdHandleDoProjectMRU.DoExecute;
+begin
+  Controller.Model.LoadProject(Controller.SelectedMRU);
+end;
+
+procedure TCmdHandleDoProjectMRU.DoRemoveListeners;
+begin
+  Controller.OnMRLClicked := nil;
 end;
 
 end.

@@ -37,7 +37,7 @@ uses
   ,StdCtrls
   ,Controls
   ,Dialogs
-  ;
+  ,app_ctrl;
 
 { TParamEditController }
 
@@ -55,11 +55,19 @@ begin
 end;
 
 procedure TParamEditController.DoCreateMediators;
+var
+  lComboCtrl: TComboBoxController;
 begin
   AddController(TEditController.Create(Model, View.eParamName, 'ParamName'));
   AddController(TEditController.Create(Model, View.eSQLParamName, 'SQLParamName'));
   AddController(TComboBoxIndexController.Create(Model, View.cboParamType, 'ParamType'));
   AddController(TComboBoxController.Create(Model, View.cboPassBy, 'PassBy'));
+
+  lComboCtrl := TComboBoxController.Create(Model, View.cboParamTypeName, 'ParamTypeName');
+  lComboCtrl.ListData := TAppController(ParentController.ParentController.ParentController).Model.CurrentUnit.UnitEnums;
+  lComboCtrl.ListDisplayProp := 'EnumName';
+  lComboCtrl.ListValueProp := 'EnumName';
+  AddController(lComboCtrl);
 
   // Native events
   View.btnOK.OnClick := Self.HandleOKClick;

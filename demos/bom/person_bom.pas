@@ -45,35 +45,35 @@ type
   { Generated Class: TPerson}
   TPerson = class(TtiObject)
   protected
-    FPersonType: TPersonType;
-    FFirstName: String;
-    FLastName: String;
+    FActiveDate: TDateTime;
     FAge: Integer;
+    FEmail: String;
+    FFirstName: String;
     FGender: TGenderType;
     FIsActive: Boolean;
-    FActiveDate: TDateTime;
-    FEmail: String;
-    procedure SetPersonType(const AValue: TPersonType); virtual;
-    procedure SetFirstName(const AValue: String); virtual;
-    procedure SetLastName(const AValue: String); virtual;
+    FLastName: String;
+    FPersonType: TPersonType;
+    procedure SetActiveDate(const AValue: TDateTime); virtual;
     procedure SetAge(const AValue: Integer); virtual;
+    procedure SetEmail(const AValue: String); virtual;
+    procedure SetFirstName(const AValue: String); virtual;
     procedure SetGender(const AValue: TGenderType); virtual;
     procedure SetIsActive(const AValue: Boolean); virtual;
-    procedure SetActiveDate(const AValue: TDateTime); virtual;
-    procedure SetEmail(const AValue: String); virtual;
+    procedure SetLastName(const AValue: String); virtual;
+    procedure SetPersonType(const AValue: TPersonType); virtual;
   public
     procedure   Read; override;
     procedure   Save; override;
     function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
-    property    PersonType: TPersonType read FPersonType write SetPersonType;
-    property    FirstName: String read FFirstName write SetFirstName;
-    property    LastName: String read FLastName write SetLastName;
+    property    ActiveDate: TDateTime read FActiveDate write SetActiveDate;
     property    Age: Integer read FAge write SetAge;
+    property    Email: String read FEmail write SetEmail;
+    property    FirstName: String read FFirstName write SetFirstName;
     property    Gender: TGenderType read FGender write SetGender;
     property    IsActive: Boolean read FIsActive write SetIsActive;
-    property    ActiveDate: TDateTime read FActiveDate write SetActiveDate;
-    property    Email: String read FEmail write SetEmail;
+    property    LastName: String read FLastName write SetLastName;
+    property    PersonType: TPersonType read FPersonType write SetPersonType;
   end;
   
   { List of TPerson.  TtiMappedFilteredObjectList descendant. }
@@ -221,28 +221,28 @@ begin
   
 end;
 
-procedure TPerson.SetPersonType(const AValue: TPersonType);
+procedure TPerson.SetActiveDate(const AValue: TDateTime);
 begin
-  if FPersonType <> AValue then
-    FPersonType := AValue;
-end;
-
-procedure TPerson.SetFirstName(const AValue: String);
-begin
-  if FFirstName <> AValue then
-    FFirstName := AValue;
-end;
-
-procedure TPerson.SetLastName(const AValue: String);
-begin
-  if FLastName <> AValue then
-    FLastName := AValue;
+  if FActiveDate <> AValue then
+    FActiveDate := AValue;
 end;
 
 procedure TPerson.SetAge(const AValue: Integer);
 begin
   if FAge <> AValue then
     FAge := AValue;
+end;
+
+procedure TPerson.SetEmail(const AValue: String);
+begin
+  if FEmail <> AValue then
+    FEmail := AValue;
+end;
+
+procedure TPerson.SetFirstName(const AValue: String);
+begin
+  if FFirstName <> AValue then
+    FFirstName := AValue;
 end;
 
 procedure TPerson.SetGender(const AValue: TGenderType);
@@ -257,16 +257,16 @@ begin
     FIsActive := AValue;
 end;
 
-procedure TPerson.SetActiveDate(const AValue: TDateTime);
+procedure TPerson.SetLastName(const AValue: String);
 begin
-  if FActiveDate <> AValue then
-    FActiveDate := AValue;
+  if FLastName <> AValue then
+    FLastName := AValue;
 end;
 
-procedure TPerson.SetEmail(const AValue: String);
+procedure TPerson.SetPersonType(const AValue: TPersonType);
 begin
-  if FEmail <> AValue then
-    FEmail := AValue;
+  if FPersonType <> AValue then
+    FPersonType := AValue;
 end;
 
 procedure TPerson.Read;

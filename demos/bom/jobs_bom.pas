@@ -42,19 +42,19 @@ type
   { Generated Class: TJob}
   TJob = class(TtiObject)
   protected
-    FJobName: String;
     FJobDesc: String;
+    FJobName: String;
     FStatus: TJobStatus;
-    procedure SetJobName(const AValue: String); virtual;
     procedure SetJobDesc(const AValue: String); virtual;
+    procedure SetJobName(const AValue: String); virtual;
     procedure SetStatus(const AValue: TJobStatus); virtual;
   public
     procedure   Read; override;
     procedure   Save; override;
     function    IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
   published
-    property    JobName: String read FJobName write SetJobName;
     property    JobDesc: String read FJobDesc write SetJobDesc;
+    property    JobName: String read FJobName write SetJobName;
     property    Status: TJobStatus read FStatus write SetStatus;
   end;
   
@@ -324,16 +324,16 @@ begin
   
 end;
 
-procedure TJob.SetJobName(const AValue: String);
-begin
-  if FJobName <> AValue then
-    FJobName := AValue;
-end;
-
 procedure TJob.SetJobDesc(const AValue: String);
 begin
   if FJobDesc <> AValue then
     FJobDesc := AValue;
+end;
+
+procedure TJob.SetJobName(const AValue: String);
+begin
+  if FJobName <> AValue then
+    FJobName := AValue;
 end;
 
 procedure TJob.SetStatus(const AValue: TJobStatus);

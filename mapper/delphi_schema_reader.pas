@@ -605,9 +605,11 @@ begin
                                         lNewParam := TSelectParam.Create;
                                         lNewParam.ParamName := lParam.Attributes.GetNamedItem('name').NodeValue;
                                         lNewParam.ParamType := gStrToPropType(lParam.Attributes.GetNamedItem('type').NodeValue);
-                                        lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
+                                        lNewParam.TypeName := lParam.Attributes.GetNamedItem('type').NodeValue;
                                         if lNewParam.ParamType = ptEnum then
-                                          lNewParam.TypeName := lParam.Attributes.GetNamedItem('type-name').NodeValue;
+                                          lNewParam.ParamTypeName := lParam.Attributes.GetNamedItem('type-name').NodeValue
+                                        else
+                                          lNewParam.ParamTypeName:= lNewParam.TypeName;
                                         lNewParam.PassBy := lParam.Attributes.GetNamedItem('pass-by').NodeValue;
                                         lNewParam.SQLParamName := lParam.Attributes.GetNamedItem('sql-param').NodeValue;
                                         lNewSelect.Params.Add(lNewParam);
