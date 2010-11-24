@@ -69,7 +69,7 @@ type
   {: Describes the type of OID to use for object. }
   TOIDType = (otString, otInt);
 
-  {: Describes show enumeratated types should be handled. }
+  {: Describes how enumeratated types should be handled. }
   TEnumType = (etInt, etString);
 
   {: Describes validators types. }
@@ -81,7 +81,6 @@ type
   //  Method Objects
   // -----------------------------------------------------------------
 
-  //TListSortCompare = function (Item1, Item2: Pointer): Integer;
   TGetValidatorErrorString = function(const AValType: TValidatorType): string;
 
   // -----------------------------------------------------------------
@@ -192,6 +191,7 @@ type
     function    Add(AObject: TMapConnectionDef): Integer; reintroduce;
   end;
 
+  {: Represent a pascal Enumerated type value.  ie: bsNone, bsSolid, etc. }
   TMapEnumValue = class(TBaseMapObject)
   private
     FEnumValue: integer;
@@ -216,6 +216,7 @@ type
     function    Add(const AName: string; const AValue: integer = -1): integer; overload;
   end;
 
+  {: Represents an enumerated type. }
   TMapEnum = class(TBaseMapObject)
   private
     FEnumName: string;
@@ -240,6 +241,7 @@ type
     function    FindByName(const AName: string): TMapEnum;
   end;
 
+  {: Stores information about a class property. }
   TMapClassProp = class(TBaseMapObject)
   private
     FIsReadOnly: boolean;
@@ -268,6 +270,7 @@ type
     function    FindByName(const AName: string): TMapClassProp;
   end;
 
+  {: Stores info about the mapping between a class property and its corresponding database field name. }
   TPropMapping = class(TBaseMapObject)
   private
     FFieldName: string;
@@ -293,6 +296,8 @@ type
     function    Add(AObject: TPropMapping): Integer; reintroduce;
   end;
 
+  {: Stores information about the class <--> database mapping such as table name.
+  Contains a TPropMappingList. }
   TClassMapping = class(TBaseMapObject)
   private
     FOIDType: TOIDType;
@@ -315,6 +320,8 @@ type
     destructor  Destroy; override;
   end;
 
+  {: Represent a parameter defintion in a selection.  Translates to the parameters of the
+  method that will be created in the object list class. }
   TSelectParam = class(TBaseMapObject)
   private
     FParamName: string;
@@ -351,6 +358,7 @@ type
     function    FindByName(const AName: string): TSelectParam;
   end;
 
+  {: Represents a class section.  Contains SQL and name.   }
   TClassMappingSelect = class(TBaseMapObject)
   private
     FName: string;
@@ -636,15 +644,26 @@ type
 
   procedure RegisterMappings;
 
+  // Misc global methods.
+  {: Set the class used for reading and writing schema projects from and to XML. }
   procedure gSetSchemaReaderClass(const AClass: TMapSchemaReaderClass);
+  {: Set the class of the default schema reader. }
   function  gGetSchemaReaderClass: TMapSchemaReaderClass;
+  {: Converts AString into a TClassDefType. }
   function  gStrToClassDefType(const AString: String): TClassDefType;
+  {: Converts AString into corresponding TMapPropType. }
   function  gStrToPropType(const AString: string): TMapPropType;
+  {: Converts a TMapPropType into its streaming evquilv. }
   function  gPropTypeToStr(const APropType: TMapPropType): string;
+  {: Finds a TtiAttrColMap given the AClassName.  Built in function uses the TClass instead of string. }
   function  gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
+  {: Converts AString into corresponding TValidatorType. }
   function  gStrToValType(const AString: string): TValidatorType;
+  {: Converts AValType into its string equiv. }
   function  gValTypeToStr(const AValType: TValidatorType): string;
+  {: Returns the absolute path of Source Path given Relative path. }
   function  GetabsolutePath(Source, Relative: string): string;
+  {: Converts a string representation to TOIDType. }
   function  gStrToOIDType(const AString: string): TOIDType;
 
   // -----------------------------------------------------------------
@@ -949,6 +968,8 @@ var
   lPropDef: TMapClassProp;
   lUnit: TMapUnitDef;
 begin
+  result := nil;
+
   lUnit := Units.FindByName(AUnitName);
   lClassDef := lUnit.UnitClasses.FindByName(AClassName);
   lPropDef := lClassDef.ClassProps.FindByName(APropName);

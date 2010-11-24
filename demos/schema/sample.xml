@@ -13,8 +13,8 @@
       <classes>
         <class base-class="TJob" base-class-parent="TtiObject" auto-map="true" auto-create-list="true">
           <class-props>
-            <prop name="JobName" type="String" />
             <prop name="JobDesc" type="String" />
+            <prop name="JobName" type="String" />
             <prop name="Status" type="TJobStatus" />
           </class-props>
           <validators>
@@ -121,14 +121,14 @@ WHERE
       <classes>
         <class base-class="TPerson" base-class-parent="TtiObject" auto-map="true" auto-create-list="true">
           <class-props>
-            <prop name="PersonType" type="TPersonType" />
-            <prop name="FirstName" type="String" />
-            <prop name="LastName" type="String" />
+            <prop name="ActiveDate" type="TDateTime" />
             <prop name="Age" type="Integer" />
+            <prop name="Email" type="String" />
+            <prop name="FirstName" type="String" />
             <prop name="Gender" type="TGenderType" />
             <prop name="IsActive" type="Boolean" />
-            <prop name="ActiveDate" type="TDateTime" />
-            <prop name="Email" type="String" />
+            <prop name="LastName" type="String" />
+            <prop name="PersonType" type="TPersonType" />
           </class-props>
           <validators>
             <item prop="Age" type="greater-equal">

@@ -639,9 +639,9 @@ var
   lView: TProjectSettingsView;
 begin
   lView := TProjectSettingsView.Create(nil);
-  try
-    lCtrl := TProjectSettingsController.Create(Controller.Model.Project,
+  lCtrl := TProjectSettingsController.Create(Controller.Model.Project,
       lView);
+  try
     lCtrl.Init;
     lCtrl.Active := True;
     lCtrl.Active := False;
@@ -712,6 +712,7 @@ end;
 procedure TCmdHandleDoEditClassDef.DoAddListeners;
 begin
   Controller.View.mnuEditClass.OnClick := self.HandleNotifyEvent;
+  Controller.View.lvClasses.OnDblClick := self.HandleNotifyEvent;
 end;
 
 procedure TCmdHandleDoEditClassDef.DoExecute;
@@ -748,6 +749,7 @@ end;
 procedure TCmdHandleDoEditClassDef.DoRemoveListeners;
 begin
   Controller.View.mnuEditClass.OnClick := nil;
+  Controller.View.lvClasses.OnDblClick := nil;
 end;
 
 { TCmdHandleDoCreateClassDef }
@@ -918,6 +920,7 @@ end;
 procedure TCmdHandleDoEditEnum.DoAddListeners;
 begin
   Controller.View.mnuEditEnum.OnClick := self.HandleNotifyEvent;
+  Controller.View.lvEnums.OnDblClick := self.HandleNotifyEvent;
 end;
 
 procedure TCmdHandleDoEditEnum.DoExecute;
@@ -954,6 +957,7 @@ end;
 procedure TCmdHandleDoEditEnum.DoRemoveListeners;
 begin
   Controller.View.mnuEditEnum.OnClick := nil;
+  Controller.View.lvEnums.OnDblClick := nil;
 end;
 
 { TCmdHandleDoDeleteEnum }

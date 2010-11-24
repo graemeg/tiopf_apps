@@ -1,7 +1,6 @@
 program MapperGUI;
 
 uses
-  ExceptionLog,
   Forms,
   mapper_mainform in 'mapper_mainform.pas' {MainForm},
   base_view_form in 'views\base_view_form.pas' {BaseViewForm},

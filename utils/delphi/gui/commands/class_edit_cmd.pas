@@ -184,6 +184,7 @@ end;
 procedure TCmdDoEditProperty.DoAddListeners;
 begin
   Controller.View.mnuEditProp.OnClick := self.HandleNotifyEvent;
+  Controller.View.lvProps.OnDblClick := self.HandleNotifyEvent;
 end;
 
 procedure TCmdDoEditProperty.DoExecute;
@@ -296,8 +297,6 @@ end;
 
 procedure TCmdDoDeleteProperty.DoExecute;
 var
-  lCtrl: TPropMapEditController;
-  lView: TClassPropEditView;
   lListCtrl: TListViewController;
   lProp: TMapClassProp;
   lMsg: string;
@@ -398,6 +397,7 @@ end;
 procedure TCmdDoEditPropMapping.DoAddListeners;
 begin
   Controller.View.mnuEditMap.OnClick := self.HandleNotifyEvent;
+  Controller.View.lvMapping.OnDblClick := self.HandleNotifyEvent;
 end;
 
 procedure TCmdDoEditPropMapping.DoExecute;
@@ -443,8 +443,6 @@ end;
 
 procedure TCmdDoDeletePropMapping.DoExecute;
 var
-  lCtrl: TPropMapEditController;
-  lView: TClassPropEditView;
   lListCtrl: TListViewController;
   lMap: TPropMapping;
   lMsg: string;
@@ -569,6 +567,7 @@ end;
 procedure TCmdDoEditValidator.DoAddListeners;
 begin
   Controller.View.mnuEditValidator.OnClick := self.HandleNotifyEvent;
+  Controller.View.lvValidators.OnDblClick := self.HandleNotifyEvent;
 end;
 
 procedure TCmdDoEditValidator.DoExecute;
@@ -613,8 +612,6 @@ end;
 
 procedure TCmdDoDeleteValidator.DoExecute;
 var
-  lCtrl: TValidatorEditController;
-  lView: TValidatorEditView;
   lListCtrl: TListViewController;
   lVal: TMapValidator;
   lMsg: string;
@@ -684,6 +681,7 @@ end;
 procedure TCmdDoEditSelect.DoAddListeners;
 begin
   Controller.View.mnuEditSelect.OnClick := Self.HandleNotifyEvent;
+  Controller.View.lvSelections.OnDblClick := Self.HandleNotifyEvent;
 end;
 
 procedure TCmdDoEditSelect.DoExecute;

@@ -1,9 +1,7 @@
 inherited ClassPropEditView: TClassPropEditView
-  BorderStyle = bsDialog
   Caption = 'Edit Class Property Definition'
   ClientHeight = 166
   ClientWidth = 243
-  Position = poMainFormCenter
   ExplicitWidth = 249
   ExplicitHeight = 192
   PixelsPerInch = 96
@@ -18,14 +16,16 @@ inherited ClassPropEditView: TClassPropEditView
   object lblPropType: TLabel [1]
     Left = 8
     Top = 54
-    Width = 100
+    Width = 69
     Height = 13
-    Caption = 'Class Property Name'
+    Caption = 'Property Type'
   end
   inherited btnOK: TButton
     Left = 150
     Top = 132
     TabOrder = 3
+    ExplicitLeft = 150
+    ExplicitTop = 132
   end
   object ePropName: TEdit
     Left = 8
