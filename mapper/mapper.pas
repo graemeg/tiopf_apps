@@ -98,7 +98,7 @@ type
     function    GetItems(i: Integer): TBaseMapObject; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TBaseMapObject); reintroduce;
   public
-    property    Items[Index: Integer]: TBaseMapObject read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TBaseMapObject read GetItems write SetItems; default;
     function    Add(AObject: TBaseMapObject): Integer; reintroduce;
   end;
 
@@ -159,7 +159,7 @@ type
     function    GetItems(i: Integer): TMapProject; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapProject); reintroduce;
   public
-    property    Items[Index: Integer]: TMapProject read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapProject read GetItems write SetItems; default;
     function    Add(AObject: TMapProject): Integer; reintroduce;
   end;
 
@@ -187,7 +187,7 @@ type
     function    GetItems(i: Integer): TMapConnectionDef; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapConnectionDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapConnectionDef read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapConnectionDef read GetItems write SetItems; default;
     function    Add(AObject: TMapConnectionDef): Integer; reintroduce;
   end;
 
@@ -211,7 +211,7 @@ type
     function    GetItems(i: Integer): TMapEnumValue; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapEnumValue); reintroduce;
   public
-    property    Items[Index: Integer]: TMapEnumValue read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapEnumValue read GetItems write SetItems; default;
     function    Add(AObject: TMapEnumValue): Integer; reintroduce; overload;
     function    Add(const AName: string; const AValue: integer = -1): integer; overload;
   end;
@@ -236,7 +236,7 @@ type
     function    GetItems(i: Integer): TMapEnum; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapEnum); reintroduce;
   public
-    property    Items[i: Integer]: TMapEnum read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapEnum read GetItems write SetItems; default;
     function    Add(AObject: TMapEnum): Integer; reintroduce;
     function    FindByName(const AName: string): TMapEnum;
   end;
@@ -264,7 +264,7 @@ type
     function    GetItems(i: Integer): TMapClassProp; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapClassProp); reintroduce;
   public
-    property    Items[Index: Integer]: TMapClassProp read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapClassProp read GetItems write SetItems; default;
     function    Add(AObject: TMapClassProp): Integer; reintroduce; overload;
     function    Add(const AName: string; const APropType: TMapPropType): integer; overload;
     function    FindByName(const AName: string): TMapClassProp;
@@ -292,7 +292,7 @@ type
     function    GetItems(i: Integer): TPropMapping; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TPropMapping); reintroduce;
   public
-    property    Items[Index: Integer]: TPropMapping read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TPropMapping read GetItems write SetItems; default;
     function    Add(AObject: TPropMapping): Integer; reintroduce;
   end;
 
@@ -353,7 +353,7 @@ type
     function    GetItems(i: Integer): TSelectParam; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TSelectParam); reintroduce;
   public
-    property    Items[Index: Integer]: TSelectParam read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TSelectParam read GetItems write SetItems; default;
     function    Add(AObject: TSelectParam): Integer; reintroduce;
     function    FindByName(const AName: string): TSelectParam;
   end;
@@ -382,7 +382,7 @@ type
     function    GetItems(i: Integer): TClassMappingSelect; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TClassMappingSelect); reintroduce;
   public
-    property    Items[Index: Integer]: TClassMappingSelect read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TClassMappingSelect read GetItems write SetItems; default;
     function    Add(AObject: TClassMappingSelect): Integer; reintroduce;
   end;
 
@@ -391,7 +391,7 @@ type
     function    GetItems(i: Integer): TClassMapping; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TClassMapping); reintroduce;
   public
-    property    Items[Index: Integer]: TClassMapping read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TClassMapping read GetItems write SetItems; default;
     function    Add(AObject: TClassMapping): Integer; reintroduce;
   end;
 
@@ -411,7 +411,7 @@ type
     function    GetItems(i: Integer): TFilterDef; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TFilterDef); reintroduce;
   public
-    property    Items[Index: Integer]: TFilterDef read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TFilterDef read GetItems write SetItems; default;
     function    Add(AObject: TFilterDef): Integer; reintroduce;
   end;
 
@@ -495,7 +495,7 @@ type
     function    GetItems(i: Integer): TMapClassDef; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapClassDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapClassDef read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapClassDef read GetItems write SetItems; default;
     function    Add(AObject: TMapClassDef): Integer; reintroduce;
     function    FindByName(const AName: string): TMapClassDef;
   end;
@@ -524,7 +524,7 @@ type
     function    GetItems(i: Integer): TMapUnitDef; reintroduce;
     procedure   SetItems(i: Integer;  AObject: TMapUnitDef); reintroduce;
   public
-    property    Items[Index: Integer]: TMapUnitDef read GetItems write SetItems; default;
+    property    Items[AIndex: Integer]: TMapUnitDef read GetItems write SetItems; default;
     function    Add(AObject: TMapUnitDef): Integer; reintroduce;
     function    FindByName(const AName: string): TMapUnitDef;
   end;
@@ -2158,4 +2158,4 @@ initialization
   ValidatorStringClass := TValidatorStringGenerator;
 
 end.
-
+

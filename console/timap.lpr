@@ -1,12 +1,15 @@
 program timap;
 
+{$IFDEF FPC}
 {$mode objfpc}{$H+}
+{$ENDIF}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, mapper, fpc_schema_writer;
+  {$ENDIF}
+  Classes, SysUtils, CustApp, mapper, fpc_schema_writer,
+  mapper_project_writer, fpc_schema_reader;
 
 type
 
@@ -105,7 +108,7 @@ end;
 
 procedure TMapperCmd.OnWriteUnit(AUnitDef: TMapUnitDef);
 begin
-  WriteLn('Writing Unit: ' + AUnitDef.UnitName);
+  WriteLn('Writing Unit: ' + AUnitDef.Name);
 end;
 
 procedure TMapperCmd.WriteError(const AError: string);
@@ -163,12 +166,10 @@ end;
 var
   Application: TMapperCmd;
 
-{$R *.res}
-
 begin
   Application:=TMapperCmd.Create(nil);
   Application.Title:='TtiMapper';
   Application.Run;
   Application.Free;
 end.
-
+

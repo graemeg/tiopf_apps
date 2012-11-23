@@ -1,26 +1,25 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <Flags>
         <MainUnitHasCreateFormStatements Value="False"/>
         <MainUnitHasTitleStatement Value="False"/>
-        <UseDefaultCompilerOptions Value="True"/>
       </Flags>
+      <SessionStorage Value="InProjectDir"/>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=".exe"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <Icon Value="0"/>
-      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
       <Language Value=""/>
       <CharSet Value=""/>
-      <StringTable Comments="" CompanyName="" FileDescription="" FileVersion="" InternalName="" LegalCopyright="" LegalTrademarks="" OriginalFilename="" ProductName="" ProductVersion=""/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -31,7 +30,7 @@
       <local>
         <FormatVersion Value="1"/>
         <CommandLineParams Value="-f &quot;M:\LazarusProjects\poker_clock\schema\main_schema.xml&quot;"/>
-        <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
+        <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
     <RequiredPackages Count="1">
@@ -39,304 +38,29 @@
         <PackageName Value="laz_timapper"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="17">
+    <Units Count="2">
       <Unit0>
         <Filename Value="timap.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="timap"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="14" Y="8"/>
-        <UsageCount Value="201"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="..\mapper\mapper.pas"/>
-        <UnitName Value="mapper"/>
-        <EditorIndex Value="3"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="118"/>
-        <CursorPos X="15" Y="138"/>
-        <UsageCount Value="101"/>
-        <Bookmarks Count="1">
-          <Item0 X="29" Y="650" ID="2"/>
-        </Bookmarks>
-        <Loaded Value="True"/>
+        <Filename Value="readme.txt"/>
+        <IsPartOfProject Value="True"/>
       </Unit1>
-      <Unit2>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\packages\fcl-base\src\custapp.pp"/>
-        <UnitName Value="CustApp"/>
-        <EditorIndex Value="0"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="76"/>
-        <CursorPos X="32" Y="104"/>
-        <UsageCount Value="101"/>
-        <Loaded Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="..\mapper\mapper_project_writer.pas"/>
-        <UnitName Value="mapper_project_writer"/>
-        <EditorIndex Value="2"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1304"/>
-        <CursorPos X="31" Y="1317"/>
-        <UsageCount Value="100"/>
-        <Bookmarks Count="1">
-          <Item0 X="20" Y="721" ID="1"/>
-        </Bookmarks>
-        <Loaded Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <UnitName Value="fpc_schema_reader"/>
-        <EditorIndex Value="4"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="111"/>
-        <CursorPos X="54" Y="124"/>
-        <UsageCount Value="101"/>
-        <Bookmarks Count="1">
-          <Item0 X="24" Y="691" ID="9"/>
-        </Bookmarks>
-        <Loaded Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="..\demos\bom\person_bom.pas"/>
-        <UnitName Value="person_bom"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="87" Y="29"/>
-        <UsageCount Value="25"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="..\demos\bom\jobs_bom.pas"/>
-        <UnitName Value="jobs_bom"/>
-        <UsageCount Value="7"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\packages\fcl-xml\src\dom.pp"/>
-        <UnitName Value="DOM"/>
-        <EditorIndex Value="7"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="65"/>
-        <CursorPos X="3" Y="82"/>
-        <UsageCount Value="71"/>
-        <Loaded Value="True"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiObject.pas"/>
-        <UnitName Value="tiObject"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="422"/>
-        <CursorPos X="17" Y="439"/>
-        <UsageCount Value="25"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiUtils.pas"/>
-        <UnitName Value="tiUtils"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="25"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="58"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="M:\DelphiProjects\D2009Projects\Components\VGScene\lazarus\vgscene.pas"/>
-        <UnitName Value="vgscene"/>
-        <EditorIndex Value="6"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="88" Y="17"/>
-        <UsageCount Value="62"/>
-        <Loaded Value="True"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\objpas\sysutils\sysutilh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="191"/>
-        <CursorPos X="23" Y="208"/>
-        <UsageCount Value="18"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\win32\system.pp"/>
-        <UnitName Value="System"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="23"/>
-        <CursorPos X="2" Y="40"/>
-        <UsageCount Value="18"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\objpas\classes\classesh.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="144"/>
-        <CursorPos X="3" Y="161"/>
-        <UsageCount Value="6"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\inc\variants.pp"/>
-        <UnitName Value="variants"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="34"/>
-        <CursorPos X="40" Y="66"/>
-        <UsageCount Value="5"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="M:\lazarus_current\lazarus\fpc\2.4.0\source\rtl\inc\varianth.inc"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="66"/>
-        <CursorPos X="4" Y="53"/>
-        <UsageCount Value="5"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="M:\lazarus\components\tiOPF2\Core\tiRTTI.pas"/>
-        <UnitName Value="tiRTTI"/>
-        <EditorIndex Value="5"/>
-        <WindowIndex Value="0"/>
-        <TopLine Value="52"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="46"/>
-        <Loaded Value="True"/>
-      </Unit16>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="115"/>
-      </Position1>
-      <Position2>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="129" Column="1" TopLine="115"/>
-      </Position2>
-      <Position3>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="115"/>
-      </Position3>
-      <Position4>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="129" Column="1" TopLine="115"/>
-      </Position4>
-      <Position5>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="115"/>
-      </Position5>
-      <Position6>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="129" Column="1" TopLine="115"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="120" Column="1" TopLine="107"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="107"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="120" Column="1" TopLine="107"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="107"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="120" Column="1" TopLine="107"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="116"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="129" Column="1" TopLine="116"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="116"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="120" Column="1" TopLine="113"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="126" Column="1" TopLine="113"/>
-      </Position16>
-      <Position17>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="72" Column="1" TopLine="65"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="15" Column="11" TopLine="43"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="127" Column="56" TopLine="111"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="131" Column="17" TopLine="111"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="130" Column="38" TopLine="111"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="128" Column="1" TopLine="111"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="130" Column="63" TopLine="111"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="128" Column="71" TopLine="111"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="123" Column="34" TopLine="111"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\mapper\fpc_schema_reader.pas"/>
-        <Caret Line="139" Column="11" TopLine="111"/>
-      </Position26>
-      <Position27>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="72" Column="1" TopLine="65"/>
-      </Position27>
-      <Position28>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="9" Column="39" TopLine="1"/>
-      </Position28>
-      <Position29>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="12" Column="33" TopLine="1"/>
-      </Position29>
-      <Position30>
-        <Filename Value="timap.lpr"/>
-        <Caret Line="9" Column="56" TopLine="1"/>
-      </Position30>
-    </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
     <Target>
       <Filename Value="timap"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)\"/>
-      <OtherUnitFiles Value="M:\LazarusProjects\custom_comps\tiOPFMapper\demos\bom\"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\demos\bom"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
-    <Parsing>
-      <SyntaxOptions>
-        <UseAnsiStrings Value="True"/>
-      </SyntaxOptions>
-    </Parsing>
     <Linking>
       <Debugging>
         <StripSymbols Value="True"/>
@@ -350,12 +74,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Source Value="..\mapper\fpc_schema_reader.pas"/>
-        <Line Value="129"/>
-      </Item1>
-    </BreakPoints>
     <Exceptions Count="3">
       <Item1>
         <Name Value="EAbort"/>
@@ -368,4 +86,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

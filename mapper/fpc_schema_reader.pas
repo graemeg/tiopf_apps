@@ -141,11 +141,11 @@ begin
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
             begin
-              lNewMapProp.PropType := gStrToPropType('string');
+              lNewMapProp.PropertyType := gStrToPropType('string');
             end
           else
             begin
-              lNewMapProp.PropType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
+              lNewMapProp.PropertyType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
             end;
 
           AClass.ClassMapping.PropMappings.Add(lNewMapProp);
@@ -167,7 +167,7 @@ begin
         begin
           lNewProp := TMapClassProp.create;
 
-          lNewProp.PropName := lPropNode.Attributes.GetNamedItem('name').NodeValue;
+          lNewProp.Name := lPropNode.Attributes.GetNamedItem('name').NodeValue;
 
           // Read only?
           lPropAttr := lPropNode.Attributes.GetNamedItem('read-only');
@@ -183,21 +183,21 @@ begin
               if lPropAttr.NodeValue <> '' then
                 begin
                   if Copy(lPropAttr.NodeValue, 1,1) = 'T' then
-                    lNewProp.PropType := ptEnum
+                    lNewProp.PropertyType := ptEnum
                   else
-                    lNewProp.PropType := gStrToPropType(lPropAttr.NodeValue);
+                    lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
                   lNewProp.PropTypeName := lPropAttr.NodeValue
                 end
               else
                 begin
-                  lNewProp.PropType := ptString;
+                  lNewProp.PropertyType := ptString;
                   lNewProp.PropTypeName := 'String';
                 end;
             end
           else
             begin
               lNewProp.PropTypeName := 'string';
-              lNewProp.PropType := ptString;
+              lNewProp.PropertyType := ptString;
             end;
 
           AClass.ClassProps.Add(lNewProp);
@@ -249,8 +249,8 @@ begin
           if lVal.ValidatorType <> vtRequired then
             begin
               lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
-              lTempStr := lProp.PropName;
-              lType := lProp.PropType;
+              lTempStr := lProp.Name;
+              lType := lProp.PropertyType;
               if lProp = nil then
                 raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
                   lVal.ClassProp);
@@ -260,7 +260,7 @@ begin
                   begin
                     lValStr := lValNode.ChildNodes.Item[0].TextContent;
 
-                    case lProp.PropType of
+                    case lProp.PropertyType of
                       ptAnsiString, ptString:
                         lVal.Value := lValStr;
                       ptBoolean:
@@ -307,11 +307,11 @@ begin
       if lUnitNode.NodeType <> COMMENT_NODE then
         begin
           lName := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
-          lUnit := TMapUnitDef(FProject.Units.FindByProps(['UnitName'], [lName]));
+          lUnit := TMapUnitDef(FProject.Units.FindByProps(['Name'], [lName]));
           if lUnit = nil then
             begin
               lUnit := TMapUnitDef.Create;
-              lUnit.UnitName := lName;
+              lUnit.Name := lName;
               FProject.Units.Add(lUnit);
             end;
 
@@ -590,7 +590,7 @@ begin
                             // Change variable ${field_list} into list of field names in sql format
                             if POS('${field_list}', lTemp) > 0 then
                               lTemp := StringReplace(lTemp, '${field_list}', CreateSQLSelectList(lNewClass), [rfReplaceAll]);
-                            lNewSelect.SQL.Text := lTemp;
+                            lNewSelect.SQL := lTemp;
                             lNewSelect.Name := lSelectNode.Attributes.GetNamedItem('name').NodeValue;
                             lParamListNode := lSelectNode.FindNode('params');
                             if (lParamListNode <> nil) and (lParamListNode.HasChildNodes) then
@@ -728,7 +728,7 @@ begin
       lNewMapPropNode := FDoc.CreateElement('prop-map');
       lNewMapPropNode.SetAttribute('prop', lMapProp.PropName);
       lNewMapPropNode.SetAttribute('field', lMapProp.FieldName);
-      lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropType));
+      lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropertyType));
       lNewMapNode.AppendChild(lNewMapPropNode);
     end;
 
@@ -750,11 +750,11 @@ begin
     begin
       lProp := AClassDef.ClassProps.Items[lCtr];
       lNewPropNode := FDoc.CreateElement('prop');
-      lNewPropNode.SetAttribute('name', lProp.PropName);
-      if lProp.PropType = ptEnum then
+      lNewPropNode.SetAttribute('name', lProp.Name);
+      if lProp.PropertyType = ptEnum then
         lNewPropNode.SetAttribute('type', lProp.PropTypeName)
       else
-        lNewPropNode.SetAttribute('type', gPropTypeToStr(lProp.PropType));
+        lNewPropNode.SetAttribute('type', gPropTypeToStr(lProp.PropertyType));
 
       lClassPropsNode.AppendChild(lNewPropNode);
     end;
@@ -784,7 +784,7 @@ begin
       lNewSelNode.SetAttribute('name', lSelect.Name);
       // SQL
       lNewSQLNode := FDoc.CreateElement('sql');
-      lNewCDATA := FDoc.CreateCDATASection(WrapText(lSelect.SQL.Text, 40));
+      lNewCDATA := FDoc.CreateCDATASection(WrapText(lSelect.SQL, 40));
       lNewSQLNode.AppendChild(lNewCDATA);
       lNewSelNode.AppendChild(lNewSQLNode);
 
@@ -917,7 +917,7 @@ begin
     begin
       lUnit := FWriterProject.Units.Items[lCtr];
       lNewUnitNode := FDoc.CreateElement('unit');
-      lNewUnitNode.SetAttribute('name', lUnit.UnitName);
+      lNewUnitNode.SetAttribute('name', lUnit.Name);
       WriteUnit(lUnit, lNewUnitNode);
       lUnitsElem.AppendChild(lNewUnitNode);
     end;
