@@ -248,7 +248,7 @@ begin
           lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
-              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
+              lProp := TMapClassProp(AClass.ClassProps.FindByName(lVal.ClassProp));
               if lProp = nil then
                 raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lVal.ClassProp +'"');
               lTempStr := lProp.Name;
