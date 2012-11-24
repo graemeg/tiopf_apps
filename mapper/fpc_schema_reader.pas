@@ -249,11 +249,10 @@ begin
           if lVal.ValidatorType <> vtRequired then
             begin
               lProp := TMapClassProp(AClass.ClassProps.FindByProps(['PropName'], [lVal.ClassProp]));
+              if lProp = nil then
+                raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lVal.ClassProp +'"');
               lTempStr := lProp.Name;
               lType := lProp.PropertyType;
-              if lProp = nil then
-                raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
-                  lVal.ClassProp);
 
                 lValueNode := lValNode.ChildNodes.Item[0];
                 if lValueNode <> nil then
