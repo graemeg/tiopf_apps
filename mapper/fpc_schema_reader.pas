@@ -548,7 +548,7 @@ begin
               end;
 
             if lClassNode.FindNode('class-props') = nil then
-              raise Exception.Create(ClassName + '.ReadUnitClasses: Class PrNode is not present.');
+              raise Exception.Create(ClassName + '.ReadUnitClasses: "class-props" node is not present.');
 
             lClassProps := lClassNode.FindNode('class-props').ChildNodes;
             if lClassProps <> nil then
