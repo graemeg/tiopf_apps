@@ -31,7 +31,7 @@ type
     procedure   ReadClassProps(AClass: TMapClassDef; ANode: TDOMNodeList);
     procedure   ReadClassMapping(AClass: TMapClassDef; ANode: TDomNodeList);
     procedure   ReadClassSelects(AClass: TMapClassDef; ANode: TDomNode);
-    procedure   ReadClassValidators(AClass: TMapClassDef; ANode: TDomNode);
+    procedure   ReadClassValidators(AClass: TMapClassDef; ANode: TDOMNode);
   public
     procedure   ReadSchema(AProject: TMapProject; const AFileName: string = ''); overload; override;
     procedure   WriteAll; override;
@@ -215,8 +215,7 @@ begin
 
 end;
 
-procedure TFPCSchemaXMLReader.ReadClassValidators(AClass: TMapClassDef;
-  ANode: TDomNode);
+procedure TFPCSchemaXMLReader.ReadClassValidators(AClass: TMapClassDef; ANode: TDOMNode);
 var
   lCtr: Integer;
   lVal: TMapValidator;
@@ -254,32 +253,28 @@ begin
               lTempStr := lProp.Name;
               lType := lProp.PropertyType;
 
-                lValueNode := lValNode.ChildNodes.Item[0];
-                if lValueNode <> nil then
-                  begin
-                    lValStr := lValNode.ChildNodes.Item[0].TextContent;
-
-                    case lProp.PropertyType of
-                      ptAnsiString, ptString:
-                        lVal.Value := lValStr;
-                      ptBoolean:
-                        lVal.Value := StrtoBool(lValStr);
-                      ptInt64, ptInteger:
-                        lVal.Value := StrToInt(lValStr);
-                      ptDateTime:
-                        lVal.Value := tiIntlDateStorAsDateTime(lValStr);
-                      ptEnum:;
-                      ptDouble, ptCurrency, ptSingle:
-                        lVal.Value := StrToFloat(lValStr);
-                    end;
+              lValueNode := lValNode.ChildNodes.Item[0];
+              if lValueNode <> nil then
+                begin
+                  lValStr := lValNode.ChildNodes.Item[0].TextContent;
+                  case lProp.PropertyType of
+                    ptAnsiString, ptString:
+                      lVal.Value := lValStr;
+                    ptBoolean:
+                      lVal.Value := StrtoBool(lValStr);
+                    ptInt64, ptInteger:
+                      lVal.Value := StrToInt(lValStr);
+                    ptDateTime:
+                      lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                    ptEnum:;
+                    ptDouble, ptCurrency, ptSingle:
+                      lVal.Value := StrToFloat(lValStr);
                   end;
-
+                end;
             end;
-
           AClass.Validators.Add(lVal);
         end;
     end;
-
 end;
 
 procedure TFPCSchemaXMLReader.ReadProjectInfo;
@@ -497,7 +492,7 @@ begin
             lNewClass := TMapClassDef.Create;
 
             lClassAttr := lClassNode.Attributes.GetNamedItem('def-type');
-            if lClassAttr <>nil then
+            if lClassAttr <> nil then
               lNewClass.DefType := gStrToClassDefType(lClassAttr.NodeValue)
             else
               lNewClass.DefType := dtReference;
@@ -567,7 +562,6 @@ begin
               end;
 
             lValNode := lClassNode.FindNode('validators');
-
             if lValNode <> nil then
               ReadClassValidators(lNewClass, lValNode);
 
