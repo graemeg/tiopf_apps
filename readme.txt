@@ -162,10 +162,10 @@ pascal class definition.
 <validators>
 Basic validators are supported including "required" (string types only) which ensures that
 the there is not an empty string.  There is also "greater"/"greater-equal", "less"/"less-equal"
-and "not-equal".  For all Validator types excepted "required" you must include a <value> node
+and "not-equal".  For all Validator types except "required", you must include a <value> node
 inside the <validator> node indicating the value to compare against.
 
-When the class code is written out to the unit file, the mapper creates and IsValid() override
+When the class code is written out to the unit file, the mapper creates an IsValid() override
 for each class that has <validator>'s defined and writes out the code for is.  For the TPerson
 describted above, the following would be generated:
 
@@ -297,4 +297,4 @@ The utility also creates a specialized visitor and fleshes it out.
 
 
 
-
+
