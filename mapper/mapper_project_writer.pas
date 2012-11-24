@@ -1399,7 +1399,7 @@ end;
 procedure TMapperProjectWriter.WritePropSetter(ASL: TStringList;
   APropDef: TMapClassProp);
 begin
-  WriteLine('procedure Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
+  WriteLine('procedure   Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteSelectSQL(ASL: TStringList;
@@ -2271,4 +2271,4 @@ begin
 end;
 
 end.
-
+
