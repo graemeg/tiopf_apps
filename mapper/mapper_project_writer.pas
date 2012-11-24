@@ -1316,11 +1316,16 @@ begin
         '(const AValue: ' + lMap.PropTypeName + ');', ASL);
       WriteLine('begin', ASL);
       IncTab;
-        WriteLine('if F' + lMap.Name + ' <> AValue then', ASL);
-          IncTab;
-            WriteLine('F' + lMap.Name + ' := AValue;', ASL);
+        WriteLine('if F' + lMap.Name + ' = AValue then', ASL);
+        IncTab;
+          WriteLine('Exit;', ASL);
           DecTab;
-      DecTab;
+        if AClassDef.NotifyObserversOfPropertyChanges then
+          WriteLine('BeginUpdate;', ASL);
+        WriteLine('F' + lMap.Name + ' := AValue;', ASL);
+        if AClassDef.NotifyObserversOfPropertyChanges then
+          WriteLine('EndUpdate;', ASL);
+        DecTab;
       WriteLine('end;', ASL);
       WriteBreak(ASL);
     end;

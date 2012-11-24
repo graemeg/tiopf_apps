@@ -454,6 +454,7 @@ type
     FCrud: string;
     FDefType: TClassDefType;
     FForwardDeclare: boolean;
+    FNotifyObserversOfPropertyChanges: boolean;
     FORMClassName: string;
     FSelections: TClassMappingSelectList;
     FValidators: TMapValidatorList;
@@ -467,6 +468,7 @@ type
     procedure SetCrud(const AValue: string);
     procedure SetDefType(const AValue: TClassDefType);
     procedure SetForwardDeclare(const AValue: boolean);
+    procedure SetNotifyObserversOfPropertyChanges(const AValue: boolean);
     procedure SetORMClassName(const AValue: string);
   public
     // Object Props
@@ -488,6 +490,7 @@ type
     property    DefType: TClassDefType read FDefType write SetDefType;
     property    FowardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
     property    ORMClassName: string read FORMClassName write SetORMClassName;
+    property    NotifyObserversOfPropertyChanges: boolean read FNotifyObserversOfPropertyChanges write SetNotifyObserversOfPropertyChanges default False;
   end;
 
   TMapClassDefList = class(TBaseMapObjectList)
@@ -1280,7 +1283,7 @@ begin
   FClassMapping := TClassMapping.Create;
   FSelections := TClassMappingSelectList.Create;
   FValidators := TMapValidatorList.Create;
-
+  FNotifyObserversOfPropertyChanges := False;
 end;
 
 destructor TMapClassDef.Destroy;
@@ -1350,6 +1353,12 @@ procedure TMapClassDef.SetForwardDeclare(const AValue: boolean);
 begin
   if FForwardDeclare=AValue then exit;
   FForwardDeclare:=AValue;
+end;
+
+procedure TMapClassDef.SetNotifyObserversOfPropertyChanges(const AValue: boolean);
+begin
+  if FNotifyObserversOfPropertyChanges = AValue then exit;
+  FNotifyObserversOfPropertyChanges := AValue;
 end;
 
 procedure TMapClassDef.SetORMClassName(const AValue: string);
