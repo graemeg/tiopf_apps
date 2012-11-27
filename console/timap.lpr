@@ -43,6 +43,12 @@ var
   lSL: TStringList;
   lProjWriter: TProjectWriter;
 begin
+  if (ParamCount = 0) or HasOption('h','help') then
+  begin
+    WriteHelp;
+    Terminate;
+    Exit;
+  end;
 
   if not HasOption('f','file') then
     begin
@@ -134,6 +140,11 @@ procedure TMapperCmd.WriteHelp;
 begin
   { add your help code here }
   writeln('Usage: ',ExeName,' -h');
+  writeln('');
+  writeln('   -h             Displays this help');
+  writeln('   -v             Verbose output');
+  writeln('   -f <file>      Where <file> is the XML schema file');
+  writeln('');
 end;
 
 procedure TMapperCmd.WriteProject(AProject: TMapProject);
