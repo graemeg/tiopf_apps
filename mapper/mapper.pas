@@ -629,16 +629,11 @@ type
   public
     class function GetValueAsString(AObject: TtiObject; const APropName: string; AValue: Variant): string;
     class function CreateRequiredValidatorMsg(AObject: TtiObject; const APropName: string): string; virtual;
-    class function CreateGreaterValidatorMsg(AObject: TtiObject; const APropName: string;
-      AValue: Variant): string; virtual;
-    class function CreateGreaterOrEqualValidatorMsg(AObject: TtiObject; const APropName: string;
-      AValue: Variant): string; virtual;
-    class function CreateLessThanValidatorMsg(AObject: TtiObject; const APropName: string;
-      AValue: Variant): string; virtual;
-    class function CreateLessThanOrEqualValidatorMsg(AObject: TtiObject; const APropName: string;
-      AValue: Variant): string; virtual;
-    class function CreateNotEqualToValidatorMsg(AObject: TtiObject; const APropName: string;
-      AValue: Variant): string; virtual;
+    class function CreateGreaterValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string; virtual;
+    class function CreateGreaterOrEqualValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string; virtual;
+    class function CreateLessThanValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string; virtual;
+    class function CreateLessThanOrEqualValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string; virtual;
+    class function CreateNotEqualToValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string; virtual;
   end;
 
   {: Class of  }
