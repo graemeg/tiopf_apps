@@ -1312,6 +1312,8 @@ begin
   for lCtr := 0 to AClassDef.ClassProps.Count -1 do
     begin
       lMap := AClassDef.ClassProps.Items[lCtr];
+      if lMap.IsReadOnly then
+        Continue;
       WriteLine('procedure ' + AClassDef.BaseClassName + '.Set' + lMap.Name +
         '(const AValue: ' + lMap.PropTypeName + ');', ASL);
       WriteLine('begin', ASL);
