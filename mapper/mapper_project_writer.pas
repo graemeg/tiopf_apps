@@ -447,7 +447,7 @@ begin
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(ClassName + ''read'', self);', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(ClassName + ''_read'', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -461,9 +461,9 @@ begin
     IncTab;
       WriteLine('Case ObjectState of', ASL);
       IncTab;
-        WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'delete'', self);', ASL);
-        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'save'', self);', ASL);
-        WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'create'', self);', ASL);
+        WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_delete'', self);', ASL);
+        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_save'', self);', ASL);
+        WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_create'', self);', ASL);
       DecTab;
       WriteLine('end;', ASL);
     DecTab;
@@ -863,13 +863,13 @@ begin
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
     AClassMap.BaseClassName + 'List_Delete);', ASL);
 
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'read'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_read'', ' +
     AClassMap.BaseClassName + '_Read);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'save'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_save'', ' +
     AClassMap.BaseClassName + '_Save);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'delete'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_delete'', ' +
     AClassMap.BaseClassName + '_Delete);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'create'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_create'', ' +
     AClassMap.BaseClassName + '_Create);', ASL);
 
 
