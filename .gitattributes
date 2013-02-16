@@ -1,0 +1,20 @@
+# Set default behaviour, in case users don't have core.autorclf set.
+*	text=auto
+*.pas	diff=pascal
+*.lpr	diff=pascal
+*.pp	diff=pascal
+*.ods	diff=odf
+*.odt	diff=odf
+*.odp	diff=odf
+
+# declare files that must always have specific EOL style
+*.dez	text	eol=crlf
+
+# True binary files that should not be modify (just for safety sake)
+*.jpg	binary
+*.png	binary
+*.bmp	binary
+*.inf	binary
+*.zip	binary
+*.tar.gz	binary
+*.wav	binary
