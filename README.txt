@@ -1,14 +1,14 @@
 
------------------------
 tiOPFMapper
------------------------
+===========
 
-DESCRIPTION
 
-tiOPF is a wonderful framework, but the tasks of writing all of the boiler plate
-code can be a lot of work.  So I wrote the tiMapper utility in the spirit of
-some existing PHP frameworks that use YML or XML to describle a project's classes
-and other types which are then transformed into the base class files with all of
+Description
+-----------
+tiOPF [http://tiopf.sourceforge.net] is a wonderful framework, but the tasks of writing
+all of the boiler plate code can be a lot of work.  So I wrote the tiMapper utility in
+the spirit of some existing PHP frameworks that use YML or XML to describle a project's
+classes and other types which are then transformed into the base class files with all of
 hard coded boiler plate code already written.
 
 The tiMapper utility uses one or more xml documents to describe a "schema".  The schema
@@ -294,7 +294,3 @@ The utility also creates a specialized visitor and fleshes it out.
     procedure   MapRowToObject; override;
   end;
 
-
-
-
-
