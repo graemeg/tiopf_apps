@@ -4,12 +4,15 @@
 *.lpr text diff=pascal
 *.pp text diff=pascal
 *.txt text
+*.xml text
 *.ods text diff=odf
 *.odt text diff=odf
 *.odp text diff=odf
 
 # declare files that must always have specific EOL style
 *.dez text eol=crlf
+*.sh text eol=lf
+*.bat text eol=crlf
 
 # True binary files that should not be modify (just for safety sake)
 *.jpg binary
