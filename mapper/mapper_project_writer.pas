@@ -447,7 +447,7 @@ begin
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(ClassName + ''read'', self);', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(ClassName + ''_read'', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -461,9 +461,9 @@ begin
     IncTab;
       WriteLine('Case ObjectState of', ASL);
       IncTab;
-        WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'delete'', self);', ASL);
-        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'save'', self);', ASL);
-        WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'create'', self);', ASL);
+        WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_delete'', self);', ASL);
+        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_save'', self);', ASL);
+        WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_create'', self);', ASL);
       DecTab;
       WriteLine('end;', ASL);
     DecTab;
@@ -863,13 +863,13 @@ begin
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
     AClassMap.BaseClassName + 'List_Delete);', ASL);
 
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'read'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_read'', ' +
     AClassMap.BaseClassName + '_Read);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'save'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_save'', ' +
     AClassMap.BaseClassName + '_Save);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'delete'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_delete'', ' +
     AClassMap.BaseClassName + '_Delete);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'create'', ' +
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_create'', ' +
     AClassMap.BaseClassName + '_Create);', ASL);
 
 
@@ -1312,15 +1312,22 @@ begin
   for lCtr := 0 to AClassDef.ClassProps.Count -1 do
     begin
       lMap := AClassDef.ClassProps.Items[lCtr];
+      if lMap.IsReadOnly then
+        Continue;
       WriteLine('procedure ' + AClassDef.BaseClassName + '.Set' + lMap.Name +
         '(const AValue: ' + lMap.PropTypeName + ');', ASL);
       WriteLine('begin', ASL);
       IncTab;
-        WriteLine('if F' + lMap.Name + ' <> AValue then', ASL);
-          IncTab;
-            WriteLine('F' + lMap.Name + ' := AValue;', ASL);
+        WriteLine('if F' + lMap.Name + ' = AValue then', ASL);
+        IncTab;
+          WriteLine('Exit;', ASL);
           DecTab;
-      DecTab;
+        if AClassDef.NotifyObserversOfPropertyChanges then
+          WriteLine('BeginUpdate;', ASL);
+        WriteLine('F' + lMap.Name + ' := AValue;', ASL);
+        if AClassDef.NotifyObserversOfPropertyChanges then
+          WriteLine('EndUpdate;', ASL);
+        DecTab;
       WriteLine('end;', ASL);
       WriteBreak(ASL);
     end;
@@ -1394,7 +1401,7 @@ end;
 procedure TMapperProjectWriter.WritePropSetter(ASL: TStringList;
   APropDef: TMapClassProp);
 begin
-  WriteLine('procedure Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
+  WriteLine('procedure   Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteSelectSQL(ASL: TStringList;
@@ -2266,4 +2273,4 @@ begin
 end;
 
 end.
-
+

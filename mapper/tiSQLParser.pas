@@ -1,3 +1,5 @@
+{ This unit defines a SQL parser that translates BOM property names into
+  DB field names. }
 unit tiSQLParser;
 
 {$IFDEF FPC}
@@ -63,7 +65,9 @@ type
   end;
 
 
-  {: The Main parser class. }
+  {: The Main parser class. It parses the SQL statement, replacing the class
+     property names with the database fields names - using the existing
+     Auto-Mapping functionality of tiOPF. }
   TtiSQLParser = class(TtiObject)
   private
     FLoadStates: TtiSQLParserStateList;
@@ -272,4 +276,4 @@ begin
   FParser := AParser;
 end;
 
-end.
+end.

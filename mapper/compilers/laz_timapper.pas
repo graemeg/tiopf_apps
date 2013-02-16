@@ -8,14 +8,8 @@ interface
 
 uses
     tiSQLParser, mapper, fpc_schema_reader, mapper_project_writer, 
-  LazarusPackageIntf;
+  fpc_schema_writer;
 
 implementation
 
-procedure Register; 
-begin
-end; 
-
-initialization
-  RegisterPackage('laz_timapper', @Register); 
 end.

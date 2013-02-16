@@ -1,12 +1,15 @@
 program timap;
 
+{$IFDEF FPC}
 {$mode objfpc}{$H+}
+{$ENDIF}
 
 uses
-  {$IFDEF UNIX}{$IFDEF UseCThreads}
+  {$IFDEF UNIX}
   cthreads,
-  {$ENDIF}{$ENDIF}
-  Classes, SysUtils, CustApp, mapper, fpc_schema_writer;
+  {$ENDIF}
+  Classes, SysUtils, CustApp, mapper, fpc_schema_writer,
+  mapper_project_writer, fpc_schema_reader;
 
 type
 
@@ -40,6 +43,12 @@ var
   lSL: TStringList;
   lProjWriter: TProjectWriter;
 begin
+  if (ParamCount = 0) or HasOption('h','help') then
+  begin
+    WriteHelp;
+    Terminate;
+    Exit;
+  end;
 
   if not HasOption('f','file') then
     begin
@@ -105,7 +114,7 @@ end;
 
 procedure TMapperCmd.OnWriteUnit(AUnitDef: TMapUnitDef);
 begin
-  WriteLn('Writing Unit: ' + AUnitDef.UnitName);
+  WriteLn('Writing Unit: ' + AUnitDef.Name);
 end;
 
 procedure TMapperCmd.WriteError(const AError: string);
@@ -131,6 +140,11 @@ procedure TMapperCmd.WriteHelp;
 begin
   { add your help code here }
   writeln('Usage: ',ExeName,' -h');
+  writeln('');
+  writeln('   -h             Displays this help');
+  writeln('   -v             Verbose output');
+  writeln('   -f <file>      Where <file> is the XML schema file');
+  writeln('');
 end;
 
 procedure TMapperCmd.WriteProject(AProject: TMapProject);
@@ -163,12 +177,10 @@ end;
 var
   Application: TMapperCmd;
 
-{$R *.res}
-
 begin
   Application:=TMapperCmd.Create(nil);
   Application.Title:='TtiMapper';
   Application.Run;
   Application.Free;
 end.
-
+
