@@ -1,0 +1,8 @@
+*.lps
+*.compiled
+*.[oa]
+*.ppu
+*.rst
+*.cgi
+*.exe
+*.log

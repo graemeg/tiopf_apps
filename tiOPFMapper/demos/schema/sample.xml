@@ -1,0 +1,190 @@
+<project tab-spaces="2" begin-end-tabs="1" visibility-tabs="0" project-name="MyProject" outputdir="" enum-type="int">
+  <project-units>
+    <unit name="jobs_bom">
+      <enums>
+        <enum name="TJobStatus">
+          <values>
+            <item name="jsCreated" />
+            <item name="jsStarted" />
+            <item name="jsFinished" />
+          </values>
+        </enum>
+      </enums>
+      <classes>
+        <class base-class="TJob" base-class-parent="TtiObject" auto-map="true" auto-create-list="true">
+          <class-props>
+            <prop name="JobDesc" type="String" />
+            <prop name="JobName" type="String" />
+            <prop name="Status" type="TJobStatus" />
+          </class-props>
+          <validators>
+            <item prop="JobName" type="required">
+              <value />
+            </item>
+          </validators>
+          <mapping table="jobs" pk="OID" pk-field="OID" oid-type="string">
+            <prop-map prop="JobName" field="job_name" type="String" />
+            <prop-map prop="JobDesc" field="job_desc" type="String" />
+            <prop-map prop="Status" field="job_status" type="enum" />
+          </mapping>
+          <selections>
+            <select name="FindByUser">
+              <sql>
+                <![CDATA[
+SELECT 
+  ${field_list}
+FROM 
+    JOBS INNER JOIN USER_JOB_RELATION ON JOBS.OID = 
+    USER_JOB_RELATION.JOB_OID
+WHERE 
+    USER_JOB_RELATION.USER_OID = :user_oid
+ORDER BY 
+    JOBS.JOB_NAME
+                                ]]>
+              </sql>
+              <params>
+                <param name="AUser" pass-by="const" sql-param="user_oid" type="String" />
+              </params>
+            </select>
+            <select name="FindByStatus">
+              <sql>
+                <![CDATA[
+SELECT 
+ ${field_list}
+FROM 
+ JOBS 
+WHERE 
+ JOBS.JOB_STATUS = :STATUS
+ORDER BY 
+ JOBS.JOB_NAME
+                                ]]>
+              </sql>
+              <params>
+                <param name="AStatus" pass-by="const" sql-param="status" type="enum" type-name="enum" />
+              </params>
+            </select>
+          </selections>
+        </class>
+        <class base-class="TUserJobRelation" base-class-parent="TtiObject" auto-map="true" auto-create-list="true">
+          <class-props>
+            <prop name="JobOID" type="String" />
+            <prop name="UserOID" type="String" />
+          </class-props>
+          <validators>
+            <item prop="JobOID" type="required">
+              <value />
+            </item>
+            <item prop="UserOID" type="required">
+              <value />
+            </item>
+          </validators>
+          <mapping table="user_job_relation" pk="OID" pk-field="OID" oid-type="string">
+            <prop-map prop="JobOID" field="job_oid" type="String" />
+            <prop-map prop="UserOID" field="user_oid" type="String" />
+          </mapping>
+          <selections>
+            <select name="FindByUser">
+              <sql>
+                <![CDATA[
+SELECT 
+  ${field_list}
+FROM 
+    USER_JOB_RELATION 
+WHERE 
+    USER_JOB_RELATION.USER_OID = :USER_OID                                                                      
+                                ]]>
+              </sql>
+              <params>
+                <param name="AUserOID" pass-by="const" sql-param="user_oid" type="String" />
+              </params>
+            </select>
+          </selections>
+        </class>
+      </classes>
+    </unit>
+    <unit name="person_bom">
+      <enums>
+        <enum name="TGenderType">
+          <values>
+            <item name="gtFemale" value="0" />
+            <item name="gtMale" value="1" />
+          </values>
+        </enum>
+        <enum name="TPersonType">
+          <values>
+            <item name="ptEmployee" />
+            <item name="ptCustomer" />
+            <item name="ptVendor" />
+          </values>
+        </enum>
+      </enums>
+      <classes>
+        <class base-class="TPerson" base-class-parent="TtiObject" auto-map="true" auto-create-list="true">
+          <class-props>
+            <prop name="ActiveDate" type="TDateTime" />
+            <prop name="Age" type="Integer" />
+            <prop name="Email" type="String" />
+            <prop name="FirstName" type="String" />
+            <prop name="Gender" type="TGenderType" />
+            <prop name="IsActive" type="Boolean" />
+            <prop name="LastName" type="String" />
+            <prop name="PersonType" type="TPersonType" />
+          </class-props>
+          <validators>
+            <item prop="Age" type="greater-equal">
+              <value>18</value>
+            </item>
+            <item prop="FirstName" type="required">
+              <value />
+            </item>
+            <item prop="LastName" type="required">
+              <value />
+            </item>
+          </validators>
+          <mapping table="person" pk="OID" pk-field="OID" oid-type="string">
+            <prop-map prop="FirstName" field="first_name" type="String" />
+            <prop-map prop="LastName" field="last_name" type="String" />
+            <prop-map prop="Age" field="age" type="Integer" />
+            <prop-map prop="Gender" field="gender" type="enum" />
+            <prop-map prop="PersonType" field="person_type" type="enum" />
+          </mapping>
+          <selections>
+            <select name="FindByGender">
+              <sql>
+                <![CDATA[
+SELECT 
+  ${field_list}
+FROM 
+    PERSON
+WHERE 
+    PERSON.GENDER = :gender_type
+                                ]]>
+              </sql>
+              <params>
+                <param name="AGender" pass-by="const" sql-param="gender_type" type="enum" type-name="enum" />
+              </params>
+            </select>
+            <select name="FindByFirstNameMatch">
+              <sql>
+                <![CDATA[
+SELECT 
+  ${field_list}
+FROM 
+    PERSON
+WHERE 
+    PERSON.FIRST_NAME STARTING WITH :USER_FIRST
+ORDER BY
+    PERSON.FIRST_NAME,
+    PERSON.LAST_NAME                                       
+                                ]]>
+              </sql>
+              <params>
+                <param name="AName" pass-by="const" sql-param="user_first" type="String" />
+              </params>
+            </select>
+          </selections>
+        </class>
+      </classes>
+    </unit>
+  </project-units>
+</project>
