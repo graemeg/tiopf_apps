@@ -1,4 +1,4 @@
-<project tab-spaces="2" begin-end-tabs="1" visibility-tabs="0" project-name="MyProject" outputdir="../bom" enum-type="int">
+<project tab-spaces="2" begin-end-tabs="1" visibility-tabs="0" project-name="MyProject" outputdir="" enum-type="int">
   <project-units>
     <unit name="jobs_bom">
       <enums>
