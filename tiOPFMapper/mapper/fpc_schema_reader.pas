@@ -360,11 +360,19 @@ begin
       if lDirNode.NodeValue <> '' then
         FProject.BaseDirectory := lNode.Attributes.GetNamedItem('base-directory').NodeValue
       else
-        FProject.BaseDirectory := ExtractFileDir(AFileName);
+      begin
+        lPath := ExtractFileDir(AFileName);
+        if lPath = '' then  // means only the filename was passed in, without any path details
+          lPath := GetCurrentDir;
+        FProject.BaseDirectory := lPath;
+      end;
     end
   else
     begin
-      FProject.BaseDirectory := ExtractFileDir(AFileName);
+      lPath := ExtractFileDir(AFileName);
+      if lPath = '' then  // means only the filename was passed in, without any path details
+        lPath := GetCurrentDir;
+      FProject.BaseDirectory := lPath;
     end;
 
   if lNode.Attributes.GetNamedItem('outputdir') = nil then
