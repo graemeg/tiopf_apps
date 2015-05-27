@@ -378,7 +378,6 @@ begin
     begin
       if lDirNode.NodeValue <> '' then
         begin
-          lPath := FProject.BaseDirectory;
           lPath := GetabsolutePath(FProject.BaseDirectory, lNode.Attributes.GetNamedItem('outputdir').NodeValue);
           FProject.OutputDirectory := lPath;
         end
