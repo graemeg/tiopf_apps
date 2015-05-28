@@ -7,20 +7,20 @@ Description
 -----------
 tiOPF [http://tiopf.sourceforge.net] is a wonderful framework, but the tasks of writing
 all of the boiler plate code can be a lot of work.  So I wrote the tiMapper utility in
-the spirit of some existing PHP frameworks that use YML or XML to describle a project's
+the spirit of some existing PHP frameworks that use YML or XML to describe a project's
 classes and other types which are then transformed into the base class files with all of
 hard coded boiler plate code already written.
 
-The tiMapper utility uses one or more xml documents to describe a "schema".  The schema
+The tiMapper utility uses one or more XML documents to describe a "schema".  The schema
 describes any TtiObject based classes and enumerations as well as mappings that use
 the tiAutoMap registration mechanism to store meta data about the types described
 in the schema.  There is one main "schema" file which can have INCLUDES pointing to
-other xml files which describe yet additional classes, enums and mappings if necessary.
+other XML files which describe yet additional classes, enums and mappings if necessary.
 
 Eventually, I'll write a GUI utility front end for it, but for now I am content writing
 out the xml.  A typical 200 line xml schema will produce about 2K lines or more of pascal
 code for defining the classes, their visitors, registering visitors, mappings, etc and
-gluing everything up so that you're bascially able to just start writing code.
+gluing everything up so that you're basically able to just start writing code.
 
 The utility uses the schema to create unit (.pas) files and within those unit files, each
 class, enumeration mappings, etc described in the schema.  Take the following project
@@ -155,19 +155,19 @@ Resulting class definition:
 
 <class-props>
 These describe the properties of a class.  Default is "String" so omitting the "type"
-attribute will register the property as String.  All base type (string, boolean, TDateTime)
+attribute will register the property as String.  All base type (string, Boolean, TDateTime)
 as well as enumerated types.  The types that get registered are written directly out to the
 pascal class definition.
 
 <validators>
 Basic validators are supported including "required" (string types only) which ensures that
-the there is not an empty string.  There is also "greater"/"greater-equal", "less"/"less-equal"
+there is not an empty string.  There is also "greater"/"greater-equal", "less"/"less-equal"
 and "not-equal".  For all Validator types except "required", you must include a <value> node
 inside the <validator> node indicating the value to compare against.
 
 When the class code is written out to the unit file, the mapper creates an IsValid() override
 for each class that has <validator>'s defined and writes out the code for is.  For the TPerson
-describted above, the following would be generated:
+described above, the following would be generated:
 
 function TPerson.IsValid(const AErrors: TtiObjectErrors): boolean;
 var
@@ -209,7 +209,7 @@ you are mapping.  The EXCEPTION is enumerated types.  If the type being mapped i
 enumerated type, the value that you indicated should be "enum".  This will allow the
 mapping utility to account for how to write out functions for dealing enumerated types
 such as when overriding a visitor's MapRowToObject method.  When the type is "enum",
-the mapper will lookup the type indicated for the property by it's corresponding <prop>
+the mapper will look up the type indicated for the property by it's corresponding <prop>
 tag and use that.
 
 For each class that you define with a populated <mapping> tag, the mapper will automatically create
@@ -282,11 +282,11 @@ It's FindByFirstName implementation would be written out as:
   end;
 
 Notice that the class definition for TPersonList has a built in method called
-FindByFirstName which takes a const AName: string param and returns and integer
+FindByFirstName which takes a const AName: string parameter and returns and integer
 indicating the number of objects that got populated into the object list.  All of
-the sql and code to use the sql is written automatically.
+the SQL and code to use the SQL is written automatically.
 
-The utility also creates a specialized visitor and fleshes it out.
+The utility also creates a specialised visitor and fleshes it out.
 
   TPersonList_FindByFirstNameVis = class(TtiMapParameterListReadVisitor)
   protected
