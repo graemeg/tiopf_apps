@@ -7,3 +7,7 @@
 *.exe
 *.log
 *.or
+*.dcu
+*.ddp
+*.dof
+
