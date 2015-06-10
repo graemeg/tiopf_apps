@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ActnList,
   tiObject, tiFocusPanel, tiPerAwareCtrls, tiVTListView,
-  tiBOMExploration;
+  tiBOMExploration, tiVTAbstract;
 
 type
   TtiSelectBOMFrame = class(TFrame)

@@ -11,6 +11,15 @@ uses
 
 type
 
+  { This object was introduced to get public access to the Read() and Save()
+    methods. This project was written before those methods got moved to
+    the Protected section in TtiObject. }
+  TCustomObject = class(TtiObject)
+  public
+    procedure Read; override;
+    procedure Save; override;
+  end;
+
   TShowMethodCollection = class;
   TPeriodCollection = class;
   TMidpointListCollection = class;
@@ -73,7 +82,7 @@ type
   published
   end;
 
-  TPeriod = class(TtiObject)
+  TPeriod = class(TCustomObject)
   private
   protected
     function GetOwner: TPeriodCollection; reintroduce;
@@ -100,7 +109,7 @@ type
   published
   end;
 
-  TShowMethod = class(TtiObject)
+  TShowMethod = class(TCustomObject)
   private
     FName: String;
   protected
@@ -161,7 +170,7 @@ type
 	  procedure SetItems(I: Integer; const AValue: TMidpoint); reintroduce;
 	  function GetOwner: TMidpointList; reintroduce;
 	  procedure SetOwner(const AValue: TMidpointList); reintroduce;
-    function GetOID: TOID; override;
+    function GetOID: TtiOID; override;
   public
 	  property Items[I: Integer]: TMidpoint read GetItems write SetItems; default;
 	  procedure Add(const AObject : TMidpoint); reintroduce; overload;
@@ -170,7 +179,7 @@ type
   published
   end;
 
-  TMidpoint = class(TtiObject)
+  TMidpoint = class(TCustomObject)
   private
     FName: String;
     FPunch: Integer;
@@ -206,7 +215,7 @@ type
   published
   end;
 
-  TRTSQuestion = class(TtiObject)
+  TRTSQuestion = class(TCustomObject)
   private
     FName: String;
     FMidpointList: TMidpointList;
@@ -559,7 +568,7 @@ begin
   Result := TMidpoint(inherited GetItems(I));
 end;
 
-function TMidpointCollection.GetOID: TOID;
+function TMidpointCollection.GetOID: TtiOID;
 begin
   Result := Owner.OID;
 end;
@@ -668,6 +677,18 @@ end;
 procedure TRTSQuestion.SetOwner(const AValue: TRTSQuestionCollection);
 begin
   inherited SetOwner(AValue);
+end;
+
+{ TCustomObject }
+
+procedure TCustomObject.Read;
+begin
+  inherited Read;
+end;
+
+procedure TCustomObject.Save;
+begin
+  inherited Save;
 end;
 
 end.

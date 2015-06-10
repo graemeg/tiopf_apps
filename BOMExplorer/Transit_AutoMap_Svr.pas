@@ -8,7 +8,7 @@ implementation
 
 uses
   tiOPFManager
-  , tiClassToDBMap_BOM
+  , tiAutoMap
   , Transit_BOM;
 
 procedure RegisterMappings;

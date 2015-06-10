@@ -8,7 +8,7 @@ uses
   ToolWin, ComCtrls,
   tiFocusPanel, tiVTTreeView, tiRoundedPanel, tiSplitter, tiObject,
   tiVirtualTrees,
-  FtiAutoEditFrame, tiBOMExploration;
+  FtiAutoEditFrame, tiBOMExploration, tiVTAbstract;
 
 type
   TFtiBOMExplorer = class(TForm)
@@ -129,7 +129,10 @@ uses
   , tiOPFManager
   , FtiValidationErrors
   , tiHelperClasses
-  , FtiSelectBOMDlg;
+  , FtiSelectBOMDlg
+  , tiVisitor
+  , Transit_BOM
+  ;
 
 resourcestring
   SApplyBufferChanges = 'Changes have been made in the edit buffer. Apply changes?';
@@ -186,7 +189,7 @@ begin
   if not FinishEditing then
     Exit;
   ANode := SelectedNode;
-  AData := TV.GetObjectForNode(ANode);
+  AData := TV.GetObjectFromNode(ANode);
 
   //GOTCHA: ideally the code would work like this
   //TV.DoInsert(Self);
@@ -222,7 +225,7 @@ begin
   //GOTCHA: doesn't work because it checks for GUI button visibility too
   //instead, re-invent the wheel
   ANode := SelectedNode;
-  AData := TV.GetObjectForNode(ANode);
+  AData := TV.GetObjectFromNode(ANode);
   Mapping := TV.GetMappingForNode(ANode);
   if not (Assigned(Mapping) and Mapping.CanDelete) then
     Exit;
@@ -292,7 +295,10 @@ begin
   through the _ReadFromPK visitors}
   if AData.ObjectState <> posEmpty then
     AData.ObjectState := posPK;
-  AData.Read;
+
+  { See the code comments in Transit_BOM for the class TCustomObject }
+  if AData is TCustomObject then
+    TCustomObject(AData).Read;
 
   //update GUI
   RefreshTree(ANode);
@@ -349,7 +355,7 @@ begin
   if SelectionMade then
   begin
     Mapping := TV.GetMappingForNode(Node);
-    AData := TV.GetObjectForNode(Node);
+    AData := TV.GetObjectFromNode(Node);
   end;
   actRefresh.Enabled := SelectionMade;
 
@@ -392,7 +398,9 @@ procedure TFtiBOMExplorer.actPostExecute(Sender: TObject);
 begin
   if FinishEditing then
   begin
-    TV.SelectedData.Save;
+  { See the code comments in Transit_BOM for the class TCustomObject }
+  if TV.SelectedData is TCustomObject then
+    TCustomObject(TV.SelectedData).Save;
 
     //ObjectState can change to posClean or posDeleted, so we must update GUI
     SetupEditing(SelectedNode);
@@ -483,7 +491,7 @@ begin
   Unlike TtiObjectList.FreeDeleted, this routine uses a visitor to
   cull down the hierarchy}
   ANode := SelectedNode;
-  AData := TV.GetObjectForNode(ANode);
+  AData := TV.GetObjectFromNode(ANode);
   RemoveSubject := AData.ObjectState in [posCreate, posDeleted];
   if Recursive then
   begin
@@ -494,7 +502,8 @@ begin
     implemented free notification}
     FreeDeletedVisitor := TVisFreeDeleted.Create;
     try
-      AData.IterateBottomUp(FreeDeletedVisitor);
+      FreeDeletedVisitor.IterationStyle := isBottomUpSinglePass;
+      AData.Iterate(FreeDeletedVisitor);
     finally
       FreeDeletedVisitor.Free;
     end;
@@ -561,10 +570,16 @@ begin
       DlgResult := MessageDlg(SSaveChanges, mtConfirmation,
         [mbYes, mbNo, mbCancel], 0);
       case DlgResult of
-        mrYes: ViewPoint.Root.Save; //save all changes to db
+        mrYes:
+          begin
+            //save all changes to db
+            { See the code comments in Transit_BOM for the class TCustomObject }
+            if ViewPoint.Root is TCustomObject then
+              TCustomObject(ViewPoint.Root).Save;
+          end;
         mrNo:
-        begin
-        end; //do nothing - abandon changes
+          begin
+          end; //do nothing - abandon changes
         else
           Result := False;
       end;
@@ -732,7 +747,7 @@ begin
   ChildFrame.OnValidate := OnChildFrameValidate;
   Mapping := TV.GetMappingForNode(Node);
   ChildFrame.ReadOnly := not Mapping.CanEdit;
-  ChildFrame.Data := TV.GetObjectForNode(Node);
+  ChildFrame.Data := TV.GetObjectFromNode(Node);
   ChildFrame.Parent := pnlRight;
   ChildFrame.Align := alClient;
   ChildFrame.Show;
@@ -784,7 +799,10 @@ end;
 
 procedure TFtiBOMExplorer.UpdateViewPoint;
 begin
-  ViewPoint.Root.Read;
+  { See the code comments in Transit_BOM for the class TCustomObject }
+  if ViewPoint.Root is TCustomObject then
+    TCustomObject(ViewPoint.Root).Read;
+
   TV.Data := nil;
   TV.Data := ViewPoint.Root;
 end;

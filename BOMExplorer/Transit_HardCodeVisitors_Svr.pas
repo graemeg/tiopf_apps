@@ -11,7 +11,7 @@ uses
   ;
 
 type
-  TVisPeriod_Read = class( TVisOwnedQrySelect )
+  TVisPeriod_Read = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -19,7 +19,7 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisPeriod_ReadFromPK = class( TVisOwnedQrySelect )
+  TVisPeriod_ReadFromPK = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -27,36 +27,28 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisPeriod_Create = class( TVisOwnedQryUpdate )
+  TVisPeriod_Create = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisPeriod_Update = class( TVisOwnedQryUpdate )
+  TVisPeriod_Update = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisPeriod_Delete = class( TVisOwnedQryUpdate )
+  TVisPeriod_Delete = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisShowMethod_Read = class( TVisOwnedQrySelect )
-  protected
-  	function AcceptVisitor: Boolean; override;
-  	procedure Init; override;
-  	procedure SetupParams; override;
-  	procedure MapRowToObject; override;
-  end;
-
-  TVisShowMethod_ReadFromPK = class( TVisOwnedQrySelect )
+  TVisShowMethod_Read = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -64,28 +56,36 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisShowMethod_Create = class( TVisOwnedQryUpdate )
+  TVisShowMethod_ReadFromPK = class( TtiVisitorSelect )
+  protected
+  	function AcceptVisitor: Boolean; override;
+  	procedure Init; override;
+  	procedure SetupParams; override;
+  	procedure MapRowToObject; override;
+  end;
+
+  TVisShowMethod_Create = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisShowMethod_Update = class( TVisOwnedQryUpdate )
+  TVisShowMethod_Update = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisShowMethod_Delete = class( TVisOwnedQryUpdate )
+  TVisShowMethod_Delete = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisMidpointList_Read = class( TVisOwnedQrySelect )
+  TVisMidpointList_Read = class( TtiVisitorSelect )
   private
     FMaster: TMidpointList;
   protected
@@ -95,7 +95,7 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisMidpointList_ReadFromPK = class( TVisOwnedQrySelect )
+  TVisMidpointList_ReadFromPK = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -103,58 +103,29 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisMidpointList_Create = class( TVisOwnedQryUpdate )
+  TVisMidpointList_Create = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisMidpointList_Update = class( TVisOwnedQryUpdate )
+  TVisMidpointList_Update = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisMidpointList_Delete = class( TVisOwnedQryUpdate )
+  TVisMidpointList_Delete = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
-    procedure Final         ; override ;
+    procedure Final(const AVisited: TtiObject); override ;
   end;
 
-  TVisMidpoint_ReadFromPK = class( TVisOwnedQrySelect )
-  protected
-  	function AcceptVisitor: Boolean; override;
-  	procedure Init; override;
-  	procedure SetupParams; override;
-  	procedure MapRowToObject; override;
-  end;
-
-  TVisMidpoint_Create = class( TVisOwnedQryUpdate )
-  protected
-  	function AcceptVisitor: Boolean; override;
-  	procedure Init; override;
-  	procedure SetupParams; override;
-  end;
-
-  TVisMidpoint_Update = class( TVisOwnedQryUpdate )
-  protected
-  	function AcceptVisitor: Boolean; override;
-  	procedure Init; override;
-  	procedure SetupParams; override;
-  end;
-
-  TVisMidpoint_Delete = class( TVisOwnedQryUpdate )
-  protected
-  	function AcceptVisitor: Boolean; override;
-  	procedure Init; override;
-  	procedure SetupParams; override;
-  end;
-
-  TVisRTSQuestion_Read = class( TVisOwnedQrySelect )
+  TVisMidpoint_ReadFromPK = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -162,7 +133,28 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisRTSQuestion_ReadFromPK = class( TVisOwnedQrySelect )
+  TVisMidpoint_Create = class( TtiVisitorUpdate )
+  protected
+  	function AcceptVisitor: Boolean; override;
+  	procedure Init; override;
+  	procedure SetupParams; override;
+  end;
+
+  TVisMidpoint_Update = class( TtiVisitorUpdate )
+  protected
+  	function AcceptVisitor: Boolean; override;
+  	procedure Init; override;
+  	procedure SetupParams; override;
+  end;
+
+  TVisMidpoint_Delete = class( TtiVisitorUpdate )
+  protected
+  	function AcceptVisitor: Boolean; override;
+  	procedure Init; override;
+  	procedure SetupParams; override;
+  end;
+
+  TVisRTSQuestion_Read = class( TtiVisitorSelect )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -170,21 +162,29 @@ type
   	procedure MapRowToObject; override;
   end;
 
-  TVisRTSQuestion_Create = class( TVisOwnedQryUpdate )
+  TVisRTSQuestion_ReadFromPK = class( TtiVisitorSelect )
+  protected
+  	function AcceptVisitor: Boolean; override;
+  	procedure Init; override;
+  	procedure SetupParams; override;
+  	procedure MapRowToObject; override;
+  end;
+
+  TVisRTSQuestion_Create = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisRTSQuestion_Update = class( TVisOwnedQryUpdate )
+  TVisRTSQuestion_Update = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
   	procedure SetupParams; override;
   end;
 
-  TVisRTSQuestion_Delete = class( TVisOwnedQryUpdate )
+  TVisRTSQuestion_Delete = class( TtiVisitorUpdate )
   protected
   	function AcceptVisitor: Boolean; override;
   	procedure Init; override;
@@ -222,8 +222,8 @@ begin
   gTIOPFManager.RegSaveVisitor(TVisMidpoint_Delete);
   gTIOPFManager.RegSaveVisitor(TVisMidpointList_Delete);
 
-  gTIOPFManager.RegSaveVisitor(TVisMidpoint_Create);
-  gTIOPFManager.RegSaveVisitor(TVisMidpointList_Create);
+//  gTIOPFManager.RegSaveVisitor(TVisMidpoint_Create);
+//  gTIOPFManager.RegSaveVisitor(TVisMidpointList_Create);
 
   //association - is order important?
   gTIOPFManager.RegReadVisitor(TVisRTSQuestion_Read);
@@ -648,11 +648,11 @@ begin
   Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result]);
 end;
 
-procedure TVisMidpointList_Delete.Final;
+procedure TVisMidpointList_Delete.Final(const AVisited: TtiObject);
 var
   LData: TMidpointList;
 begin
-  inherited;
+  inherited Final(AVisited);
   LData := Visited as TMidpointList;
   lData.Midpoints.ObjectState := posClean ;
 end;

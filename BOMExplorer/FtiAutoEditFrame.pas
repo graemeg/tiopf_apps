@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, FtiEditFrame, tiObject, ActnList, StdCtrls, Buttons, Contnrs, ImgList,
   ComCtrls, ToolWin,
-  tiPerAwareCtrls, ExtCtrls, tiFocusPanel, tiVTListView;
+  tiPerAwareCtrls, ExtCtrls, tiFocusPanel, tiVTListView, tiVTAbstract;
 
 type
   TtiAutoEditFrame = class(TtiEditFrame)
@@ -65,7 +65,10 @@ implementation
 uses
   tiUtils
   , tiVisitor
-  , TypInfo;
+  , TypInfo
+  , tiOPFManager
+  , tiRTTI
+  ;
 
 resourcestring
 
@@ -99,7 +102,7 @@ begin
   {$IFDEF OID_AS_INT64}
     DataBuffer.OID := gTIOPFManager.DefaultPerLayer.NextOIDMgr.NextOID;
   {$ELSE}
-  DataBuffer.OID.GetNextValue('', '');
+    GTIOPFManager.DefaultOIDGenerator.AssignNextOID(DataBuffer.OID);
   {$ENDIF}
   UpdateObjectState;
   UpdateOID;
