@@ -15,7 +15,8 @@ uses
   FtiSelectBOMDlg in 'FtiSelectBOMDlg.PAS' {tiSelectBOMDlg},
   FtiDefineAlias in 'FtiDefineAlias.pas' {tiDefineAlias},
   Transit_DBIndependentVisitors_Svr in 'Transit_DBIndependentVisitors_Svr.pas',
-  Transit_HardCodeVisitors_Svr in 'Transit_HardCodeVisitors_Svr.pas';
+  Transit_HardCodeVisitors_Svr in 'Transit_HardCodeVisitors_Svr.pas',
+  FPickDatabase in 'FPickDatabase.pas' {FormPickDatabase};
 
 {$R *.res}
 
