@@ -1,13 +1,17 @@
-# Set default behaviour, in case users don't have core.autorclf set.
+# Set default behaviour, in case users don't have core.autocrlf set.
 * text=auto
-*.pas text diff=pascal
-*.lpr text diff=pascal
-*.pp text diff=pascal
-*.txt text
-*.xml text
-*.ods text diff=odf
-*.odt text diff=odf
-*.odp text diff=odf
+
+# Explicitly set some EOL styles and preferred diff style
+*.pas  text diff=pascal
+*.lpr  text diff=pascal
+*.pp   text diff=pascal
+*.inc  text diff=pascal
+*.txt  text
+*.xml  text
+*.xpm  text
+*.ods  diff=odf
+*.odt  diff=odf
+*.odp  diff=odf
 
 # declare files that must always have specific EOL style
 *.dez text eol=crlf
@@ -15,10 +19,14 @@
 *.bat text eol=crlf
 
 # True binary files that should not be modify (just for safety sake)
-*.jpg binary
-*.png binary
-*.bmp binary
-*.inf binary
-*.zip binary
-*.tar.gz binary
-*.wav binary
+*.jpg  binary
+*.png  binary
+*.bmp  binary
+*.inf  binary
+*.INF  binary
+*.zip  binary
+*.res  binary
+*.tar.gz  binary
+*.wav  binary
+*.pdf  binary
+
