@@ -1,6 +1,6 @@
 object tiValidationErrorsDlg: TtiValidationErrorsDlg
-  Left = 245
-  Top = 108
+  Left = 251
+  Top = 116
   BorderStyle = bsDialog
   Caption = 'SCaption'
   ClientHeight = 246
@@ -22,13 +22,11 @@ object tiValidationErrorsDlg: TtiValidationErrorsDlg
     Height = 193
     Anchors = [akLeft, akTop, akRight, akBottom]
     Shape = bsFrame
-    ExplicitWidth = 297
-    ExplicitHeight = 161
   end
   object lblMessage: TLabel
     Left = 24
     Top = 16
-    Width = 58
+    Width = 60
     Height = 13
     Caption = 'SlblMessage'
   end

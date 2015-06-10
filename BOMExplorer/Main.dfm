@@ -1,9 +1,9 @@
 object FtiBOMExplorer: TFtiBOMExplorer
   Left = 0
   Top = 0
+  Width = 629
+  Height = 398
   Caption = 'SCaption'
-  ClientHeight = 371
-  ClientWidth = 605
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,16 +18,16 @@ object FtiBOMExplorer: TFtiBOMExplorer
   TextHeight = 13
   object spnlMain: TtiSplitterPanel
     Left = 0
-    Top = 93
-    Width = 605
-    Height = 278
+    Top = 97
+    Width = 621
+    Height = 274
     Aligned = alClient
     ColorGrabBar = 16686723
     ColorPanel = clBtnFace
     PanelStyle = spsFramed
     SplitterOrientation = spoVertical
     SplitterPos = 164
-    SplitterPosPercent = 27
+    SplitterPosPercent = 26
     Panel1Controls = (
       TV
       tbDataRow)
@@ -37,7 +37,7 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Left = 2
       Top = 32
       Width = 160
-      Height = 244
+      Height = 240
       Align = alClient
       DataMappings = <>
       DefaultText = 'Node'
@@ -45,10 +45,9 @@ object FtiBOMExplorer: TFtiBOMExplorer
       VisibleButtons = [tiLVBtnVisView, tiLVBtnVisEdit, tiLVBtnVisNew, tiLVBtnVisDelete]
       TreeOptions.AnimationOptions = [toAnimatedToggle]
       OnSelectNode = TVSelectNode
-      ExplicitWidth = 155
       DesignSize = (
         160
-        244)
+        240)
     end
     object tbDataRow: TToolBar
       Left = 2
@@ -59,52 +58,49 @@ object FtiBOMExplorer: TFtiBOMExplorer
       ButtonWidth = 31
       Caption = 'tbDataRow'
       DisabledImages = ilDisabled
-      DrawingStyle = dsGradient
       HotImages = ilHot
       Images = ilNormal
       List = True
       TabOrder = 1
-      ExplicitWidth = 155
       object tbRefresh: TToolButton
         Left = 0
-        Top = 0
+        Top = 2
         Action = actRefresh
       end
       object tbAppend: TToolButton
         Left = 31
-        Top = 0
+        Top = 2
         Action = actAppend
       end
       object tbDelete: TToolButton
         Left = 62
-        Top = 0
+        Top = 2
         Action = actDelete
       end
       object tbPost: TToolButton
         Left = 93
-        Top = 0
+        Top = 2
         Action = actPost
       end
       object tbCull: TToolButton
         Left = 124
-        Top = 0
+        Top = 2
         Action = actCull
       end
     end
     object pnlRight: TPanel
       Left = 2
       Top = 2
-      Width = 429
-      Height = 274
+      Width = 445
+      Height = 270
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 434
     end
   end
   object pnlBOMStatus: TPanel
     Left = 0
-    Top = 30
-    Width = 605
+    Top = 34
+    Width = 621
     Height = 32
     Align = alTop
     BevelOuter = bvNone
@@ -265,7 +261,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       ParentFont = False
       Transparent = False
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object imgAliasIcon: TImage
       Left = 362
@@ -423,7 +418,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       ParentFont = False
       Transparent = False
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object imgRegistrarIcon: TImage
       Left = 156
@@ -581,7 +575,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       ParentFont = False
       Transparent = False
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object lblBOM: TLabel
       Left = 32
@@ -591,7 +584,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Align = alLeft
       Caption = 'SlblBOM'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object Separator2: TLabel
       Left = 346
@@ -600,9 +592,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Height = 32
       Align = alLeft
       AutoSize = False
-      ExplicitLeft = 440
-      ExplicitTop = 16
-      ExplicitHeight = 13
     end
     object lblAlias: TLabel
       Left = 394
@@ -612,7 +601,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Align = alLeft
       Caption = 'SlblAlias'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object Separator3: TLabel
       Left = 140
@@ -621,9 +609,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Height = 32
       Align = alLeft
       AutoSize = False
-      ExplicitLeft = 164
-      ExplicitTop = -6
-      ExplicitHeight = 34
     end
     object lblRegistrar: TLabel
       Left = 188
@@ -633,13 +618,12 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Align = alLeft
       Caption = 'SlblRegistrar'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
   end
   object pnlView: TPanel
     Left = 0
-    Top = 62
-    Width = 605
+    Top = 66
+    Width = 621
     Height = 31
     Align = alTop
     BevelOuter = bvNone
@@ -715,7 +699,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Align = alLeft
       Caption = 'SlblView'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object Separator5: TLabel
       Left = 218
@@ -724,8 +707,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Height = 31
       Align = alLeft
       AutoSize = False
-      ExplicitLeft = 655
-      ExplicitTop = -4
     end
     object imgViewPointIcon: TImage
       Left = 234
@@ -876,7 +857,6 @@ object FtiBOMExplorer: TFtiBOMExplorer
       Align = alLeft
       Caption = 'SlblViewPoint'
       Layout = tlCenter
-      ExplicitHeight = 13
     end
     object pnlViewHolder: TPanel
       Left = 70
@@ -922,14 +902,13 @@ object FtiBOMExplorer: TFtiBOMExplorer
   object tbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 605
-    Height = 30
+    Width = 621
+    Height = 34
     AutoSize = True
     ButtonHeight = 30
     ButtonWidth = 93
     Caption = 'tbMain'
     DisabledImages = ilDisabled
-    DrawingStyle = dsGradient
     HotImages = ilHot
     Images = ilNormal
     List = True
@@ -937,22 +916,22 @@ object FtiBOMExplorer: TFtiBOMExplorer
     TabOrder = 3
     object tbSelectBOM: TToolButton
       Left = 0
-      Top = 0
+      Top = 2
       Action = actSelectBOM
     end
     object tbConnect: TToolButton
       Left = 93
-      Top = 0
+      Top = 2
       Action = actConnectDB
     end
     object tbDisconnect: TToolButton
       Left = 186
-      Top = 0
+      Top = 2
       Action = actDisconnectDB
     end
     object tbExit: TToolButton
       Left = 279
-      Top = 0
+      Top = 2
       Action = actExit
     end
   end

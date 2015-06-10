@@ -1,16 +1,16 @@
 object tiSelectBOMDlg: TtiSelectBOMDlg
-  Left = 245
-  Top = 108
+  Left = 248
+  Top = 119
+  Width = 613
+  Height = 443
   Caption = 'SSelectBOM'
-  ClientHeight = 416
-  ClientWidth = 589
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
   DesignSize = (
-    589
+    605
     416)
   PixelsPerInch = 96
   TextHeight = 13
@@ -24,8 +24,6 @@ object tiSelectBOMDlg: TtiSelectBOMDlg
     Default = True
     ModalResult = 1
     TabOrder = 0
-    ExplicitLeft = 427
-    ExplicitTop = 386
   end
   object CancelBtn: TButton
     Left = 505
@@ -37,20 +35,16 @@ object tiSelectBOMDlg: TtiSelectBOMDlg
     Caption = 'SCancelBtn'
     ModalResult = 2
     TabOrder = 1
-    ExplicitLeft = 507
-    ExplicitTop = 386
   end
   object pnlFrameHolder: TPanel
     Left = 0
     Top = 0
-    Width = 589
+    Width = 605
     Height = 378
     Align = alTop
     Anchors = [akLeft, akTop, akRight, akBottom]
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 591
-    ExplicitHeight = 380
   end
   object ActionList: TActionList
     Left = 128

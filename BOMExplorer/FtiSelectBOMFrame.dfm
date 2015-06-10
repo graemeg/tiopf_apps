@@ -22,7 +22,7 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
     object lblBOM: TLabel
       Left = 56
       Top = 35
-      Width = 38
+      Width = 41
       Height = 13
       Caption = 'SlblBOM'
     end
@@ -449,7 +449,7 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
     object lblAliases: TLabel
       Left = 56
       Top = 184
-      Width = 49
+      Width = 50
       Height = 13
       Caption = 'SlblAliases'
     end
@@ -484,16 +484,18 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
       Header.MainColumn = -1
-      Header.Options = [hoColumnResize, hoDrag, hoVisible]
+      Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
       Header.Style = hsXPStyle
+      EditInlineOnly = False
       ShowNodeHint = False
       SortOrders.GroupColumnCount = 0
       SortOrders = <>
       VT.Left = 2
       VT.Top = 2
       VT.Width = 277
-      VT.Height = 93
+      VT.Height = 67
       VT.Align = alClient
+      VT.Colors.UnfocusedColor = clMedGray
       VT.Header.AutoSizeIndex = 0
       VT.Header.Font.Charset = DEFAULT_CHARSET
       VT.Header.Font.Color = clWindowText
@@ -501,10 +503,11 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
       VT.Header.Font.Name = 'Tahoma'
       VT.Header.Font.Style = []
       VT.Header.MainColumn = -1
-      VT.Header.Options = [hoColumnResize, hoDrag, hoVisible]
+      VT.Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
       VT.Header.Style = hsXPStyle
       VT.NodeDataSize = 4
       VT.TabOrder = 0
+      VT.TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
       VT.TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
       VT.TreeOptions.SelectionOptions = [toFullRowSelect]
       VT.Columns = <>
@@ -522,16 +525,18 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
       Header.Font.Name = 'Tahoma'
       Header.Font.Style = []
       Header.MainColumn = -1
-      Header.Options = [hoColumnResize, hoDrag, hoVisible]
+      Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
       Header.Style = hsXPStyle
+      EditInlineOnly = False
       ShowNodeHint = False
       SortOrders.GroupColumnCount = 0
       SortOrders = <>
       VT.Left = 2
       VT.Top = 2
       VT.Width = 277
-      VT.Height = 93
+      VT.Height = 67
       VT.Align = alClient
+      VT.Colors.UnfocusedColor = clMedGray
       VT.Header.AutoSizeIndex = 0
       VT.Header.Font.Charset = DEFAULT_CHARSET
       VT.Header.Font.Color = clWindowText
@@ -539,10 +544,11 @@ object tiSelectBOMFrame: TtiSelectBOMFrame
       VT.Header.Font.Name = 'Tahoma'
       VT.Header.Font.Style = []
       VT.Header.MainColumn = -1
-      VT.Header.Options = [hoColumnResize, hoDrag, hoVisible]
+      VT.Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
       VT.Header.Style = hsXPStyle
       VT.NodeDataSize = 4
       VT.TabOrder = 0
+      VT.TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
       VT.TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
       VT.TreeOptions.SelectionOptions = [toFullRowSelect]
       VT.Columns = <>

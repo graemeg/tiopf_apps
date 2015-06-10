@@ -1,28 +1,23 @@
 inherited tiAutoEditFrame: TtiAutoEditFrame
   Width = 436
   Height = 274
-  ExplicitWidth = 436
-  ExplicitHeight = 274
   object ToolBar: TToolBar
     Left = 0
     Top = 249
     Width = 436
     Height = 25
     Align = alBottom
-    ButtonWidth = 84
+    ButtonWidth = 85
     DisabledImages = ilDisabled
-    DrawingStyle = dsGradient
-    EdgeBorders = [ebTop]
     HotImages = ilHot
     Images = ilNormal
     List = True
-    GradientDirection = gdHorizontal
     ShowCaptions = True
     TabOrder = 0
     Transparent = True
     object tbSeparator: TToolButton
       Left = 0
-      Top = 0
+      Top = 2
       Width = 12
       Caption = 'tbSeparator'
       ImageIndex = 1
@@ -30,34 +25,34 @@ inherited tiAutoEditFrame: TtiAutoEditFrame
     end
     object tbApply: TToolButton
       Left = 12
-      Top = 0
+      Top = 2
       Action = actCommit
     end
     object tbSeparator2: TToolButton
-      Left = 96
-      Top = 0
+      Left = 97
+      Top = 2
       Width = 8
       Caption = 'tbSeparator2'
       ImageIndex = 1
       Style = tbsSeparator
     end
     object tbRollback: TToolButton
-      Left = 104
-      Top = 0
+      Left = 105
+      Top = 2
       Action = actRollback
       Caption = 'StbRollback'
     end
     object tbSeparator3: TToolButton
-      Left = 188
-      Top = 0
+      Left = 190
+      Top = 2
       Width = 8
       Caption = 'tbSeparator3'
       ImageIndex = 1
       Style = tbsSeparator
     end
     object tbGetOID: TToolButton
-      Left = 196
-      Top = 0
+      Left = 198
+      Top = 2
       Action = actGetOID
     end
   end
@@ -88,16 +83,18 @@ inherited tiAutoEditFrame: TtiAutoEditFrame
         Header.Font.Name = 'Tahoma'
         Header.Font.Style = []
         Header.MainColumn = -1
-        Header.Options = [hoColumnResize, hoDrag, hoVisible]
+        Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
         Header.Style = hsXPStyle
+        EditInlineOnly = False
         ShowNodeHint = False
         SortOrders.GroupColumnCount = 0
         SortOrders = <>
         VT.Left = 2
         VT.Top = 2
         VT.Width = 424
-        VT.Height = 217
+        VT.Height = 191
         VT.Align = alClient
+        VT.Colors.UnfocusedColor = clMedGray
         VT.Header.AutoSizeIndex = 0
         VT.Header.Font.Charset = DEFAULT_CHARSET
         VT.Header.Font.Color = clWindowText
@@ -105,10 +102,11 @@ inherited tiAutoEditFrame: TtiAutoEditFrame
         VT.Header.Font.Name = 'Tahoma'
         VT.Header.Font.Style = []
         VT.Header.MainColumn = -1
-        VT.Header.Options = [hoColumnResize, hoDrag, hoVisible]
+        VT.Header.Options = [hoColumnResize, hoDrag, hoOwnerDraw, hoShowSortGlyphs, hoVisible]
         VT.Header.Style = hsXPStyle
         VT.NodeDataSize = 4
         VT.TabOrder = 0
+        VT.TreeOptions.MiscOptions = [toAcceptOLEDrop, toEditable, toFullRepaintOnResize, toInitOnSave, toToggleOnDblClick, toWheelPanning]
         VT.TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowRoot, toShowVertGridLines, toThemeAware, toUseBlendedImages]
         VT.TreeOptions.SelectionOptions = [toFullRowSelect]
         VT.Columns = <>
