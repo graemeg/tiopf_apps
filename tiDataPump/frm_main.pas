@@ -21,7 +21,6 @@ uses
 type
 
   TMainForm = class(TfpgForm)
-    procedure FormDestroy(Sender: TObject);
   private
     {@VFD_HEAD_BEGIN: MainForm}
     GroupBox1: TfpgGroupBox;
@@ -49,6 +48,7 @@ type
     Bevel1: TfpgBevel;
     lblStatus: TfpgLabel;
     {@VFD_HEAD_END: MainForm}
+    procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCopyDataClicked(Sender: TObject);
     procedure UpdateProgress(const pMessage: string);
@@ -142,7 +142,7 @@ end;
 
 procedure TMainForm.UpdateProgress(const pMessage: string);
 begin
-//  memoLog.Lines.Add(pMessage);
+  memoLog.Lines.Add(pMessage);
   Log(pMessage);
   lblStatus.Text := pMessage;
   fpgApplication.ProcessMessages;
