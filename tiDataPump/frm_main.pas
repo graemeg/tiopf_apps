@@ -52,6 +52,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure btnCopyDataClicked(Sender: TObject);
     procedure UpdateProgress(const pMessage: string);
+    procedure OutputSomeDebugInfo;
   public
     procedure AfterCreate; override;
   end;
@@ -65,6 +66,7 @@ uses
   ,tiDataPump_BOM
   ,tiOPFManager
   ,tiLog
+  ,tiCommandLineParams
   ;
 
 
@@ -94,6 +96,9 @@ procedure TMainForm.FormCreate(Sender: TObject);
 var
   c, i: integer;
 begin
+  if gCommandLineParams.IsParam('d') then
+    OutputSomeDebugInfo;
+
   gTIOPFManager.PersistenceLayers.AssignCaptions(cbSourcePL.Items);
   gTIOPFManager.PersistenceLayers.AssignCaptions(cbTargetPL.Items);
 
@@ -146,6 +151,17 @@ begin
   Log(pMessage);
   lblStatus.Text := pMessage;
   fpgApplication.ProcessMessages;
+end;
+
+procedure TMainForm.OutputSomeDebugInfo;
+var
+  i: integer;
+begin
+  UpdateProgress('*** Enabled Persistence Layers ***');
+  for i := 0 to gTIOPFManager.PersistenceLayers.Count-1 do
+    UpdateProgress('   ' + gTIOPFManager.PersistenceLayers[i].PersistenceLayerName);
+  if gTIOPFManager.PersistenceLayers.Count = 0 then
+    UpdateProgress('   NONE');
 end;
 
 procedure TMainForm.AfterCreate;
