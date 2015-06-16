@@ -48,7 +48,7 @@ type
     procedure   WriteListClassImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfSaveMethod(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassImpReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteClassImpSavemethod(ASL: TStringList; AClassDef: TmapClassDef);
+    procedure   WriteClassImpSaveMethod(ASL: TStringList; AClassDef: TmapClassDef);
     // Visitor methods writing
     procedure   WriteVisRegIntf(ASL: TStringList);
     procedure   WriteVisRegImp(ASL: TStringList; AUnitDef: TMapUnitDef);
@@ -453,7 +453,7 @@ begin
   WriteBreak(ASL);
 end;
 
-procedure TMapperProjectWriter.WriteClassImpSavemethod(ASL: TStringList;
+procedure TMapperProjectWriter.WriteClassImpSaveMethod(ASL: TStringList;
   AClassDef: TmapClassDef);
 begin
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Save;', ASL);
@@ -462,7 +462,7 @@ begin
       WriteLine('Case ObjectState of', ASL);
       IncTab;
         WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_delete'', self);', ASL);
-        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_save'', self);', ASL);
+        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_update'', self);', ASL);
         WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_create'', self);', ASL);
       DecTab;
       WriteLine('end;', ASL);
@@ -859,14 +859,14 @@ begin
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
     AClassMap.BaseClassName + 'List_Create);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + 'List_Save);', ASL);
+    AClassMap.BaseClassName + 'List_Update);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
     AClassMap.BaseClassName + 'List_Delete);', ASL);
 
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_read'', ' +
     AClassMap.BaseClassName + '_Read);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_save'', ' +
-    AClassMap.BaseClassName + '_Save);', ASL);
+  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_update'', ' +
+    AClassMap.BaseClassName + '_Update);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_delete'', ' +
     AClassMap.BaseClassName + '_Delete);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_create'', ' +
@@ -1947,7 +1947,7 @@ procedure TMapperProjectWriter.WriteVisClassUpdateIntf(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
   WriteLine('{ Update Visitor for ' + AClassDef.BaseClassName + ' }', ASL);
-  WriteLine(AClassDef.BaseClassName + '_Save = class(TtiVisitorUpdate)', ASL);
+  WriteLine(AClassDef.BaseClassName + '_Update = class(TtiVisitorUpdate)', ASL);
   WriteLine('protected', ASL);
     IncTab;
       WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
@@ -2060,9 +2060,9 @@ end;
 procedure TMapperProjectWriter.WriteVisClassUpdateImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
-  WriteLine('{ ' + AClassDef.BaseClassName + '_Save }', ASL);
+  WriteLine('{ ' + AClassDef.BaseClassName + '_Update }', ASL);
 
-  WriteLine('function ' + AClassDef.BaseClassName + '_Save.AcceptVisitor: Boolean;', ASL);
+  WriteLine('function ' + AClassDef.BaseClassName + '_Update.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := Visited.ObjectState = posUpdate;', ASL);
@@ -2070,7 +2070,7 @@ begin
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 
-  WriteLine('procedure ' + AClassDef.BaseClassName + '_Save.Init;', ASL);
+  WriteLine('procedure ' + AClassDef.BaseClassName + '_Update.Init;', ASL);
   WriteLine('begin', ASL);
     IncTab;
       WriteUpdateSQL(ASL, AClassDef);
@@ -2078,7 +2078,7 @@ begin
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 
-  WriteLine('procedure ' + AClassDef.BaseClassName + '_Save.SetupParams;', ASL);
+  WriteLine('procedure ' + AClassDef.BaseClassName + '_Update.SetupParams;', ASL);
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
@@ -2116,9 +2116,9 @@ end;
 procedure TMapperProjectWriter.WriteVisListUpdateImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
-  WriteLine('{ ' + AClassDef.BaseClassName + 'List_Save }', ASL);
+  WriteLine('{ ' + AClassDef.BaseClassName + 'List_Update }', ASL);
 
-  WriteLine('function ' + AClassDef.BaseClassName + 'List_Save.AcceptVisitor: Boolean;', ASL);
+  WriteLine('function ' + AClassDef.BaseClassName + 'List_Update.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := Visited.ObjectState = posUpdate;', ASL);
@@ -2126,7 +2126,7 @@ begin
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Save.Init;', ASL);
+  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Update.Init;', ASL);
   WriteLine('begin', ASL);
     IncTab;
       WriteUpdateSQL(ASL, AClassDef);
@@ -2134,7 +2134,7 @@ begin
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Save.SetupParams;', ASL);
+  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Update.SetupParams;', ASL);
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
@@ -2152,7 +2152,7 @@ procedure TMapperProjectWriter.WriteVisListUpdateIntf(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
   WriteLine('{ List Update Visitor for ' + AClassDef.BaseClassName + 'List }', ASL);
-  WriteLine(AClassDef.BaseClassName + 'List_Save = class(TtiVisitorUpdate)', ASL);
+  WriteLine(AClassDef.BaseClassName + 'List_Update = class(TtiVisitorUpdate)', ASL);
   WriteLine('protected', ASL);
     IncTab;
       WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
@@ -2273,4 +2273,3 @@ begin
 end;
 
 end.
-
