@@ -1016,7 +1016,7 @@ begin
   WriteLine('Query.SQLText := ', ASL);
     IncTab;
       WriteLine('''DELETE FROM ' + lMapping.TableName + ' '' +', ASL);
-      WriteLine('''WHERE OID = :OID'';', ASL);
+      WriteLine('''WHERE ' + AClassDef.ClassMapping.PKField +' = :' + AClassDef.ClassMapping.PKField +''';', ASL);
     DecTab;
 end;
 
@@ -1033,7 +1033,7 @@ begin
   WriteLine('Query.SQLText := ', ASL);
     IncTab;
       WriteLine('''INSERT INTO ' + lMapping.TableName + '('' + ', ASL);
-      WriteLine(''' OID, '' + ', ASL);
+      WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' + ', ASL);
       for lCtr := 0 to lMapping.PropMappings.Count - 1 do
         begin
           lPropMap :=  lMapping.PropMappings.Items[lCtr];
@@ -1044,7 +1044,7 @@ begin
         end;
 
       WriteLine(''') VALUES ('' +', ASL);
-      WriteLine(''' :OID, '' +', ASL);
+      WriteLine(''' :' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
       for lCtr := 0 to lMapping.PropMappings.Count - 1 do
         begin
@@ -1173,6 +1173,7 @@ begin
       WriteLine('inherited SetItems(i, AValue);', ASL);
     DecTab;
   WriteLine('end;', ASL);
+  WriteBreak(ASL);
 
   WriteLine('function ' + lListName + '.FindByOID(const AOID: string): integer;', ASL);
   WriteLine('begin', ASL);
@@ -1431,7 +1432,7 @@ begin
             WriteLine(''' ' + lPropMap.FieldName + ' '' + ', ASL)
         end;
 
-      WriteLine('''FROM  ' + lMapping.TableName + ' WHERE OID = :' + lMapping.PKName + ''' ;', ASL);
+      WriteLine('''FROM ' + lMapping.TableName + ' WHERE ' + lMapping.PKField +' = :' + lMapping.PKField + ''' ;', ASL);
 
     DecTab;
 end;
@@ -1443,7 +1444,7 @@ var
   lCtr: integer;
 begin
 
-  WriteLine('lObj.OID.AssignToTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+  WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
@@ -1748,7 +1749,6 @@ var
   lMapping: TClassMapping;
   lCtr: integer;
 begin
-
   lMapping := AClassDef.ClassMapping;
 
   WriteLine('Query.SQLText := ', ASL);
@@ -1764,11 +1764,9 @@ begin
             WriteLine(''' ' + lPropMap.FieldName + ' = :' + lPropMap.FieldName + ' '' + ', ASL)
         end;
 
-      WriteLine('''WHERE ' + lMapping.PKName + ' = :' + lMapping.PKName + ''' ;', ASL);
+      WriteLine('''WHERE ' + lMapping.PKField + ' = :' + lMapping.PKField + ''' ;', ASL);
 
     DecTab;
-
-
 end;
 
 procedure TMapperProjectWriter.WriteVisClassCreateIntf(ASL: TStringList;
@@ -1789,7 +1787,6 @@ end;
 procedure TMapperProjectWriter.WriteVisClassCreateImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
-
   WriteLine('{ ' + AClassDef.BaseClassName + '_Create }', ASL);
 
   WriteLine('function ' + AClassDef.BaseClassName + '_Create.AcceptVisitor: Boolean;', ASL);
@@ -1820,7 +1817,6 @@ begin
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
-
 end;
 
 procedure TMapperProjectWriter.WriteVisClassDeleteIntf(ASL: TStringList;
@@ -1867,7 +1863,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteLine('lObj.OID.AssignToTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+      WriteLine('lObj.' + AClassDef.ClassMapping.PKName +'.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
     DecTab;
   WriteLine('end;', ASL);
 
@@ -1920,7 +1916,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteLine('lObj.OID.AssignToTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+      WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -1933,7 +1929,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteLine('lObj.OID.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+      WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
     DecTab;
   WriteLine('end;', ASL);
@@ -2037,9 +2033,10 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteLine('lObj.OID.AssignToTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+      WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
     DecTab;
   WriteLine('end;', ASL);
+  WriteBreak(ASL);
 end;
 
 procedure TMapperProjectWriter.WriteVisListDeleteIntf(ASL: TStringList;
@@ -2235,7 +2232,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lObj := ' + AClassDef.BaseClassName + '.Create;', ASL);
-      WriteLine('lObj.OID.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
+      WriteLine('lObj.' + AClassDef.ClassMapping.PKName +'.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
       WriteLine('lObj.ObjectState := posClean;', ASL);
       WriteLine('TtiObjectList(Visited).Add(lObj);', ASL);
