@@ -48,7 +48,7 @@ type
     procedure   SetItems(i: integer; const Value: TtiFileSyncDir); reintroduce ;
   public
     property    Items[i:integer] : TtiFileSyncDir read GetItems write SetItems ;
-    procedure   Add( pObject : TtiFileSyncDir ; pbDefaultDispOrder : boolean = true ) ; reintroduce ;
+    procedure   Add(const AObject : TtiFileSyncDir); reintroduce ;
     function    Clone : TtiFileSyncDirs ; reintroduce ;
     procedure   Assign( pSource : TtiFileSyncDirs ) ; reintroduce ;
   end ;
@@ -81,7 +81,7 @@ type
     procedure   SetItems(i: integer; const Value: TtiFileNameFilter); reintroduce ;
   public
     property    Items[i:integer] : TtiFileNameFilter read GetItems write SetItems ;
-    procedure   Add( pObject : TtiFileNameFilter ; pbDefaultDispOrder : boolean = true ) ; reintroduce ;
+    procedure   Add(const AObject : TtiFileNameFilter) ; reintroduce ;
     procedure   AddFilter( pFilterType : TtiFileFilterType ;
                            pWildCard   : TFileName ) ;
     function    Clone : TtiFileNameFilters ; reintroduce ;
@@ -114,7 +114,7 @@ uses
   cFileSync
   ,tiFileSyncReader_Abs
   ,tiOPFManager
-  ,tiClassToDBMap_BOM
+  ,tiAutoMap
   ,tiUtils
   ,tiQueryXMLLight
   ,tiConstants
@@ -168,10 +168,9 @@ end ;
 
 { TtiFileSyncDirs }
 
-procedure TtiFileSyncDirs.Add(pObject: TtiFileSyncDir;
-  pbDefaultDispOrder: boolean);
+procedure TtiFileSyncDirs.Add(const AObject: TtiFileSyncDir);
 begin
-  inherited Add( pObject, pbDefaultDispOrder ) ;
+  inherited Add(AObject);
 end;
 
 procedure TtiFileSyncDirs.Assign(pSource: TtiFileSyncDirs);
@@ -216,9 +215,9 @@ begin
   Add( lFileSyncSetup ) ;
 
   lFileSyncSetup  := TtiFileSyncSetup.Create ;
-  lFileSyncSetup.LocalDir := 'd:\Nemmco' ;
+  lFileSyncSetup.LocalDir := 'd:\AEMO' ;
   lFileSyncSetup.SourceReader := cgsDiskFiles ;
-  lFileSyncSetup.TargetLocation := 'h:\backup\Nemmco' ;
+  lFileSyncSetup.TargetLocation := 'h:\backup\AEMO' ;
   lFileSyncSetup.TargetReader := cgsDiskFiles ;
   Add( lFileSyncSetup ) ;
 
@@ -300,10 +299,9 @@ end;
 
 { TtiFileNameFilters }
 
-procedure TtiFileNameFilters.Add(pObject: TtiFileNameFilter;
-  pbDefaultDispOrder: boolean);
+procedure TtiFileNameFilters.Add(const AObject: TtiFileNameFilter);
 begin
-  inherited Add( pObject, pbDefaultDispOrder ) ;
+  inherited Add(AObject);
 end;
 
 procedure TtiFileNameFilters.AddFilter(pFilterType: TtiFileFilterType; pWildCard: TFileName);

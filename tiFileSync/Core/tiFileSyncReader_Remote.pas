@@ -1,5 +1,7 @@
 unit tiFileSyncReader_Remote;
 
+{$i tiDefines.inc}
+
 interface
 uses
   tiFileName_BOM
@@ -152,6 +154,13 @@ begin
     FreeAndNil(FHTTP);
     FHTTP := gTIHTTPFactory.CreateInstance(lHTTPClassMapping);
   end ;
+  FHTTP.BlockSize:= StrToInt64Def(Params.Values[CHTTPBlockSize], 0);
+  FHTTP.RetryLimit:= StrToIntDef(Params.Values[CHTTPRetryLimit], ctiOPFHTTPDefaultRetryLimit);
+  FHTTP.RetryWaitMS:= StrToIntDef(Params.Values[CHTTPRetryWaitMS], ctiOPFHTTPDefaultRetryWaitMS);
+  FHTTP.ResolveTimeout:= StrToIntDef(Params.Values[CHTTPResolveTimeout], 0);
+  FHTTP.ConnectTimeout:= StrToIntDef(Params.Values[CHTTPConnectTimeout], 0);
+  FHTTP.SendTimeout:= StrToIntDef(Params.Values[CHTTPSendTimeout], 0);
+  FHTTP.ReceiveTimeout:= StrToIntDef(Params.Values[CHTTPReceiveTimeout], 0);
   if not SameText( cHTTPMSXML, FHTTP.MappingName ) then
   begin
     lProxyActive := tiStrToBool(Params.Values[cHTTPProxyServeractive]);

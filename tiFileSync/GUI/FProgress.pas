@@ -28,7 +28,7 @@ type
 implementation
 uses
   tiUtils
-  ,tiRegINI
+  ,tiINI
   ,tiDialogs
   ,tiFileSync_Mgr
   ;

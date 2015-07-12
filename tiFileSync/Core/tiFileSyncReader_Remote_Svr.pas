@@ -39,6 +39,7 @@ uses
   ,tiLog
   ,tiUtils
   ,tiFileSyncReader_DiskFiles
+  ,tiWebServerConstants
   ,cFileSync
   ;
 
@@ -78,6 +79,7 @@ begin
     try
       ls := lFSR.Execute(lCommand, lData );
       AResponseInfo.ContentText := ls ;
+      AResponseInfo.ContentType := cHTTPContentTypeTextHTML;
     finally
       lFSR.Free;
     end;

@@ -42,10 +42,10 @@ uses
   ,tiObject
   ,tiLog
   ,tiCRC32
+  ,tiConstants
   ,Classes
   ,Windows
   ,SysUtils
-  ,FileCtrl
   ,cFileSync
  ;
 
@@ -80,7 +80,7 @@ procedure TFileSyncReaderDiskFiles.ReadFileFingerPrint(AFileName: TtiFileName);
 var
   LStream: TFileStream;
 begin
-  Assert(AFileName.TestValid, cErrorTIPerObjAbsTestValid);
+  Assert(AFileName.TestValid, CTIErrorInvalidObject);
   LStream := TFileStream.Create(AFileName.PathAndName, fmOpenRead or fmShareDenyWrite);
   try
     AFileName.Size := LStream.Size;
@@ -137,7 +137,6 @@ var
   lStartDir : string;
 begin
   lStartDir := pFileNames.StartDir;
-  Log(['ReadFileIndex', lStartDir]);
 
   // Read files to include
   if (pSourceFileNameFilters = nil) or

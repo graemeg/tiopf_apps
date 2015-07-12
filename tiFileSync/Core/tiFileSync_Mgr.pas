@@ -1,5 +1,7 @@
 unit tiFileSync_Mgr;
 
+{$i tiDefines.inc}
+
 interface
 uses
    tiBaseObject
@@ -32,7 +34,7 @@ type
 
   TtiFileSyncMgrLogEvent = procedure (const psMessage : string; pAppendToPrevRow: Boolean) of object;
   TtiFileSyncMgrFileEvent = procedure (const psFilename: string;  pAction: TtiFileSyncAction) of object;
-
+  TtiFileSyncMgrCheckFileAccessEvent = procedure (const pFileName: string; var pCanGetFile: Boolean) of object;
   TtiFileSyncTasks = class;
   TtiFileSyncTask = class;
 
@@ -42,7 +44,7 @@ type
     procedure   SetItems(i: integer; const Value: TtiFileSyncTask); reintroduce;
   public
     property    Items[i:integer] : TtiFileSyncTask read GetItems write SetItems;
-    procedure   Add(pObject : TtiFileSyncTask  ; pDefDispOrdr : boolean = true); reintroduce;
+    procedure   Add(const AObject : TtiFileSyncTask); reintroduce;
     function    AddInstance(pFileName: TtiFileName; pTargetFileNames: TtiFileNames): TtiFileSyncTask;
   end;
 
@@ -121,11 +123,12 @@ type
     FSourceReaderParams: string;
     FError: Boolean;
     FFileNameLockList: TtiFileNameLockList;
+    FOnCheckFileCanBeDownloaded: TtiFileSyncMgrCheckFileAccessEvent;
 
-    procedure BuildCreatePathList(pData : TtiObject);
-    procedure BuildDeletePathList(    pData : TtiObject);
-    procedure BuildCopyUpdateFileList(pData : TtiObject);
-    procedure BuildDeleteFileList(    pData : TtiObject);
+    procedure BuildCreatePathList(const AData : TtiObject);
+    procedure BuildDeletePathList(const AData : TtiObject);
+    procedure BuildCopyUpdateFileList(const AData : TtiObject);
+    procedure BuildDeleteFileList(const AData : TtiObject);
     procedure ReadFileIndex(const pReaderType: string;
                              const pReaderParams: string;
                              const ptiFileNames: TtiFileNames;
@@ -145,6 +148,7 @@ type
     procedure CopyFiles;
     procedure DeleteFiles;
     procedure UpdateFiles;
+    procedure RemoveRestrictedFiles;
 //    procedure CreatePath(const ptiPathName : TtiPathName; const psReader : string; const pReaderParams: string);
     procedure DeletePath(const ptiPathName : TtiPathName; const psReader : string; const pReaderParams: string);
     procedure WriteIndex(const ptiFileNames: TtiFileNames; const psReader: string; const pReaderParams: string);
@@ -175,6 +179,7 @@ type
     property    OnProgressMajor : TtiFileSyncMgrProgressEvent read FOnProgressMajor write FOnProgressMajor;
     property    OnProgressMinor : TtiFileSyncMgrProgressEvent read FOnProgressMinor write FOnProgressMinor;
     property    OnFile: TtiFileSyncMgrFileEvent read FOnFile write FOnFile;
+    property    OnCheckFileCanBeDownloaded: TtiFileSyncMgrCheckFileAccessEvent read FOnCheckFileCanBeDownloaded write FOnCheckFileCanBeDownloaded;
     procedure   Terminate;
 
     // Assign values to these before running
@@ -212,6 +217,8 @@ type
     FLastFileAction: TtiFileSyncAction;
     FFormToShow: TForm;
     FOnTerminateWithError: TNotifyEvent;
+    FOnCheckFileCanBeDownloaded: TtiFileSyncMgrCheckFileAccessEvent;
+
     procedure DoLog(const pMessage : string; pAppendToPrevRow: boolean);
     procedure DoUpdateProgressMajor(AFileName: TtiFileName; AMax, APos : integer);
     procedure DoUpdateProgressMinor(AFileName: TtiFileName; AMax, APos : integer);
@@ -220,6 +227,7 @@ type
     procedure DoLogSynchronize;
     procedure DoUpdateProgressMajorSynchronize;
     procedure DoUpdateProgressMinorSynchronize;
+    procedure DoCheckFileCanBeDownloaded(const pFileName: string; var pCanGetFile: Boolean);
   protected
   public
     constructor Create(const pSourceReader: string;
@@ -234,7 +242,8 @@ type
                         const pOnFile: TtiFileSyncMgrFileEvent;
                         const pOnTerminate: TNotifyEvent;
                         const pOnTerminateWithError: TNotifyEvent;
-                        const pFormToShow: TForm);
+                        const pFormToShow: TForm;
+                        const pOnCheckFileCanBeDownloaded: TtiFileSyncMgrCheckFileAccessEvent = nil);
 
     destructor  Destroy; override;
     procedure   Execute; override;
@@ -279,32 +288,32 @@ uses
 
 { TtiFileSyncMgrMgr }
 
-procedure TtiFileSyncMgr.BuildCopyUpdateFileList(pData: TtiObject);
+procedure TtiFileSyncMgr.BuildCopyUpdateFileList(const AData: TtiObject);
 var
   lData : TtiFileName;
 begin
-  lData := FTargetFileNames.FindLikeRootRemoved(pData as TtiFileName);
+  lData := FTargetFileNames.FindLikeRootRemoved(AData as TtiFileName);
 
   // Copy
   if (lData = nil) then
-    FCopyFileNames.AddInstance(pData as TtiFileName,
+    FCopyFileNames.AddInstance(AData as TtiFileName,
                                 FTargetFileNames)
 
   // Update
   else if (lData <> nil) and
-          ((TtiFileName(pData).Size <> lData.Size) or
-           (TtiFileName(pData).CRC <> lData.CRC)) then
-    FUpdateFileNames.Add(pData)
+          ((TtiFileName(AData).Size <> lData.Size) or
+           (TtiFileName(AData).CRC <> lData.CRC)) then
+    FUpdateFileNames.Add(AData)
 
 end;
 
-procedure TtiFileSyncMgr.BuildDeleteFileList(pData: TtiObject);
+procedure TtiFileSyncMgr.BuildDeleteFileList(const AData: TtiObject);
 var
   lData : TtiFileName;
 begin
-  lData := FSourceFileNames.FindLikeRootRemoved(TtiFileName(pData));
+  lData := FSourceFileNames.FindLikeRootRemoved(TtiFileName(AData));
   if lData = nil then
-    FDeleteFileNames.Add(pData);
+    FDeleteFileNames.Add(AData);
 end;
 
 constructor TtiFileSyncMgr.Create;
@@ -405,6 +414,10 @@ begin
   if FVerboseLogging then
     Log('  Files in source: ' + IntToStr(FSourceFileNames.Count));
 
+  // Remove restricted files
+  Log('Checking access to new files...');
+  RemoveRestrictedFiles;
+
   // Target files
   if FTerminated then Exit; //==>
   Log('Reading list of existing files...');
@@ -444,7 +457,9 @@ begin
   if fsaDelete in FileSyncActions then
     Inc(FiFileCount, FDeleteFileNames.Count);
 
-  Inc(FiFileCount, 1);
+  if FiFileCount = 0 then
+    Inc(FiFileCount, 1);
+
   UpdateProgressMajor(nil, FiFileCount, 1);
   FiFileNum := 1;
 
@@ -529,8 +544,8 @@ var
   LFiles: TtiFileNames;
   i: Integer;
 begin
-  Assert(AReader.TestValid, cErrorTIPerObjAbsTestValid);
-  Assert(ATargetFileNames.TestValid, cErrorTIPerObjAbsTestValid);
+  Assert(AReader.TestValid, CTIErrorInvalidObject);
+  Assert(ATargetFileNames.TestValid, CTIErrorInvalidObject);
   Assert(AFileName<>'', 'AStartDir not assigned');
   LFiles:= TtiFileNames.Create;
   try
@@ -547,6 +562,21 @@ begin
   finally
     LFiles.Free;
   end;
+end;
+
+procedure TtiFileSyncMgr.RemoveRestrictedFiles;
+var
+  i: Integer;
+  LCanGetFile: Boolean;
+begin
+  if Assigned(FOnCheckFileCanBeDownloaded) then
+    for i := FSourceFileNames.Count - 1 downto 0 do
+    begin
+      LCanGetFile := true; // default
+      FOnCheckFileCanBeDownloaded(FSourceFileNames.Items[i].PathAndName, LCanGetFile);
+      if not LCanGetFile then
+        FSourceFileNames.Delete(i);
+    end;
 end;
 
 procedure TtiFileSyncMgr.Execute;
@@ -616,7 +646,11 @@ begin
     except
       on e:exception do
       begin
-        Log('  ' + e.message);
+        Log('Error copying file: ' + e.message + tiLineEnd +
+          'Please close all active applications and try again. ' +
+          'If this does not work, please re-start your computer and try again. ' +
+          'You may need to confirm with your IT support staff that you have ' +
+          'write access to this location.');
         FError:= True;
       end;
     end;
@@ -855,22 +889,22 @@ begin
   end;
 end;
 
-procedure TtiFileSyncMgr.BuildCreatePathList(pData: TtiObject);
+procedure TtiFileSyncMgr.BuildCreatePathList(const AData: TtiObject);
 var
   lData : TtiPathName;
 begin
-  lData := FTargetPathNames.FindLikeRootRemoved(TtiPathName(pData));
+  lData := FTargetPathNames.FindLikeRootRemoved(TtiPathName(AData));
   if (lData = nil) then
-    FCopyPathNames.Add(pData)
+    FCopyPathNames.Add(AData)
 end;
 
-procedure TtiFileSyncMgr.BuildDeletePathList(pData: TtiObject);
+procedure TtiFileSyncMgr.BuildDeletePathList(const AData: TtiObject);
 var
   lData : TtiPathName;
 begin
-  lData := FSourcePathNames.FindLikeRootRemoved(TtiPathName(pData));
+  lData := FSourcePathNames.FindLikeRootRemoved(TtiPathName(AData));
   if lData = nil then
-    FDeletePathNames.Add(pData);
+    FDeletePathNames.Add(AData);
 end;
 
 {
@@ -961,7 +995,7 @@ end;
 
 procedure TtiFileSyncMgr.AssignFromFileSyncDir(const pData: TtiFileSyncDir);
 begin
-  Assert(pData.TestValid(TtiFileSyncDir), cTIInvalidObjectError);
+  Assert(pData.TestValid(TtiFileSyncDir), CTIErrorInvalidObject);
   SourceFileNames.StartDir := pData.LocalDir;
   SourceReader             := pData.SourceReader;
   TargetFileNames.StartDir := pData.TargetLocation;
@@ -970,9 +1004,9 @@ end;
 
 { TtiFileSyncTasks }
 
-procedure TtiFileSyncTasks.Add(pObject: TtiFileSyncTask;pDefDispOrdr: boolean);
+procedure TtiFileSyncTasks.Add(const AObject: TtiFileSyncTask);
 begin
-  inherited Add(pObject, pDefDispOrdr);
+  inherited Add(AObject);
 end;
 
 function TtiFileSyncTasks.AddInstance(pFileName: TtiFileName;
@@ -998,7 +1032,7 @@ end;
 
 function TtiFileSyncTask.GetDate: TDateTime;
 begin
-  Assert(FSourceFileName.TestValid(TtiFileName), cTIInvalidObjectError);
+  Assert(FSourceFileName.TestValid(TtiFileName), CTIErrorInvalidObject);
   result := FSourceFileName.Date;
 end;
 
@@ -1009,20 +1043,20 @@ end;
 
 function TtiFileSyncTask.GetPathAndName: string;
 begin
-  Assert(FSourceFileName.TestValid(TtiFileName), cTIInvalidObjectError);
+  Assert(FSourceFileName.TestValid(TtiFileName), CTIErrorInvalidObject);
   result := FSourceFileName.PathAndName;
 end;
 
 function TtiFileSyncTask.GetSize: Integer;
 begin
-  Assert(FSourceFileName.TestValid(TtiFileName), cTIInvalidObjectError);
+  Assert(FSourceFileName.TestValid(TtiFileName), CTIErrorInvalidObject);
   result := FSourceFileName.Size;
 end;
 
 function TtiFileSyncTask.GetTargetPathAndName: string;
 begin
-  Assert(FSourceFileName.TestValid(TtiFileName), cTIInvalidObjectError);
-  Assert(FTargetFileNames.TestValid(TtiFileNames), cTIInvalidObjectError);
+  Assert(FSourceFileName.TestValid(TtiFileName), CTIErrorInvalidObject);
+  Assert(FTargetFileNames.TestValid(TtiFileNames), CTIErrorInvalidObject);
 
   result := tiAddTrailingSlash(FTargetFileNames.StartDir) + FSourceFileName.RootRemoved;
   result := tiStrTran(result, '\\', '\');
@@ -1048,17 +1082,19 @@ constructor TthrdTIFileSyncOneWayCopy.Create(
                         const pOnFile: TtiFileSyncMgrFileEvent;
                         const pOnTerminate: TNotifyEvent;
                         const pOnTerminateWithError: TNotifyEvent;
-                        const pFormToShow: TForm);
+                        const pFormToShow: TForm;
+                        const pOnCheckFileCanBeDownloaded: TtiFileSyncMgrCheckFileAccessEvent = nil);
 begin
-  inherited Create(True);
+  inherited Create(False);
   FreeOnTerminate:= False;
   OnTerminate := pOnTerminate;
-  FOnLog := pOnLog;
+  FOnLog := pOnLog;                                  
   FOnFile := pOnFile;
   FOnProgressMajor := AOnProgressMajor;
   FOnProgressMinor := AOnProgressMinor;
   FFormToShow := pFormToShow;
   FOnTerminateWithError:= pOnTerminateWithError;
+  FOnCheckFileCanBeDownloaded := pOnCheckFileCanBeDownloaded;
 
   FFSM := TtiFileSyncMgr.Create;
   FFSM.SourceReader := pSourceReader;
@@ -1073,7 +1109,7 @@ begin
   FFSM.OnProgressMajor:= DoUpdateProgressMajor;
   FFSM.OnProgressMinor:= DoUpdateProgressMinor;
   FFSM.OnFile := DoFile;
-  Resume;
+  FFSM.OnCheckFileCanBeDownloaded := DoCheckFileCanBeDownloaded;
 end;
 
 destructor TthrdTIFileSyncOneWayCopy.Destroy;
@@ -1098,6 +1134,13 @@ end;
 procedure TthrdTIFileSyncOneWayCopy.DoLogSynchronize;
 begin
   FOnLog(FMessage, FAppendToPrevRow);
+end;
+
+procedure TthrdTIFileSyncOneWayCopy.DoCheckFileCanBeDownloaded(
+  const pFileName: string; var pCanGetFile: Boolean);
+begin
+  if Assigned(FOnCheckFileCanBeDownloaded) then
+    FOnCheckFileCanBeDownloaded(pFileName, pCanGetFile);
 end;
 
 procedure TthrdTIFileSyncOneWayCopy.DoUpdateProgressMajor(AFileName: TtiFileName; AMax, APos : integer);

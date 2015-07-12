@@ -66,7 +66,7 @@ uses
   ,tiXML
   ,FFileSyncSetupEdit
   ,tiObject
-  ,tiRegINI
+  ,tiINI
   ,FFileNameFilterEdit
   ,tiDialogs
   ,tiCommandLineParams

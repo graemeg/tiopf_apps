@@ -34,7 +34,7 @@ type
 implementation
 uses
   tiUtils
-  ,tiRegINI
+  ,tiINI
   ,tiGUIUtils
   ,tiDialogs
   , tiFileName_BOM;
