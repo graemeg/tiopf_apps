@@ -111,13 +111,13 @@ procedure CreateTables;
 
 implementation
 uses
-  cFileSync
-  ,tiFileSyncReader_Abs
+//  cFileSync
+  tiFileSyncReader_Abs
   ,tiOPFManager
   ,tiAutoMap
-  ,tiUtils
+//  ,tiUtils
   ,tiQueryXMLLight
-  ,tiConstants
+//  ,tiConstants
   ,tiQuery
   ;
 

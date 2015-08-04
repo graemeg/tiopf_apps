@@ -149,8 +149,9 @@ type
   private
     procedure   FileNamesToDataSet(const pDataSet: TtiDataBuffer);
     function    GetAsXML: string;
+    procedure   SetAsXML(AValue: string);
   protected
-    procedure   AssignItemsFromDataSets(const pDataSets: TtiDataBufferList); override ;
+    procedure   AssignItemsFromDatasets(const pDataSets: TtiDataBufferList); override ;
     function    GetItems(i: integer): TtiFileName ; reintroduce ;
     procedure   SetItems(i: integer; const Value: TtiFileName ); reintroduce ;
   public
@@ -162,11 +163,11 @@ type
 implementation
 uses
    tiUtils  // tiDirectoryTreeToStringList
-  ,tiDialogs
+//  ,tiDialogs
   ,tiConstants
   ,tiOPFManager
   ,tiAutoMap
-  ,tiXMLToTIDataSet
+  ,tiXMLToTIDataset
   ,tiQuery
   ;
 
@@ -310,7 +311,7 @@ begin
   result := FStrPathAndName ;
 end ;
 
-procedure TtiFileNames.AssignItemsFromDataSets(const pDataSets: TtiDataBufferList);
+procedure TtiFileNames.AssignItemsFromDatasets(const pDataSets: TtiDataBufferList);
 var
   lDataSet: TtiDataBuffer;
   i : Integer ;
@@ -392,6 +393,11 @@ begin
     lDS.Free;
   end;
 }
+end;
+
+procedure TtiFileNames.SetAsXML(AValue: string);
+begin
+
 end;
 
 function TtiFileNames.GetItems(i: integer): TtiFileName;

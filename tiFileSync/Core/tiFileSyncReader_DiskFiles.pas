@@ -39,12 +39,12 @@ type
 implementation
 uses
    tiUtils
-  ,tiObject
+//  ,tiObject
   ,tiLog
   ,tiCRC32
   ,tiConstants
   ,Classes
-  ,Windows
+//  ,Windows
   ,SysUtils
   ,cFileSync
  ;
