@@ -280,9 +280,9 @@ uses
   tiUtils
   ,tiGUIUtils
   ,tiLog
-  ,tiExcept
+//  ,tiExcept
   ,tiConstants
-  ,tiDialogs // Debugging
+//  ,tiDialogs // Debugging
 //  ,Windows
  ;
 
