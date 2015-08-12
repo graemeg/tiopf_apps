@@ -1,8 +1,11 @@
 unit tiFileSyncMgr_TST;
 
+{$I tiDefines.inc}
+
 interface
 uses
   TestFramework
+  ,SysUtils
   ,tiFileSync_Mgr
   ;
 
@@ -59,6 +62,7 @@ implementation
 uses
   tiFileName_BOM
   ,cFileSync
+  ,tiUtils
   ;
 
 procedure RegisterTests ;
@@ -106,7 +110,7 @@ begin
   // Setup Source
   FFSM.SourceFileNames.StartDir := FSourceRootDir;
   lFileName:= TtiFileName.Create ;
-  lFileName.PathAndName := FSourceRootDir + '\file.txt';
+  lFileName.PathAndName := FSourceRootDir + PathDelim + 'file.txt';
   FFSM.SourceFileNames.Add(lFileName);
 
   // Setup target
@@ -118,7 +122,7 @@ begin
   // Check results
   CheckEquals( 1, FFSM.CopyFileNames.Count,   'CopyFileNames.Count');
   lFileName := FFSM.CopyFileNames.Items[0].SourceFileName ;
-  CheckEquals(FSourceRootDir + '\file.txt', lFileName.PathAndName, 'PathAndName');
+  CheckEquals(FSourceRootDir + PathDelim + 'file.txt', lFileName.PathAndName, 'PathAndName');
 
 
   CheckEquals( 0, FFSM.UpdateFileNames.Count, 'UpdateFileNames.Count');
@@ -165,8 +169,8 @@ procedure TTestFileSyncMgr_File2File.Setup;
 begin
   FSourceReader  := cgsDiskFiles;
   FTargetReader  := cgsDiskFiles;
-  FSourceRootDir := 'c:\temp\source';
-  FTargetRootDir := 'c:\temp\target';
+  FSourceRootDir := tiGetTempDir + 'source';
+  FTargetRootDir := tiGetTempDir + 'target';
   inherited;
 end;
 
@@ -176,7 +180,7 @@ procedure TTestFileSyncMgr_File2Remote.Setup;
 begin
   FSourceReader  := cgsDiskFiles;
   FTargetReader  := cgsRemote;
-  FSourceRootDir := 'c:\temp\source';
+  FSourceRootDir := tiGetTempDir + 'source';
   FTargetRootDir := 'target';
   inherited;
 end;
@@ -188,7 +192,7 @@ begin
   FSourceReader  := cgsRemote;
   FTargetReader  := cgsDiskFiles;
   FSourceRootDir := 'source';
-  FTargetRootDir := 'c:\temp\target';
+  FTargetRootDir := tiGetTempDir + 'target';
   inherited;
 end;
 
