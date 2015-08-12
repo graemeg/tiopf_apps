@@ -1,18 +1,21 @@
 unit tiFileSyncDependencies;
 
+{$I tiDefines.inc}
+
 interface
 uses
    tiOIDGUID
   ,cFileSync
   ,tiFileSyncReader_Abs
   ,tiFileSyncReader_DiskFiles
+  {$IFDEF UseRemoteSync}
   ,tiFileSyncReader_Remote
+  ,tiHTTPIndy
+  {$ENDIF}
   ,tiFileSyncSetup_BOM
   ,tiFileName_BOM
   ,tiFileSync_Mgr
-
   ,tiCompressZLib
-  ,tiHTTPIndy
  ;
 
 procedure ConnectToDatabase;
