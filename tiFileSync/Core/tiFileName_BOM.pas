@@ -21,7 +21,6 @@ interface
 uses
   classes
   ,sysUtils
-  ,tiBaseObject
   ,tiObject
   ,tiDataBuffer_BOM
   ;
@@ -33,14 +32,14 @@ type
   TtiFileName        = class ;
   TtiFileNames       = class ;
 
-  TtiPathNames = class( TPerVisList )
+  TtiPathNames = class( TtiObjectList )
   private
     FRecurse: boolean;
     FStartDir: string;
     FWildCard: string;
     procedure   PathNamesToDataSet(const pDataSet: TtiDataBuffer);
     function    GetAsXML: string;
-    procedure SetStartDir(const Value: string);
+    procedure   SetStartDir(const Value: string);
   protected
     procedure   SetAsXML(const Value: string);
     procedure   ParamsToDataSet(const pDataSet: TtiDataBuffer);
@@ -150,7 +149,7 @@ type
     procedure   FileNamesToDataSet(const pDataSet: TtiDataBuffer);
     function    GetAsXML: string;
   protected
-    procedure   AssignItemsFromDataSets(const pDataSets: TtiDataBufferList); override ;
+    procedure   AssignItemsFromDatasets(const pDataSets: TtiDataBufferList); override ;
     function    GetItems(i: integer): TtiFileName ; reintroduce ;
     procedure   SetItems(i: integer; const Value: TtiFileName ); reintroduce ;
   public
@@ -162,11 +161,10 @@ type
 implementation
 uses
    tiUtils  // tiDirectoryTreeToStringList
-  ,tiDialogs
+//  ,tiDialogs
   ,tiConstants
   ,tiOPFManager
-  ,tiAutoMap
-  ,tiXMLToTIDataSet
+  ,tiXMLToTIDataset
   ,tiQuery
   ;
 
@@ -275,7 +273,10 @@ end ;
 procedure TtiFileName.SetExt(const value: string);
 begin
   FStrExt := tiStrTran( value, '.', '' ) ;
-  FStrNameFull := FStrNameOnly + '.' + FStrExt ;
+  if FStrExt = '' then
+    FStrNameFull := FStrNameOnly
+  else
+    FStrNameFull := FStrNameOnly + '.' + FStrExt ;
   FStrPathAndName := tiAddTrailingSlash( Path ) + FStrNameFull ;
 end;
 
@@ -310,7 +311,7 @@ begin
   result := FStrPathAndName ;
 end ;
 
-procedure TtiFileNames.AssignItemsFromDataSets(const pDataSets: TtiDataBufferList);
+procedure TtiFileNames.AssignItemsFromDatasets(const pDataSets: TtiDataBufferList);
 var
   lDataSet: TtiDataBuffer;
   i : Integer ;
@@ -449,8 +450,8 @@ constructor TtiPathNames.Create;
 begin
   inherited Create ;
   FRecurse  := true ;
-  FStartDir := '\' ;
-  FWildCard := '*.*' ;
+  FStartDir := PathDelim;
+  FWildCard := AllFilesWildCard;
 end;
 
 function TtiPathNames.FindLikeRootRemoved(AFileName: TtiPathName): TtiPathName;

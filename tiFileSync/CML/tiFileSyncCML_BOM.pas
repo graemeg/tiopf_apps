@@ -1,9 +1,13 @@
 unit tiFileSyncCML_BOM;
 
+{$I tiDefines.inc}
+
 interface
+
 uses
   tiBaseObject
   ,tiFileSync_Mgr
+  ,tiFileName_BOM
   ;
 
 type
@@ -12,7 +16,7 @@ type
   private
     FFSM : TtiFileSyncMgr;
     procedure DoLog( const pMessage : string; pAppendToPrevRow: boolean);
-    procedure DoUpdateProgress( pMax, pPos : integer );
+    procedure DoUpdateProgress(AFile: TtiFileName; AMax, APos: integer);
     procedure DoTerminate(Sender: TObject ) ;
     procedure DoTerminateWithError(Sender: TObject ) ;
     procedure ShowHelp;
@@ -141,7 +145,7 @@ begin
   Write(pMessage);
 end;
 
-procedure TtiFileSyncCML.DoUpdateProgress(pMax, pPos: integer);
+procedure TtiFileSyncCML.DoUpdateProgress(AFile: TtiFileName; AMax, APos: integer);
 begin
 end;
 
@@ -160,7 +164,7 @@ begin
   FFSM.VerboseLogging := True ;
   FFSM.FileSyncActions:= [fsaCopy, fsaUpdate];
   FFSM.OnLog := DoLog;
-  FFSM.OnProgress:= DoUpdateProgress;
+  FFSM.OnProgressMajor := DoUpdateProgress;
 end;
 
 destructor TtiFileSyncCML.Destroy;

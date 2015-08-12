@@ -1,9 +1,14 @@
 program tiFileSyncCML;
 
-{$APPTYPE CONSOLE}
+{$I tiDefines.inc}
+
+{$IFDEF MSWINDOWS}
+  {$APPTYPE CONSOLE}
+{$ENDIF}
 
 uses
   SysUtils,
+  Interfaces, // this includes the LCL widgetset
   tiFileSyncCML_BOM in 'tiFileSyncCML_BOM.pas';
 
 var

@@ -35,6 +35,8 @@ type
     constructor Create ; override ;
     destructor  Destroy ; override ;
     function    Clone : TtiFileSyncSetup ; reintroduce ;
+    procedure   Save; overload; override;
+    procedure   Read; overload; override;
   published
     property FileSyncDirs : TtiFileSyncDirs read FFileSyncDirs ;
     property FileNameFilters : TtiFileNameFilters read FFileNameFilters ;
@@ -51,6 +53,8 @@ type
     procedure   Add(const AObject : TtiFileSyncDir); reintroduce ;
     function    Clone : TtiFileSyncDirs ; reintroduce ;
     procedure   Assign( pSource : TtiFileSyncDirs ) ; reintroduce ;
+    procedure   Save; overload; override;
+    procedure   Read; overload; override;
   end ;
 
   TtiFileSyncDir = class( TtiObject )
@@ -75,7 +79,7 @@ type
     property    TargetReader   : string    read FTargetReader   write FTargetReader ;
   end ;
 
-  TtiFileNameFilters = class( TPerVisList )
+  TtiFileNameFilters = class(TtiObjectList)
   protected
     function    GetItems(i: integer): TtiFileNameFilter ; reintroduce ;
     procedure   SetItems(i: integer; const Value: TtiFileNameFilter); reintroduce ;
@@ -85,6 +89,8 @@ type
     procedure   AddFilter( pFilterType : TtiFileFilterType ;
                            pWildCard   : TFileName ) ;
     function    Clone : TtiFileNameFilters ; reintroduce ;
+    procedure   Read; overload; override;
+    procedure   Save; overload; override;
   end ;
 
   TtiFileNameFilter = class( TtiObject)
@@ -100,6 +106,7 @@ type
     constructor Create ; override ;
     property    Owner       : TtiFileNameFilters             read GetOwner      write SetOwner ;
     function    Clone : TtiFileNameFilter ; reintroduce ;
+    procedure   Save; overload; override;
     property    FilterType : TtiFileFilterType read FFilterType write FFilterType ;
   published
     property    FilterTypeAsString : string read GetFilterTypeAsString write SetFilterTypeAsString;
@@ -111,13 +118,13 @@ procedure CreateTables;
 
 implementation
 uses
-  cFileSync
-  ,tiFileSyncReader_Abs
+//  cFileSync
+  tiFileSyncReader_Abs
   ,tiOPFManager
   ,tiAutoMap
-  ,tiUtils
+//  ,tiUtils
   ,tiQueryXMLLight
-  ,tiConstants
+//  ,tiConstants
   ,tiQuery
   ;
 
@@ -180,6 +187,16 @@ begin
   Clear ;
   for i := 0 to pSource.Count - 1 do
     Add( pSource.Items[i].Clone ) ;
+end;
+
+procedure TtiFileSyncDirs.Save;
+begin
+  inherited Save;
+end;
+
+procedure TtiFileSyncDirs.Read;
+begin
+  inherited Read;
 end;
 
 function TtiFileSyncDirs.Clone: TtiFileSyncDirs;
@@ -283,14 +300,24 @@ begin
   result := TtiFileSyncSetup( inherited Clone ) ;
 end;
 
-constructor TtiFileSyncSetup.create;
+procedure TtiFileSyncSetup.Save;
+begin
+  inherited Save;
+end;
+
+procedure TtiFileSyncSetup.Read;
+begin
+  inherited Read;
+end;
+
+constructor TtiFileSyncSetup.Create;
 begin
   inherited;
   FFileSyncDirs:= TtiFileSyncDirs.Create;
   FFileNameFilters := TtiFileNameFilters.Create ;
 end;
 
-destructor TtiFileSyncSetup.destroy;
+destructor TtiFileSyncSetup.Destroy;
 begin
   FFileSyncDirs.Free;
   FFileNameFilters.Free;
@@ -319,6 +346,16 @@ begin
   result := TtiFileNameFilters( inherited Clone ) 
 end;
 
+procedure TtiFileNameFilters.Read;
+begin
+  inherited Read;
+end;
+
+procedure TtiFileNameFilters.Save;
+begin
+  inherited Save;
+end;
+
 function TtiFileNameFilters.GetItems(i: integer): TtiFileNameFilter;
 begin
   result := TtiFileNameFilter( inherited GetItems( i )) ;
@@ -337,7 +374,12 @@ begin
   result := TtiFileNameFilter( inherited Clone ) ;
 end;
 
-constructor TtiFileNameFilter.create;
+procedure TtiFileNameFilter.Save;
+begin
+  inherited Save;
+end;
+
+constructor TtiFileNameFilter.Create;
 begin
   inherited;
   FFilterType := fftUnassigned ;

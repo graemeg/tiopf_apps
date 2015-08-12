@@ -10,10 +10,10 @@ uses
   ,tiFileSyncReader_Abs
   ,tiFileSyncSetup_BOM
   ,Classes
-  ,SyncObjs
   ,Forms
   ,SysUtils
   ,Contnrs
+//  ,SyncObjs
  ;
 
 const
@@ -276,14 +276,14 @@ type
 
 implementation
 uses
-  cFileSync
-  ,tiUtils
+//  cFileSync
+  tiUtils
   ,tiGUIUtils
   ,tiLog
-  ,tiExcept
+//  ,tiExcept
   ,tiConstants
-  ,tiDialogs // Debugging
-  ,Windows
+//  ,tiDialogs // Debugging
+//  ,Windows
  ;
 
 { TtiFileSyncMgrMgr }

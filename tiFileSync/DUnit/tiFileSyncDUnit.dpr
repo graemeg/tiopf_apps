@@ -1,6 +1,15 @@
 program tiFileSyncDUnit;
 
+{$I tiDefines.inc}
+
+{ In Project Settings -> Compiler Settings -> Other,
+  enable the compiler define "UseRemoteSync" if you want to
+  test remote functionality too. }
+
 uses
+  {$IFDEF UNIX}
+  cthreads,
+  {$ENDIF}
   tiBaseObject,
   tiLog,
   tiLogToFile,
@@ -8,8 +17,11 @@ uses
   tiOPFManager,
   tiQueryXMLLight,
   tiUtils,
+  {$IFDEF FPC}
+  Interfaces,
+  {$ENDIF}
   Forms,
-  TestFrameWork,
+  TestFramework,
   GUITestRunner,
   tiFileName_TST in 'tiFileName_TST.pas',
   tiFileSyncSetup_TST in 'tiFileSyncSetup_TST.pas',
@@ -17,7 +29,7 @@ uses
   tiFileSyncReader_TST in 'tiFileSyncReader_TST.pas',
   tiFileSyncDependencies in '..\Core\tiFileSyncDependencies.pas';
 
-{$R *.RES}
+{$R *.res}
 
 begin
   gLog.RegisterLog(TtiLogToFile);
