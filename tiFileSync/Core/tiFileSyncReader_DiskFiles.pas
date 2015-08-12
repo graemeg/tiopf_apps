@@ -141,7 +141,7 @@ begin
   // Read files to include
   if (pSourceFileNameFilters = nil) or
      (pSourceFileNameFilters.CountNotDeleted = 0) then
-    _IncludeFiles(pFileNames, lStartDir, '*.*')
+    _IncludeFiles(pFileNames, lStartDir, AllFilesWildCard)
   else
   begin
     for i := 0 to pSourceFileNameFilters.Count - 1 do
