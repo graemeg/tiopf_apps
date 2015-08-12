@@ -21,7 +21,6 @@ interface
 uses
   classes
   ,sysUtils
-  ,tiBaseObject
   ,tiObject
   ,tiDataBuffer_BOM
   ;
@@ -33,14 +32,14 @@ type
   TtiFileName        = class ;
   TtiFileNames       = class ;
 
-  TtiPathNames = class( TPerVisList )
+  TtiPathNames = class( TtiObjectList )
   private
     FRecurse: boolean;
     FStartDir: string;
     FWildCard: string;
     procedure   PathNamesToDataSet(const pDataSet: TtiDataBuffer);
     function    GetAsXML: string;
-    procedure SetStartDir(const Value: string);
+    procedure   SetStartDir(const Value: string);
   protected
     procedure   SetAsXML(const Value: string);
     procedure   ParamsToDataSet(const pDataSet: TtiDataBuffer);
@@ -149,7 +148,6 @@ type
   private
     procedure   FileNamesToDataSet(const pDataSet: TtiDataBuffer);
     function    GetAsXML: string;
-    procedure   SetAsXML(AValue: string);
   protected
     procedure   AssignItemsFromDatasets(const pDataSets: TtiDataBufferList); override ;
     function    GetItems(i: integer): TtiFileName ; reintroduce ;
@@ -166,7 +164,6 @@ uses
 //  ,tiDialogs
   ,tiConstants
   ,tiOPFManager
-  ,tiAutoMap
   ,tiXMLToTIDataset
   ,tiQuery
   ;
@@ -276,7 +273,10 @@ end ;
 procedure TtiFileName.SetExt(const value: string);
 begin
   FStrExt := tiStrTran( value, '.', '' ) ;
-  FStrNameFull := FStrNameOnly + '.' + FStrExt ;
+  if FStrExt = '' then
+    FStrNameFull := FStrNameOnly
+  else
+    FStrNameFull := FStrNameOnly + '.' + FStrExt ;
   FStrPathAndName := tiAddTrailingSlash( Path ) + FStrNameFull ;
 end;
 
@@ -395,11 +395,6 @@ begin
 }
 end;
 
-procedure TtiFileNames.SetAsXML(AValue: string);
-begin
-
-end;
-
 function TtiFileNames.GetItems(i: integer): TtiFileName;
 begin
   result := TtiFileName( inherited GetItems( i )) ;
@@ -455,8 +450,8 @@ constructor TtiPathNames.Create;
 begin
   inherited Create ;
   FRecurse  := true ;
-  FStartDir := '\' ;
-  FWildCard := '*.*' ;
+  FStartDir := PathDelim;
+  FWildCard := AllFilesWildCard;
 end;
 
 function TtiPathNames.FindLikeRootRemoved(AFileName: TtiPathName): TtiPathName;
