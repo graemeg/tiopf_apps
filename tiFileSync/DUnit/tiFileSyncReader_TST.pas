@@ -6,7 +6,9 @@ interface
 uses
   TestFramework
   ,tiFileSyncReader_Abs
+  {$IFDEF UseRemoteSync}
   ,tiFileSyncReader_Remote_Svr
+  {$ENDIF}
  ;
 
 const
@@ -40,9 +42,10 @@ type
   protected
     procedure Setup; override;
   public
-    constructor Create(MethodName: string); override;
+    constructor Create(const AProcName: string); override;
   end;
 
+  {$IFDEF UseRemoteSync}
   TTestFileReaderRemote = class(TTestFileReaderAbs)
   private
     FFileSyncServer : TtiFileSyncRemoteServer;
@@ -50,9 +53,10 @@ type
     procedure   Setup; override;
     procedure   TearDown; override;
   public
-    constructor Create(MethodName: string); override;
+    constructor Create(const AProcName: string); override;
     destructor  Destroy; override;
   end;
+  {$ENDIF}
 
 procedure RegisterTests;
 
@@ -61,7 +65,9 @@ uses
    tiConstants
   ,tiUtils
   ,tiFileSyncReader_DiskFiles
+  {$IFDEF UseRemoteSync}
   ,tiFileSyncReader_Remote
+  {$ENDIF}
   ,tiFileName_BOM
   ,tiCRC32
   ,cFileSync
@@ -71,7 +77,9 @@ uses
 procedure RegisterTests;
 begin
   RegisterTest(TTestFileReaderDiskFiles.Suite);
+  {$IFDEF UseRemoteSync}
   RegisterTest(TTestFileReaderRemote.Suite);
+  {$ENDIF}
 end;
 
 { TTestFileReaderAbs }
@@ -273,7 +281,7 @@ begin
       CheckEquals(FRootReader + '\file1.txt', lFileNames.Items[0].PathAndName, '#4');
       CheckEquals(lNow, lFileNames.Items[0].Date, cdtOneSecond*2, '#4a');
       CheckEquals(4,    lFileNames.Items[0].Size, '#4b');
-      CheckEquals(tiGetFileCrc32(FRootLocal + '\file1.txt'), LFileNames.Items[0].CRC, '#4c');
+      CheckEquals(tiCRC32FromFile(FRootLocal + '\file1.txt'), LFileNames.Items[0].CRC, '#4c');
 
       tiStringToFile('test', FRootLocal + '\file2.txt');
       lNow := Now;
@@ -282,7 +290,7 @@ begin
       CheckEquals(FRootReader + '\file2.txt', lFileNames.Items[1].PathAndName, '#6');
       CheckEquals(lNow, lFileNames.Items[1].Date, cdtOneSecond*2, '#6a');
       CheckEquals(4,    lFileNames.Items[1].Size, '#6b');
-      CheckEquals(tiGetFileCrc32(FRootLocal + '\file2.txt'), LFileNames.Items[1].CRC, '#6c');
+      CheckEquals(tiCRC32FromFile(FRootLocal + '\file2.txt'), LFileNames.Items[1].CRC, '#6c');
 
       lReader.ReadFileIndex(lFileNames);
       CheckEquals(2, lFileNames.Count, '#7');
@@ -295,7 +303,7 @@ begin
       CheckEquals(FRootReader + '\Dir1\file2.txt', lFileNames.Items[2].PathAndName, '#9');
       CheckEquals(lNow, lFileNames.Items[0].Date, cdtOneSecond*2, '#9a');
       CheckEquals(4,    lFileNames.Items[0].Size, '#9b');
-      CheckEquals(tiGetFileCrc32(FRootLocal + '\Dir1\file2.txt'), LFileNames.Items[0].CRC, '#9c');
+      CheckEquals(tiCRC32FromFile(FRootLocal + '\Dir1\file2.txt'), LFileNames.Items[0].CRC, '#9c');
     finally
       lFileNames.Free;
     end;
@@ -394,7 +402,7 @@ end;
 
 { TTestFileReaderDiskFiles }
 
-constructor TTestFileReaderDiskFiles.Create(MethodName: string);
+constructor TTestFileReaderDiskFiles.Create(const AProcName: string);
 begin
   inherited;
   FReaderName  := cgsDiskFiles;
@@ -411,7 +419,8 @@ end;
 
 { TTestFileReaderRemote }
 
-constructor TTestFileReaderRemote.Create(MethodName: string);
+{$IFDEF UseRemoteSync}
+constructor TTestFileReaderRemote.Create(const AProcName: string);
 begin
   inherited;
   FReaderName  := cgsRemote;
@@ -440,5 +449,6 @@ begin
   inherited;
   FFileSyncServer.Active := False;
 end;
+{$ENDIF}
 
 end.
