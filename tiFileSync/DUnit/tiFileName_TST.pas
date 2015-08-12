@@ -1,5 +1,7 @@
 unit tiFileName_TST;
 
+{$I tiDefines.inc}
+
 interface
 uses
   TestFramework
@@ -39,9 +41,6 @@ uses
   ,SysUtils
   ;
 
-const
-  cRoot = 'c:\temp' ;
-    
 procedure RegisterTests ;
 begin
   RegisterTest( TTestTIFileName.Suite );
@@ -84,15 +83,25 @@ var
 begin
   lPathNames := TtiPathNames.Create ;
   try
-    lPathNames.StartDir := 'c:\temp' ;
+    lPathNames.StartDir := tiGetTempDir;
     lPathName := TtiPathName.Create ;
-    lPathName.Path := 'c:\temp\dir1\dir2\dir3' ;
+    lPathName.Path := tiGetTempDir + tiFixPathDelim('dir1\dir2\dir3');
     lPathNames.Add( lPathName ) ;
 
+    {$IFDEF MSWINDOWS}
     CheckEquals( 'c:', lPathName.Drive ) ;
+    {$ENDIF}
+    {$IFDEF UNIX}
+    CheckEquals( '', lPathName.Drive ) ;
+    {$ENDIF}
+    {$IFDEF MSWINDOWS}
     CheckEquals( '\temp\dir1\dir2\dir3', lPathName.Directory ) ;
-    CheckEquals( 'c:\temp', lPathName.RootDir ) ;
-    CheckEquals( '\dir1\dir2\dir3', lPathName.RootRemoved ) ;
+    {$ENDIF}
+    {$IFDEF UNIX}
+    CheckEquals( '/tmp/dir1/dir2/dir3', lPathName.Directory ) ;
+    {$ENDIF}
+    CheckEquals( tiGetTempDir, lPathName.RootDir ) ;
+    CheckEquals( tiFixPathDelim('dir1\dir2\dir3'), lPathName.RootRemoved ) ;
 
   finally
     lPathNames.Free ;
@@ -235,12 +244,17 @@ var
   lFileNameFrom : TtiFileName ;
   lFileNameTo   : TtiFileName ;
 const
+  {$IFDEF MSWINDOWS}
   cFileName  = 'c:\temp\dir1\dir2\dir3\temp.txt' ;
+  {$ENDIF}
+  {$IFDEF UNIX}
+  cFileName  = '/tmp/dir1/dir2/dir3/temp.txt' ;
+  {$ENDIF}
   cTestString = 'testing' ;
 begin
   lFileNames := TtiFileNames.Create ;
   try
-    lFileNames.StartDir := 'c:\temp' ;
+    lFileNames.StartDir := tiGetTempDir;
     lFileNameFrom := TtiFileName.Create ;
     lFileNames.Add( lFileNameFrom ) ;
     lFileNameFrom.PathAndName := cFileName ;
@@ -249,7 +263,7 @@ begin
     lFileNameFrom.Data.LoadFromFile( cFileName ) ;
     lFileNameFrom.Date := Now ;
     lFileNameFrom.Size := Length( cTestString ) ;
-    lFileNameFrom.CRC  := tiStringToCRC32(cTestString);
+    lFileNameFrom.CRC  := tiCRC32FromString(cTestString);
 
     lFileNameTo := lFileNameFrom.Clone ;
     try
@@ -259,7 +273,7 @@ begin
       SysUtils.DeleteFile( cFileName ) ;
       lFileNameTo.Data.SaveToFile( cFileName ) ;
       CheckEquals( cTestString, tiFileToString( cFileName ), 'Data' ) ;
-      CheckEquals( tiStringToCRC32(cTestString), LFileNameTo.CRC, 'CRC' ) ;
+      CheckEquals( tiCRC32FromString(cTestString), LFileNameTo.CRC, 'CRC' ) ;
 
     finally
       lFileNameTo.Free ;
@@ -303,7 +317,7 @@ procedure TTestTIFileName.FileNames_AsXML;
     lFileName: TtiFileName;
   begin
     lFileName:= TtiFileName.Create;
-    lFileName.PathAndName := 'c:\temp\testfile' + IntToStr(pIndex) + '.txt';
+    lFileName.PathAndName := tiGetTempDir + 'testfile' + IntToStr(pIndex) + '.txt';
     lFileName.Size := 100 + pIndex ;
     lFileName.Date := Date + pIndex ;
     pFileNames.Add(lFileName);
@@ -311,7 +325,7 @@ procedure TTestTIFileName.FileNames_AsXML;
 
   procedure _CheckFile(const pFile: TtiFileName; pIndex: Integer);
   begin
-    CheckEquals('c:\temp\testfile' + IntToStr(pIndex) + '.txt', pFile.PathAndName, 'PathAndName');
+    CheckEquals(tiGetTempDir + 'testfile' + IntToStr(pIndex) + '.txt', pFile.PathAndName, 'PathAndName');
     CheckEquals(100 + pIndex, pFile.Size, 'Size');
     CheckEquals(Date + pIndex, pFile.Date, 'Date');
   end;
@@ -321,7 +335,7 @@ var
 begin
   lFileNames:= TtiFileNames.Create ;
   try
-    lFileNames.StartDir := cRoot ;
+    lFileNames.StartDir := tiGetTempDir ;
     _AddFile(lFileNames, 1);
     _AddFile(lFileNames, 2);
     _AddFile(lFileNames, 3);
@@ -335,7 +349,7 @@ begin
   lFileNames:= TtiFileNames.Create ;
   try
     lFileNames.AsXML := ls ;
-    CheckEquals(cRoot, lFileNames.StartDir, 'StartDir');
+    CheckEquals(tiGetTempDir, lFileNames.StartDir, 'StartDir');
     CheckEquals(5, lFileNames.Count, 'Count');
     _CheckFile(lFileNames.Items[0], 1);
     _CheckFile(lFileNames.Items[1], 2);
@@ -355,16 +369,16 @@ var
 begin
   lPathNames:= TtiPathNames.Create ;
   try
-    lPathNames.StartDir := cRoot;
+    lPathNames.StartDir := tiGetTempDir;
     lPathNames.Recurse  := False ;
     lPathName:= TtiPathName.Create;
-    lPathName.Path := 'c:\temp\dir1' ;
+    lPathName.Path := tiGetTempDir + 'dir1' ;
     lPathNames.Add(lPathName);
     lPathName:= TtiPathName.Create;
-    lPathName.Path := 'c:\temp\dir2' ;
+    lPathName.Path := tiGetTempDir + 'dir2' ;
     lPathNames.Add(lPathName);
     lPathName:= TtiPathName.Create;
-    lPathName.Path := 'c:\temp\dir3' ;
+    lPathName.Path := tiGetTempDir + 'dir3' ;
     lPathNames.Add(lPathName);
     ls := lPathNames.AsXML;
   finally
@@ -374,12 +388,12 @@ begin
   lPathNames:= TtiPathNames.Create ;
   try
     lPathNames.AsXML := ls ;
-    CheckEquals( cRoot, lPathNames.StartDir, 'StartDir');
+    CheckEquals( tiGetTempDir, lPathNames.StartDir, 'StartDir');
     CheckEquals( False, lPathNames.Recurse, 'Recurse');
     CheckEquals(3, lPathNames.Count, 'Count');
-    CheckEquals( 'c:\temp\dir1', lPathNames.Items[0].Path, 'Path');
-    CheckEquals( 'c:\temp\dir2', lPathNames.Items[1].Path, 'Path');
-    CheckEquals( 'c:\temp\dir3', lPathNames.Items[2].Path, 'Path');
+    CheckEquals( tiGetTempDir + 'dir1', lPathNames.Items[0].Path, 'Path');
+    CheckEquals( tiGetTempDir + 'dir2', lPathNames.Items[1].Path, 'Path');
+    CheckEquals( tiGetTempDir + 'dir3', lPathNames.Items[2].Path, 'Path');
   finally
     lPathNames.Free;
   end ;
@@ -393,7 +407,12 @@ var
   lFileDate: TDateTime;
 const
   cFileData = 'a string to use as the file data';
+  {$IFDEF MSWINDOWS}
   cFileName = 'c:\temp\testfile.txt' ;
+  {$ENDIF}
+  {$IFDEF UNIX}
+  cFileName = '/tmp/testfile.txt' ;
+  {$ENDIF}
 begin
   lFileDate := Now ;
   lFileName:= TtiFileName.Create ;
@@ -424,7 +443,12 @@ var
   lPathName: TtiPathName;
   ls: string;
 const
+  {$IFDEF MSWINDOWS}
   cFileName = 'c:\temp\testfile.txt' ;
+  {$ENDIF}
+  {$IFDEF UNIX}
+  cFileName = '/tmp/testfile.txt' ;
+  {$ENDIF}
 begin
   lPathName:= TtiPathName.Create;
   try
