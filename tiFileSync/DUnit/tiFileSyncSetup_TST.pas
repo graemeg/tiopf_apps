@@ -1,5 +1,7 @@
 unit tiFileSyncSetup_TST;
 
+{$I tiDefines.inc}
+
 interface
 uses
    TestFramework

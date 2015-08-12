@@ -1,5 +1,7 @@
 unit tiFileSyncReader_TST;
 
+{$I tiDefines.inc}
+
 interface
 uses
   TestFramework
