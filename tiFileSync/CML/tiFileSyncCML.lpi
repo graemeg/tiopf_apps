@@ -38,6 +38,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="-sr df -tr df -sl /tmp/t1/ -tl /tmp/t2/ -i"/>
       </local>
     </RunParams>
     <RequiredPackages Count="2">
