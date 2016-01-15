@@ -1,10 +1,11 @@
 [projectoptions]
-mainfile=src/${PROJECTNAME}.pas
-targetfile=bin/${PROJECTNAME}${EXEEXT}
+mainfile=timap.lpr
+targetfile=timap${EXEEXT}
 messageoutputfile=
 makecommand=${COMPILER}
 makedir=
-unitdirs=10
+unitdirs=11
+ ../mapper
  ${ONGUARD}/
  ${TIOPF}/GUI/fpGUI
  ${TIOPF}/Options
@@ -24,7 +25,7 @@ befcommand=2
  rm units/${TargetCPU}-${TargetOS}/*
  rm units/*
 aftcommand=0
-makeoptions=17
+makeoptions=20
  -l -Mobjfpc -Sh -Sc -Si
  -gl -O-
  -gh
@@ -42,6 +43,9 @@ makeoptions=17
  -WG
  -dLINK_SQLDB_IB
  -dLINK_SQLDB_PQ
+ -dLINK_XMLLIGHT
+ -dLINK_SQLDB_MySQL55
+ -dLINK_SQLDB_SQLite3
 codetemplatedirs=1
  ${TEMPLATEDIR}
 toolmenus=2
@@ -181,7 +185,7 @@ modulefiles=0
 befcommandon=2
  0
  32
-makeoptionson=17
+makeoptionson=20
  63
  7
  7
@@ -198,9 +202,13 @@ makeoptionson=17
  63
  24
  63
- 0
+ 32
+ 32
+ 32
+ 32
 aftcommandon=0
-unitdirson=10
+unitdirson=11
+ 65599
  196671
  65599
  65599
@@ -333,7 +341,7 @@ beforeload=
 afterload=
 beforerun=
 sourcebase=
-sourcedirs=15
+sourcedirs=16
  ${FPGUI}/src/corelib/render/software/
  ${FPGUI}/src/reportengine/
  ${FPGUI}/src/corelib/${FPG_GFX}/
@@ -348,7 +356,8 @@ sourcedirs=15
  ${FPCDIR}src/rtl/unix/
  ${FPCDIR}src/rtl/linux/
  ${FPCDIR}src/rtl/inc/
- src/
+ ../mapper/
+ ./
 defines=0
 progparameters=
 progworkingdirectory=
