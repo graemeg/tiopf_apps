@@ -578,7 +578,7 @@ type
     destructor  Destroy; override;
   end;
 
-  {: TtiFilteredObjectList descendant with extra properties to facility custom searching/queries. }
+  {: TtiFilteredObjectList descendant with extra properties to facilitate custom searching/queries. }
   TtiMappedFilteredObjectList = class(TtiFilteredObjectList)
   private
     FEnumType: TEnumType;
@@ -2162,4 +2162,3 @@ initialization
   ValidatorStringClass := TValidatorStringGenerator;
 
 end.
-
