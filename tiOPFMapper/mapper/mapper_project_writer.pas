@@ -355,7 +355,7 @@ begin
 
   lMapping := AClassDef.ClassMapping;
 
-  WriteLine('''SELECT '' + ', ASL);
+  WriteLine('''SELECT '' +', ASL);
 
    WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
@@ -364,9 +364,9 @@ begin
     begin
       lPropMap := lMapping.PropMappings.Items[lCtr];
       if lCtr < (lMapping.PropMappings.Count -1) then
-        WriteLine(''' ' + lPropMap.FieldName + ', '' + ', ASL)
+        WriteLine(''' ' + lPropMap.FieldName + ', '' +', ASL)
       else
-        WriteLine(''' ' + lPropMap.FieldName + ' '' + ', ASL)
+        WriteLine(''' ' + lPropMap.FieldName + ' '' +', ASL)
     end;
 
   WriteLine('''FROM  ' + lMapping.TableName + ' ''', ASL);
@@ -1017,20 +1017,19 @@ var
   lMapping: TClassMapping;
   lCtr: integer;
 begin
-
   lMapping := AClassDef.ClassMapping;
 
-  WriteLine('Query.SQLText := ', ASL);
+  WriteLine('Query.SQLText :=', ASL);
     IncTab;
-      WriteLine('''INSERT INTO ' + lMapping.TableName + '('' + ', ASL);
-      WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' + ', ASL);
+      WriteLine('''INSERT INTO ' + lMapping.TableName + '('' +', ASL);
+      WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
       for lCtr := 0 to lMapping.PropMappings.Count - 1 do
         begin
           lPropMap :=  lMapping.PropMappings.Items[lCtr];
           if lCtr < (lMapping.PropMappings.Count -1) then
-            WriteLine(''' ' + lPropMap.FieldName + ', '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ', '' +', ASL)
           else
-            WriteLine(''' ' + lPropMap.FieldName + ''' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ''' +', ASL)
         end;
 
       WriteLine(''') VALUES ('' +', ASL);
@@ -1040,14 +1039,13 @@ begin
         begin
           lPropMap := lMapping.PropMappings.Items[lCtr];
           if lCtr < (lMapping.PropMappings.Count -1) then
-            WriteLine(''' :' + lPropMap.FieldName + ', '' + ', ASL)
+            WriteLine(''' :' + lPropMap.FieldName + ', '' +', ASL)
           else
-            WriteLine(''' :' + lPropMap.FieldName + ''' + ', ASL)
+            WriteLine(''' :' + lPropMap.FieldName + ''' +', ASL)
         end;
 
       WriteLine(''') '';', ASL);
     DecTab;
-
 end;
 
 procedure TMapperProjectWriter.WriteIntfUses(ASL: TStringList; AUnitDef: TMapUnitDef);
@@ -1196,12 +1194,7 @@ begin
     DecTab;
   WriteLine('end;', ASL);
 
-
-
-
-
   WriteBreak(ASL);
-
 end;
 
 procedure TMapperProjectWriter.WriteListSelectSQL(ASL: TStringList;
@@ -1211,14 +1204,11 @@ var
   lMapping: TClassMapping;
   lCtr: integer;
 begin
-
   lMapping := AClassDef.ClassMapping;
 
-  WriteLine('lSQL := ', ASL);
+  WriteLine('lSQL :=', ASL);
     IncTab;
-
-      WriteLine('''SELECT '' + ', ASL);
-
+      WriteLine('''SELECT '' +', ASL);
       WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
       //' + lMapping.TableName + ' SET '' +', ASL);
@@ -1226,15 +1216,13 @@ begin
         begin
           lPropMap := lMapping.PropMappings.Items[lCtr];
           if lCtr < (lMapping.PropMappings.Count -1) then
-            WriteLine(''' ' + lPropMap.FieldName + ', '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ', '' +', ASL)
           else
-            WriteLine(''' ' + lPropMap.FieldName + ' '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ' '' +', ASL)
         end;
 
       WriteLine('''FROM  ' + lMapping.TableName + ' %s %s ;'';', ASL);
-
     DecTab;
-
 end;
 
 procedure TMapperProjectWriter.WriteMapRowToObject(ASL: TStringList;
@@ -1419,28 +1407,24 @@ var
   lMapping: TClassMapping;
   lCtr: integer;
 begin
-
   lMapping := AClassDef.ClassMapping;
 
-  WriteLine('Query.SQLText := ', ASL);
+  WriteLine('Query.SQLText :=', ASL);
     IncTab;
-
-      WriteLine('''SELECT '' + ', ASL);
-
-       WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
+      WriteLine('''SELECT '' +', ASL);
+      WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
       //' + lMapping.TableName + ' SET '' +', ASL);
       for lCtr := 0 to lMapping.PropMappings.Count - 1 do
         begin
           lPropMap := lMapping.PropMappings.Items[lCtr];
           if lCtr < (lMapping.PropMappings.Count -1) then
-            WriteLine(''' ' + lPropMap.FieldName + ', '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ', '' +', ASL)
           else
-            WriteLine(''' ' + lPropMap.FieldName + ' '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ' '' +', ASL)
         end;
 
       WriteLine('''FROM ' + lMapping.TableName + ' WHERE ' + lMapping.PKField +' = :' + lMapping.PKField + ''' ;', ASL);
-
     DecTab;
 end;
 
@@ -1762,21 +1746,19 @@ var
 begin
   lMapping := AClassDef.ClassMapping;
 
-  WriteLine('Query.SQLText := ', ASL);
+  WriteLine('Query.SQLText :=', ASL);
     IncTab;
-
       WriteLine('''UPDATE ' + lMapping.TableName + ' SET '' +', ASL);
       for lCtr := 0 to lMapping.PropMappings.Count - 1 do
         begin
           lPropMap := lMapping.PropMappings.Items[lCtr];
           if lCtr < (lMapping.PropMappings.Count -1) then
-            WriteLine(''' ' + lPropMap.FieldName + ' = :' + lPropMap.FieldName + ', '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ' = :' + lPropMap.FieldName + ', '' +', ASL)
           else
-            WriteLine(''' ' + lPropMap.FieldName + ' = :' + lPropMap.FieldName + ' '' + ', ASL)
+            WriteLine(''' ' + lPropMap.FieldName + ' = :' + lPropMap.FieldName + ' '' +', ASL)
         end;
 
       WriteLine('''WHERE ' + lMapping.PKField + ' = :' + lMapping.PKField + ''' ;', ASL);
-
     DecTab;
 end;
 
