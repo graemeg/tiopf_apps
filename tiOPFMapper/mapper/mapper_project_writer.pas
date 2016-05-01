@@ -1787,7 +1787,7 @@ begin
   WriteLine('function ' + AClassDef.BaseClassName + '_Create.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('result := Visited.ObjectState = posCreate;', ASL);
+      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and (Visited.ObjectState = posCreate);', ASL);
       WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
@@ -1838,7 +1838,7 @@ begin
   WriteLine('function ' + AClassDef.BaseClassName + '_Delete.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('result := Visited.ObjectState = posDelete;', ASL);
+      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and (Visited.ObjectState = posDelete);', ASL);
       WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
@@ -1892,7 +1892,7 @@ begin
   WriteLine('function ' + AClassDef.BaseClassName + '_Read.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('result := (Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean);', ASL);
+      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and ((Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean));', ASL);
       WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
@@ -1932,9 +1932,7 @@ begin
     DecTab;
   WriteLine('end;', ASL);
 
-
   WriteBreak(ASL);
-
 end;
 
 procedure TMapperProjectWriter.WriteVisClassUpdateIntf(ASL: TStringList;
@@ -1960,7 +1958,7 @@ begin
   WriteLine('function ' + AClassDef.BaseClassName + '_Update.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('result := Visited.ObjectState = posUpdate;', ASL);
+      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and (Visited.ObjectState = posUpdate);', ASL);
       WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
