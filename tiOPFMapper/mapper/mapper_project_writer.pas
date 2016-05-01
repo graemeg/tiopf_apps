@@ -20,7 +20,7 @@ type
   TMapperProjectWriter = class(TMapSchemaWriter)
   private
     FBaseDir: string;
-    procedure SetBaseDir(const AValue: string);
+    procedure   SetBaseDir(const AValue: string);
   protected
     function    CreateSQLFieldList(AClassDef: TMapClassDef): string;
     procedure   PrepareUnitList(AList: TStringList);
@@ -71,10 +71,8 @@ type
     procedure   WriteVisListUpdateImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteVisListDeleteIntf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteVisListDeleteImp(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteCustomListVisIntf(ASL: TStringList; AClassDef: TMapClassDef;
-      ASelect: TClassMappingSelect);
-    procedure   WriteCustomListVisImp(ASL: TStringList; AClassDef: TMapClassDef;
-      ASelect: TClassMappingSelect);
+    procedure   WriteCustomListVisIntf(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
+    procedure   WriteCustomListVisImp(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
     procedure   WriteAllCustomListVisIntfs(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteAllCustomListVisImps(ASL: TStringList; AClassDef: TMapClassDef);
     // AutoMap Registration
@@ -92,15 +90,12 @@ type
     procedure   WriteMapRowToObject(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteMapRowToObjectForList(ASL: TStringList; AClassDef: TMapClassDef);
     // Custom Select Methods
-    procedure   WriteClassListSelectMethodIntf(ASL: TStringList; AClassDef: TMapClassDef;
-      ASelect: TClassMappingSelect);
-    procedure   WriteClassListSelectMethodImp(ASL: TStringList; AClassDef: TMapClassDef;
-      ASelect: TClassMappingSelect);
+    procedure   WriteClassListSelectMethodIntf(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
+    procedure   WriteClassListSelectMethodImp(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
     // Validators
     procedure   WriteClassIsValidIntf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIsValidImp(ASL: TStringList; AClassDef: TMapClassDef);
-    function    DoGetValidatorTestString(const APropName: string; const APropType: TMapPropType;
-      const AValType: TValidatorType; AValue: Variant): string;
+    function    DoGetValidatorTestString(const APropName: string; const APropType: TMapPropType; const AValType: TValidatorType; AValue: Variant): string;
   public
     property    BaseDir: string read FBaseDir write SetBaseDir;
     procedure   WriteUnit(AUnit: TMapUnitDef; ASL: TStringList); virtual;
@@ -120,9 +115,6 @@ type
     Second: word;
     MSecond: word;
   end;
-
-const
-  SOME_VALUE = 'this value';
 
 
 implementation
