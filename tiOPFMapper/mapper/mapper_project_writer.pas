@@ -160,7 +160,7 @@ begin
           ptDateTime:
             begin
               lDateTime := AValue;
-              DecodeDateTime(AValue, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
+              DecodeDateTime(lDateTime, lParts.Year, lParts.Month, lParts.Day, lParts.Hour, lParts.Minute,
                 lParts.Second, lParts.MSecond);
               lStubIf := lStubIf + ' <= EncodeDateTime(' + IntToStr(lParts.Year) + ', ' +
                 IntToStr(lParts.Month) + ', ' + IntToStr(lParts.Day) + ', ' + IntToStr(lParts.Hour) + ', ' +
