@@ -65,12 +65,6 @@ type
     procedure   WriteVisClassReadImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteVisListReadIntf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteVisListReadImp(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListCreateIntf(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListCreateImp(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListUpdateIntf(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListUpdateImp(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListDeleteIntf(ASL: TStringList; AClassDef: TMapClassDef);
-    procedure   WriteVisListDeleteImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteCustomListVisIntf(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
     procedure   WriteCustomListVisImp(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
     procedure   WriteAllCustomListVisIntfs(ASL: TStringList; AClassDef: TMapClassDef);
@@ -850,11 +844,11 @@ begin
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listread'', ' +
     AClassMap.BaseClassName + 'List_Read);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + 'List_Create);', ASL);
+    AClassMap.BaseClassName + '_Create);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + 'List_Update);', ASL);
+    AClassMap.BaseClassName + '_Update);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + 'List_Delete);', ASL);
+    AClassMap.BaseClassName + '_Delete);', ASL);
 
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_read'', ' +
     AClassMap.BaseClassName + '_Read);', ASL);
@@ -1637,9 +1631,6 @@ begin
                 lClassDef := AUnit.UnitClasses.Items[lCtr];
                 WriteClassVisitorIntfs(ASL, lClassDef);
                 WriteVisListReadIntf(ASL, lClassDef);
-                WriteVisListCreateIntf(ASL, lClassDef);
-                WriteVisListUpdateIntf(ASL, lClassDef);
-                WriteVisListDeleteIntf(ASL, lClassDef);
 
                 // Write Out any custom list visitors
                 WriteAllCustomListVisIntfs(ASL, lClassDef);
@@ -1690,9 +1681,6 @@ begin
           WriteVisClassReadImp(ASL, lClassDef);
           WriteVisClassDeleteImp(ASL, lClassDef);
           WriteVisListReadImp(ASL, lClassDef);
-          WriteVisListCreateImp(ASL, lClassDef);
-          WriteVisListDeleteImp(ASL, lClassDef);
-          WriteVisListUpdateImp(ASL, lClassDef);
 
           WriteAllCustomListVisImps(ASL, lClassDef);
         end;
@@ -1961,106 +1949,6 @@ begin
   WriteBreak(ASL);
 end;
 
-procedure TMapperProjectWriter.WriteVisListCreateImp(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ ' + AClassDef.BaseClassName + 'List_Create }', ASL);
-
-  WriteLine('function ' + AClassDef.BaseClassName + 'List_Create.AcceptVisitor: Boolean;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('result := Visited.ObjectState = posCreate;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Create.Init;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteInsertSQL(ASL, AClassDef);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Create.SetupParams;', ASL);
-  WriteLine('var', ASL);
-    IncTab;
-      WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
-    DecTab;
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteSetupParams(ASL, AClassDef);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-end;
-
-procedure TMapperProjectWriter.WriteVisListCreateIntf(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ List Create Visitor for ' + AClassDef.BaseClassName + 'List }', ASL);
-  WriteLine(AClassDef.BaseClassName + 'List_Create = class(TtiVisitorUpdate)', ASL);
-  WriteLine('protected', ASL);
-    IncTab;
-      WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
-      WriteLine('procedure   Init; override;', ASL);
-      WriteLine('procedure   SetupParams; override;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-end;
-
-procedure TMapperProjectWriter.WriteVisListDeleteImp(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ ' + AClassDef.BaseClassName + 'List_Delete }', ASL);
-
-  WriteLine('function ' + AClassDef.BaseClassName + 'List_Delete.AcceptVisitor: Boolean;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('result := Visited.ObjectState = posDelete;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Delete.Init;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteDeleteSQL(ASL, AClassDef);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Delete.SetupParams;', ASL);
-  WriteLine('var', ASL);
-    IncTab;
-      WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
-    DecTab;
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-end;
-
-procedure TMapperProjectWriter.WriteVisListDeleteIntf(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ List Delete Visitor for ' + AClassDef.BaseClassName + 'List }', ASL);
-  WriteLine(AClassDef.BaseClassName + 'List_Delete = class(TtiVisitorUpdate)', ASL);
-  WriteLine('protected', ASL);
-    IncTab;
-      WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
-      WriteLine('procedure   Init; override;', ASL);
-      WriteLine('procedure   SetupParams; override;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-end;
-
 procedure TMapperProjectWriter.WriteVisClassUpdateImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
@@ -2116,56 +2004,6 @@ begin
 
   WriteBreak(ASL);
 
-end;
-
-procedure TMapperProjectWriter.WriteVisListUpdateImp(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ ' + AClassDef.BaseClassName + 'List_Update }', ASL);
-
-  WriteLine('function ' + AClassDef.BaseClassName + 'List_Update.AcceptVisitor: Boolean;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('result := Visited.ObjectState = posUpdate;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Update.Init;', ASL);
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteUpdateSQL(ASL, AClassDef);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-
-  WriteLine('procedure ' + AClassDef.BaseClassName + 'List_Update.SetupParams;', ASL);
-  WriteLine('var', ASL);
-    IncTab;
-      WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
-    DecTab;
-  WriteLine('begin', ASL);
-    IncTab;
-      WriteLine('lObj := ' + AClassDef.BaseClassName + '(Visited);', ASL);
-      WriteSetupParams(ASL, AClassDef);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
-end;
-
-procedure TMapperProjectWriter.WriteVisListUpdateIntf(ASL: TStringList;
-  AClassDef: TMapClassDef);
-begin
-  WriteLine('{ List Update Visitor for ' + AClassDef.BaseClassName + 'List }', ASL);
-  WriteLine(AClassDef.BaseClassName + 'List_Update = class(TtiVisitorUpdate)', ASL);
-  WriteLine('protected', ASL);
-    IncTab;
-      WriteLine('function    AcceptVisitor: Boolean; override;', ASL);
-      WriteLine('procedure   Init; override;', ASL);
-      WriteLine('procedure   SetupParams; override;', ASL);
-    DecTab;
-  WriteLine('end;', ASL);
-  WriteBreak(ASL);
 end;
 
 procedure TMapperProjectWriter.WriteVisListReadImp(ASL: TStringList;
