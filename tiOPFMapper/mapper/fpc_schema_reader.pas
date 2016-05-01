@@ -140,13 +140,9 @@ begin
 
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
-            begin
-              lNewMapProp.PropertyType := gStrToPropType('string');
-            end
+            lNewMapProp.PropertyType := gStrToPropType('string')
           else
-            begin
-              lNewMapProp.PropertyType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
-            end;
+            lNewMapProp.PropertyType := gStrToPropType(lMapNode.NodeValue);
 
           AClass.ClassMapping.PropMappings.Add(lNewMapProp);
         end;
