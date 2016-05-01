@@ -44,6 +44,7 @@ type
     procedure   WriteClassImpSettersGetters(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteIntfUses(ASL: TStringList; AUnitDef: TMapUnitDef);
+    procedure   WriteImpUses(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteListClassIntf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteListClassImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfSaveMethod(ASL: TStringList; AClassDef: TMapClassDef);
@@ -1090,7 +1091,16 @@ begin
     DecTab;
 
   WriteBreak(ASL);
+end;
 
+procedure TMapperProjectWriter.WriteImpUses(ASL: TStringList; AUnitDef: TMapUnitDef);
+begin
+  WriteLine('uses', ASL);
+    IncTab;
+      WriteLine('tiLog', ASL);
+      WriteLine(';', ASL);
+    DecTab;
+  WriteBreak(ASL);
 end;
 
 procedure TMapperProjectWriter.WriteListClassIntf(ASL: TStringList;
@@ -1659,6 +1669,8 @@ begin
   ASL.Add('implementation');
   ASL.Add(sLineBreak);
 
+  WriteImpUses(ASL, AUnit);
+
   WriteAllRegisterAutoMaps(ASL, AUnit);
 
   if AUnit.UnitClasses.Count > 0 then
@@ -1793,6 +1805,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := Visited.ObjectState = posCreate;', ASL);
+      WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -1843,6 +1856,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := Visited.ObjectState = posDelete;', ASL);
+      WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -1896,6 +1910,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := (Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean);', ASL);
+      WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -2063,6 +2078,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := Visited.ObjectState = posUpdate;', ASL);
+      WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -2173,6 +2189,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('result := (Visited.ObjectState = posEmpty);', ASL);
+      WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
