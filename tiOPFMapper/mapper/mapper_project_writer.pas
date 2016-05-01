@@ -1086,7 +1086,8 @@ procedure TMapperProjectWriter.WriteImpUses(ASL: TStringList; AUnitDef: TMapUnit
 begin
   WriteLine('uses', ASL);
     IncTab;
-      WriteLine('tiLog', ASL);
+      WriteLine('tiUtils', ASL);
+      WriteLine(',tiLog', ASL);
       WriteLine(';', ASL);
     DecTab;
   WriteBreak(ASL);
@@ -1248,7 +1249,14 @@ begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
       case lPropMap.PropertyType of
         ptString, ptAnsiString:
-          WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
+          begin
+            lClassProp := AClassDef.ClassProps.FindByName(lPropMap.PropName);
+            if Assigned(lClassProp) and (lClassProp.PropertyType = ptDateTime) then
+              { DateTime stored as a ISO 8601 date/time string }
+              WriteLine('lObj.' + lPropMap.PropName + ' := tiIntlDateStorAsDateTime(Query.FieldAsString[''' + lPropMap.FieldName + ''']);', ASL)
+            else
+              WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
+          end;
         ptBoolean:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsBoolean[''' + lPropMap.FieldName + '''];', ASL);
         ptEnum:
@@ -1440,17 +1448,25 @@ procedure TMapperProjectWriter.WriteSetupParams(ASL: TStringList;
   AClassDef: TMapClassDef);
 var
   lPropMap: TPropMapping;
+  lClassProp: TMapClassProp;
   lCtr: integer;
 begin
-
   WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
       lPropMap := AClassDef.ClassMapping.PropMappings.Items[lCtr];
       case lPropMap.PropertyType of
         ptString, ptAnsiString:
-          WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
-            'lObj.' + lPropMap.PropName + ';', ASL);
+          begin
+            lClassProp := AClassDef.ClassProps.FindByName(lPropMap.PropName);
+            if Assigned(lClassProp) and (lClassProp.PropertyType = ptDateTime) then
+              { DateTime stored as a ISO 8601 date/time string }
+              WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
+                'tiDateTimeAsIntlDateStor(lObj.' + lPropMap.PropName + ');', ASL)
+            else
+              WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
+                'lObj.' + lPropMap.PropName + ';', ASL);
+          end;
         ptBoolean:
           WriteLine('Query.ParamAsBoolean[''' + lPropMap.FieldName + '''] := ' +
             'lObj.' + lPropMap.PropName + ';', ASL);
