@@ -841,8 +841,11 @@ begin
 
   WriteLine('{ Register Visitors for ' + AClassMap.BaseClassName + ' }', ASL);
 
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listread'', ' +
-    AClassMap.BaseClassName + 'List_Read);', ASL);
+  if AClassMap.AutoCreateListClass then
+  begin
+    WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listread'', ' +
+      AClassMap.BaseClassName + 'List_Read);', ASL);
+  end;
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
     AClassMap.BaseClassName + '_Create);', ASL);
   WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
