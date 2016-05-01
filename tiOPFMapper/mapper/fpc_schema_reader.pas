@@ -157,48 +157,48 @@ var
   lNewProp: TMapClassProp;
 begin
   for lCtr := 0 to ANode.Length - 1 do
+  begin
+    lPropNode := ANode.Item[lCtr];
+    if lPropNode.NodeType <> COMMENT_NODE then
     begin
-      lPropNode := ANode.Item[lCtr];
-      if lPropNode.NodeType <> COMMENT_NODE then
+      lNewProp := TMapClassProp.create;
+
+      lNewProp.Name := lPropNode.Attributes.GetNamedItem('name').NodeValue;
+
+      // Read only?
+      lPropAttr := lPropNode.Attributes.GetNamedItem('read-only');
+      if lPropAttr <> nil then
+        lNewProp.IsReadOnly := StrToBool(lPropAttr.NodeValue)
+      else
+        lNewProp.IsReadOnly := false;
+
+      // Property type?
+      lPropAttr := lPropNode.Attributes.GetNamedItem('type');
+      if lPropAttr <> nil then
+      begin
+        if lPropAttr.NodeValue <> '' then
         begin
-          lNewProp := TMapClassProp.create;
-
-          lNewProp.Name := lPropNode.Attributes.GetNamedItem('name').NodeValue;
-
-          // Read only?
-          lPropAttr := lPropNode.Attributes.GetNamedItem('read-only');
-          if lPropAttr <> nil then
-            lNewProp.IsReadOnly := StrToBool(lPropAttr.NodeValue)
+          if (Copy(lPropAttr.NodeValue, 1,1) = 'T') and (Lowercase(lPropAttr.NodeValue) <> 'tdatetime') then
+            lNewProp.PropertyType := ptEnum
           else
-            lNewProp.IsReadOnly := false;
-
-          // Property type?
-          lPropAttr := lPropNode.Attributes.GetNamedItem('type');
-          if lPropAttr <> nil then
-            begin
-              if lPropAttr.NodeValue <> '' then
-                begin
-                  if Copy(lPropAttr.NodeValue, 1,1) = 'T' then
-                    lNewProp.PropertyType := ptEnum
-                  else
-                    lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
-                  lNewProp.PropTypeName := lPropAttr.NodeValue
-                end
-              else
-                begin
-                  lNewProp.PropertyType := ptString;
-                  lNewProp.PropTypeName := 'String';
-                end;
-            end
-          else
-            begin
-              lNewProp.PropTypeName := 'string';
-              lNewProp.PropertyType := ptString;
-            end;
-
-          AClass.ClassProps.Add(lNewProp);
+            lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
+          lNewProp.PropTypeName := lPropAttr.NodeValue
+        end
+        else
+        begin
+          lNewProp.PropTypeName := 'String';
+          lNewProp.PropertyType := ptString;
         end;
+      end
+      else
+      begin
+        lNewProp.PropTypeName := 'String';
+        lNewProp.PropertyType := ptString;
+      end;
+
+      AClass.ClassProps.Add(lNewProp);
     end;
+  end;
 end;
 
 procedure TFPCSchemaXMLReader.ReadClassSelects(AClass: TMapClassDef;
