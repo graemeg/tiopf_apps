@@ -428,31 +428,29 @@ begin
 
 end;
 
-procedure TMapperProjectWriter.WriteClassImpReadMethod(ASL: TStringList;
-  AClassDef: TMapClassDef);
+procedure TMapperProjectWriter.WriteClassImpReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
+var
+  lBaseClassName: string;
 begin
+  lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(ClassName + ''_read'', self);', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + ''', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
 end;
 
-procedure TMapperProjectWriter.WriteClassImpSaveMethod(ASL: TStringList;
-  AClassDef: TmapClassDef);
+procedure TMapperProjectWriter.WriteClassImpSaveMethod(ASL: TStringList; AClassDef: TmapClassDef);
+var
+  lBaseClassName: string;
 begin
+  lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Save;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('Case ObjectState of', ASL);
-      IncTab;
-        WriteLine('posDelete: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_delete'', self);', ASL);
-        WriteLine('posUpdate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_update'', self);', ASL);
-        WriteLine('posCreate: GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + '_create'', self);', ASL);
-      DecTab;
-      WriteLine('end;', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -837,31 +835,21 @@ var
   lCtr: Integer;
   lSelect: TClassMappingSelect;
   lBaseSig: string;
+  lBaseClassName: string;
 begin
-
-  WriteLine('{ Register Visitors for ' + AClassMap.BaseClassName + ' }', ASL);
+  lBaseClassName := Copy(AClassMap.BaseClassName, 2, Length(AClassMap.BaseClassName));
+  WriteLine('{ NOTE: The most reliable order of registering visitors is', ASL);
+  WriteLine('        Read, Delete, Update, Create }', ASL);
 
   if AClassMap.AutoCreateListClass then
   begin
-    WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listread'', ' +
-      AClassMap.BaseClassName + 'List_Read);', ASL);
+    WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Load%sList'', %sList_Read);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
   end;
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + '_Create);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + '_Update);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + 'List_listsave'', ' +
-    AClassMap.BaseClassName + '_Delete);', ASL);
 
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_read'', ' +
-    AClassMap.BaseClassName + '_Read);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_update'', ' +
-    AClassMap.BaseClassName + '_Update);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_delete'', ' +
-    AClassMap.BaseClassName + '_Delete);', ASL);
-  WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + AClassMap.BaseClassName + '_create'', ' +
-    AClassMap.BaseClassName + '_Create);', ASL);
-
+  WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Load%s'', %s_Read);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
+  WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Delete);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
+  WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Update);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
+  WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Create);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
 
   if AClassMap.Selections.Count > 0 then
     begin
@@ -1123,11 +1111,12 @@ procedure TMapperProjectWriter.WriteListClassImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 var
   lListName: string;
+  lBaseClassName: string;
 begin
-
   if not AClassDef.AutoCreateListClass then
     exit;
 
+  lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
   lListName := AClassDef.BaseClassName + 'List';
 
   WriteLine(' {' + lListName + ' }', ASL);
@@ -1152,7 +1141,7 @@ begin
   WriteLine('procedure ' + lListName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'List_listread'', self);', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + 'List'', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -1160,7 +1149,7 @@ begin
   WriteLine('procedure ' + lListName + '.Save;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''' + AClassDef.BaseClassName + 'List_listsave'', self);', ASL);
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
