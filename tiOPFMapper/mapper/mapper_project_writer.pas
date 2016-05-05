@@ -838,7 +838,7 @@ var
   lBaseClassName: string;
 begin
   lBaseClassName := Copy(AClassMap.BaseClassName, 2, Length(AClassMap.BaseClassName));
-  WriteLine('{ NOTE: The most reliable order of registering visitors is', ASL);
+  WriteLine('{ NOTE: The most reliable order of registering visitors are', ASL);
   WriteLine('        Read, Delete, Update, Create }', ASL);
 
   if AClassMap.AutoCreateListClass then
