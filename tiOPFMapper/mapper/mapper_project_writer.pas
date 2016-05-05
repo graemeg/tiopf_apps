@@ -101,13 +101,13 @@ type
   end;
 
   TDateTimeParts = record
-    Year: word;
-    Month: word;
-    Day: word;
-    Hour: word;
-    Minute: word;
-    Second: word;
-    MSecond: word;
+    Year: uint16;
+    Month: uint16;
+    Day: uint16;
+    Hour: uint16;
+    Minute: uint16;
+    Second: uint16;
+    MSecond: uint16;
   end;
 
 
