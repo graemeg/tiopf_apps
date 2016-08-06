@@ -75,6 +75,7 @@ begin
           lWriter.OnWriteClass := {$IFDEF FPC}@{$ENDIF}Self.OnWriteClass;
           lWriter.OnWriteEnum := {$IFDEF FPC}@{$ENDIF}self.OnWriteEnum;
           lWriter.OnWriteUnit := {$IFDEF FPC}@{$ENDIF}self.OnWriteUnit;
+          lWriter.Verbose := true;
         end;
 
       lWriter.WriteProject(lProj.OutputDirectory);
@@ -183,4 +184,4 @@ begin
   Application.Run;
   Application.Free;
 end.
-
+

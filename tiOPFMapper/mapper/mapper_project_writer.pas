@@ -20,7 +20,9 @@ type
   TMapperProjectWriter = class(TMapSchemaWriter)
   private
     FBaseDir: string;
+    FVerbose : boolean;
     procedure   SetBaseDir(const AValue: string);
+    procedure   SetVerbose(AValue: Boolean);
   protected
     function    CreateSQLFieldList(AClassDef: TMapClassDef): string;
     procedure   PrepareUnitList(AList: TStringList);
@@ -92,6 +94,7 @@ type
     function    DoGetValidatorTestString(const APropName: string; const APropType: TMapPropType; const AValType: TValidatorType; AValue: Variant): string;
   public
     property    BaseDir: string read FBaseDir write SetBaseDir;
+    property    Verbose: Boolean read FVerbose write SetVerbose;
     procedure   WriteUnit(AUnit: TMapUnitDef; ASL: TStringList); virtual;
     {: Expects to have NO trailing path delim to ADirectory parameter string.}
     procedure   WriteProject(const ADirectory: String); overload; override;
@@ -118,6 +121,7 @@ implementation
 constructor TMapperProjectWriter.Create(AProject: TMapProject);
 begin
   inherited Create(AProject);
+  FVerbose:=false;
 end;
 
 function TMapperProjectWriter.CreateSQLFieldList(
@@ -288,6 +292,12 @@ procedure TMapperProjectWriter.SetBaseDir(const AValue: string);
 begin
   if FBaseDir=AValue then exit;
   FBaseDir:=AValue;
+end;
+
+procedure TMapperProjectWriter.SetVerbose(AValue: Boolean);
+begin
+  if FVerbose=AValue then exit;
+  FVerbose:=AValue;
 end;
 
 procedure TMapperProjectWriter.WriteAllCustomListVisImps(ASL: TStringList;
@@ -1584,6 +1594,14 @@ begin
 
   ASL.Add(sLineBreak);
   ASL.Add('unit ' + AUnit.Name + ';');
+  if Verbose then
+  begin
+    WriteLine('// ---------------------------------------------------------', ASL);
+    WriteLine('// Automatically generated on '+DateToStr(now)+' '+TimeToStr(now), ASL);
+    WriteLine('// Warning: ', ASL);
+    WriteLine('//   If you rerun timap, your changes in this file will be lost', ASL);
+    WriteLine('// ---------------------------------------------------------', ASL);
+  end;
   ASL.Add(sLineBreak);
   ASL.Add('{$IFDEF FPC}');
   ASL.Add('{$mode objfpc}{$H+}');
