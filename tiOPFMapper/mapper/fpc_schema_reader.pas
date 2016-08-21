@@ -118,6 +118,7 @@ var
   lMapPropNode: TDOMNode;
   lNewMapProp: TPropMapping;
   lLastGood: string;
+  lAbstractValue: Boolean;
 begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
@@ -135,6 +136,22 @@ begin
           lNewMapProp := TPropMapping.create;
           lNewMapProp.FieldName := lNode.Attributes.GetNamedItem('field').NodeValue;
           lNewMapProp.PropName := lNode.Attributes.GetNamedItem('prop').NodeValue;
+          lMapPropNode := lNode.Attributes.GetNamedItem('getter');
+          if Assigned(lMapPropNode) then
+            lNewMapProp.PropertyGetter := lMapPropNode.NodeValue;
+          lMapPropNode := lNode.Attributes.GetNamedItem('setter');
+          if Assigned(lMapPropNode) then
+            lNewMapProp.PropertySetter := lMapPropNode.NodeValue;
+          lMapPropNode := lNode.Attributes.GetNamedItem('abstract');
+          if Assigned(lMapPropNode) then
+            case LowerCase(lMapPropNode.NodeValue) of
+              'false','0','no': lAbstractValue:=False;
+            else
+              lAbstractValue:=True;
+            end
+          else
+            lAbstractValue:=True;
+          lNewMapProp.PropertyAccessorsAreAbstract := lAbstractValue;
 
           lLastGood := lNewMapProp.PropName;
 
