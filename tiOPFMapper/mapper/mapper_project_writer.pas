@@ -1210,6 +1210,10 @@ begin
     begin
       WriteLine('{ List of ' + AClassDef.BaseClassName + '.  TtiMappedFilteredObjectList descendant. }', ASL);
       WriteLine(AClassDef.BaseClassName + 'List = class(TtiMappedFilteredObjectList)', ASL);
+      WriteLine('private', ASL);
+        IncTab;
+          WriteLine('class var FItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
+        DecTab;
       WriteLine('protected', ASL);
         IncTab;
           WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
@@ -1221,6 +1225,7 @@ begin
           WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
           WriteLine('procedure   Read; override;', ASL);
           WriteLine('procedure   Save; override;', ASL);
+          WriteLine('class property ItemClass: '+AClassDef.BaseClassName+'Class read FItemClass write FItemClass;', ASL);
           WriteLine('{ Return count (1) if successful. }', ASL);
           WriteLine('function    FindByOID(const AOID: string): integer;', ASL);
           WriteClassSelectsInf(ASL, AClassDef);
@@ -1748,7 +1753,7 @@ begin
   // Event Notification
   if Assigned(FOnWriteClass) then
     FOnWriteClass(AClassDef);
-
+  WriteLine(AClassDef.BaseClassName+'Class = class of '+AClassDef.BaseClassName+';', ASL);
   WriteLine('{ Generated Class: ' + AClassDef.BaseClassName + '}', ASL);
   WriteLine(AClassDef.BaseClassName + ' = class(' + AClassDef.BaseClassParent + ')', ASL);
 
@@ -2333,11 +2338,19 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteLine('lItemClass : '+AClassDef.BaseClassName+'Class = '+AClassDef.BaseClassName+';', ASL);
       WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('lObj := ' + AClassDef.BaseClassName + '.Create;', ASL);
+      if AClassDef.AutoCreateListClass then
+      begin
+        WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
+        IncTab;
+          WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
+        DecTab;
+      end;
+      WriteLine('lObj := lItemClass.Create;', ASL);
       WriteLine('lObj.' + AClassDef.ClassMapping.PKName +'.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
       WriteLine('lObj.ObjectState := posClean;', ASL);
