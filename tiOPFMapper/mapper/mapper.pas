@@ -51,7 +51,7 @@ type
 
   {: Type of class property. }
   TMapPropType = (ptString, ptAnsiString, ptDouble, ptSingle, ptCurrency, ptInteger, ptInt64,
-    ptDateTime, ptBoolean, ptEnum);
+    ptDateTime, ptBoolean, ptEnum, ptStream);
 
   {: Type of class definition to create. }
   TClassDefType = (dtCreate, dtReference);
@@ -276,15 +276,23 @@ type
     FFieldName: string;
     FPropName: string;
     FPropertyType: TMapPropType;
+    FPropertyGetter: String;
+    FPropertySetter: String;
+    FPropertyAccessorsAreAbstract: Boolean;
     procedure SetFieldName(const AValue: string);
     procedure SetPropName(const AValue: string);
     procedure SetPropType(const AValue: TMapPropType);
+    procedure SetPropertyGetter(const AValue: string);
+    procedure SetPropertySetter(const AValue: string);
   public
     function    IsValid(const AErrors: TtiObjectErrors): Boolean; override;
   published
     property    PropName: string read FPropName write SetPropName;
     property    FieldName: string read FFieldName write SetFieldName;
     property    PropertyType: TMapPropType read FPropertyType write SetPropType;
+    property    PropertyGetter: string read FPropertyGetter write SetPropertyGetter;
+    property    PropertySetter: string read FPropertySetter write SetPropertySetter;
+    property    PropertyAccessorsAreAbstract: Boolean read FPropertyAccessorsAreAbstract write FPropertyAccessorsAreAbstract;
   end;
 
   TPropMappingList = class(TBaseMapObjectList)
@@ -860,6 +868,8 @@ begin
     Result := ptCurrency
   else if lType = 'single' then
     result := ptSingle
+  else if lType = 'blob' then
+    result := ptStream
   else
     raise Exception.Create('gStrToPropType: Invalid parameter: ' + AString);
 
@@ -878,6 +888,7 @@ begin
     ptDouble: result := 'Double';
     ptCurrency: result := 'Currency';
     ptEnum: result := 'enum';
+    ptStream: result := 'blob';
   end;
 end;
 
@@ -1564,6 +1575,18 @@ begin
   FPropertyType:=AValue;
 end;
 
+procedure TPropMapping.SetPropertyGetter(const AValue: String);
+begin
+  if FPropertyGetter=AValue then exit;
+  FPropertyGetter:=AValue;
+end;
+
+procedure TPropMapping.SetPropertySetter(const AValue: String);
+begin
+  if FPropertySetter=AValue then exit;
+  FPropertySetter:=AValue;
+end;
+
 { TPropMappingList }
 
 function TPropMappingList.Add(AObject: TPropMapping): Integer;
@@ -1979,6 +2002,7 @@ begin
             else
               Query.ParamAsInteger[lParam.SQLParamName] := Integer(lParam.Value);
           end;
+        ptStream: Query.AssignParamFromStream(lParam.SQLParamName, TStream(PtrUInt(lParam.Value)));
       end;
     end;
 end;

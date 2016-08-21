@@ -36,6 +36,8 @@ type
     procedure   WritePropPrivateVars(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WritePropGetter(ASL: TStringList; APropDef: TMapClassProp);
     procedure   WritePropSetter(ASL: TStringList; APropDef: TMapClassProp);
+    procedure   WritePropStreamGetter(ASL: TStringList; APropMap: TPropMapping);
+    procedure   WritePropStreamSetter(ASL: TStringList; APropMap: TPropMapping);
     procedure   WriteClassMappings(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassSelectsInf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassSelectsImps(ASL: TStringList; AClassDef: TMapClassDef);
@@ -44,12 +46,14 @@ type
     procedure   WriteORMClass(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfMethods(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassImpSettersGetters(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteClassIntfDestructor(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteIntfUses(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteImpUses(ASL: TStringList; AUnitDef: TMapUnitDef);
     procedure   WriteListClassIntf(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteListClassImp(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassIntfSaveMethod(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteClassImpDestructor(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassImpReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteClassImpSaveMethod(ASL: TStringList; AClassDef: TmapClassDef);
     // Visitor methods writing
@@ -71,6 +75,7 @@ type
     procedure   WriteCustomListVisImp(ASL: TStringList; AClassDef: TMapClassDef; ASelect: TClassMappingSelect);
     procedure   WriteAllCustomListVisIntfs(ASL: TStringList; AClassDef: TMapClassDef);
     procedure   WriteAllCustomListVisImps(ASL: TStringList; AClassDef: TMapClassDef);
+    procedure   WriteExtraVarsMaybe(ASL: TStringList; AClassDef: TMapClassDef);
     // AutoMap Registration
     procedure   WriteAutoMapIntf(ASL: TStringList);
     procedure   WriteAllRegisterAutoMaps(ASL: TStringList; AUnitDef: TMapUnitDef);
@@ -313,6 +318,23 @@ begin
     end;
 end;
 
+procedure TMapperProjectWriter.WriteExtraVarsMaybe(ASL: TStringList; AClassDef: TMapClassDef);
+var
+  i: Integer;
+  HasStream: Boolean = False;
+begin
+  for i := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+  begin
+    if not HasStream and (AClassDef.ClassMapping.PropMappings.Items[I].PropertyType = ptStream) then
+    begin
+      WriteLine('lStream: TStream;', ASL);
+      WriteLine('lStreamFree: Boolean = True;', ASL);
+      HasStream := True;
+    end;
+    // others...
+  end;
+end;
+
 procedure TMapperProjectWriter.WriteAllRegisterAutoMaps(ASL: TStringList;
   AUnitDef: TMapUnitDef);
 var
@@ -435,6 +457,45 @@ begin
       AClassDef.BaseClassName + 'List, ' + AClassDef.BaseClassName + ');', ASL);
 
   WriteBreak(ASL);
+
+end;
+
+procedure TMapperProjectWriter.WriteClassImpDestructor(ASL: TStringList; AClassDef: TMapClassDef);
+var
+  lCtr: integer;
+  lMapping: TPropMapping;
+  lNeedDestructor: Boolean = False;
+  lBaseClassName: String;
+begin
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+    begin
+      lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      if lMapping.PropertyType = ptStream then
+      begin
+        lNeedDestructor := True;
+        Break;
+      end;
+    end;
+
+  if not lNeedDestructor then
+    Exit;
+
+  lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
+  WriteLine('destructor ' + AClassDef.BaseClassName + '.Destroy;', ASL);
+  WriteLine('begin', ASL);
+  IncTab;
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+    begin
+      lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      if lMapping.PropertyType = ptStream then
+      begin
+        WriteLine('FreeAndNil(F'+lMapping.PropName+');', ASL);
+        Write
+      end;
+    end;
+    WriteLine('inherited Destroy;', ASL);
+  DecTab;
+  WriteLine('end;', ASL);
 
 end;
 
@@ -575,6 +636,7 @@ begin
             ptCurrency: lParamStr := 'ptCurrency';
             ptInt64, ptInteger: lParamStr := 'ptInteger';
             ptEnum: lParamStr := 'ptEnum';
+            ptStream: lParamStr := 'ptStream';
           end;
 
           //AddParam('user_oid', ptString, AUser);
@@ -624,6 +686,7 @@ procedure TMapperProjectWriter.WriteClassPropAccessMethods(ASL: TStringList;
 var
   lProp: TMapClassProp;
   lCtr: Integer;
+  lMapping: TPropMapping;
 begin
   for lCtr := 0 to AClassDef.ClassProps.Count - 1 do
     begin
@@ -634,6 +697,17 @@ begin
       if not lProp.IsReadOnly then
         WritePropSetter(ASL, lProp);
 
+    end;
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+    begin
+      lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      if (lMapping.PropertyType = ptStream) then
+      begin
+        if (lMapping.PropertyGetter <> '') then
+          WritePropStreamGetter(ASL, lMapping);
+        if not lProp.IsReadOnly and (lMapping.PropertySetter <> '')then
+          WritePropStreamSetter(ASL, lMapping);
+      end;
     end;
 end;
 
@@ -881,6 +955,10 @@ var
   lProp: TMapClassProp;
   lParam: TSelectParam;
   lCtr: integer;
+  lNeedsHelper: Boolean;
+  lGetter: String;
+  lPropIndex: Integer;
+  lPropMap: TPropMapping;
 begin
 
   if not AClassDef.AutoCreateListClass then
@@ -902,6 +980,7 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -921,6 +1000,7 @@ begin
       WriteLine('lCtr: integer;', ASL);
       WriteLine('lParam: TSelectParam;', ASL);
       WriteLine('lList: TtiMappedFilteredObjectList;', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -960,6 +1040,40 @@ begin
                     WriteLine('end;', ASL);
                   end;
 
+              end;
+            ptStream:
+              begin
+                lNeedsHelper := LowerCase(lParam.ParamTypeName) <> 'tstream';
+                if lNeedsHelper then
+                begin
+                  lProp := AClassDef.ClassProps.FindByName(lParam.ParamName);
+                  lPropIndex := lProp.Index;
+                  lPropMap := AClassDef.ClassMapping.PropMappings.Items[lPropIndex];
+                  lGetter := lPropMap.PropertyGetter;
+                  if lGetter = '' then
+                    Raise Exception.CreateFmt(ClassName + '.WriteCustomListVisImp: Property mapping for %s must have accessor',[lProp.PropTypeName]);
+                end;
+                WriteLine('try', ASL);
+                IncTab;
+                if lNeedsHelper then
+                  WriteLine('lStream := '+lGetter+'();', ASL)
+                else
+                begin
+                  // WRONG!
+                  WriteLine('lStream := (TStream(PtrUInt(lParam.Value))));', ASL);
+                  WriteLine('lStreamFree := False;', ASL);
+                end;
+
+                  WriteLine('Query.AssignParamFromStream(''' + lParam.SQLParamName + ''', lStream);', ASL);
+                DecTab;
+                WriteLine('finally', ASL);
+                IncTab;
+                  WriteLine('if lStreamFree then', ASL);
+                  IncTab;
+                    WriteLine('lStream.Free;', ASL);
+                  DecTab;
+                DecTab;
+                WriteLine('end;', ASL);
               end;
           end;
         end;
@@ -1096,6 +1210,10 @@ begin
     begin
       WriteLine('{ List of ' + AClassDef.BaseClassName + '.  TtiMappedFilteredObjectList descendant. }', ASL);
       WriteLine(AClassDef.BaseClassName + 'List = class(TtiMappedFilteredObjectList)', ASL);
+      WriteLine('private', ASL);
+        IncTab;
+          WriteLine('class var FItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
+        DecTab;
       WriteLine('protected', ASL);
         IncTab;
           WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
@@ -1107,6 +1225,7 @@ begin
           WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
           WriteLine('procedure   Read; override;', ASL);
           WriteLine('procedure   Save; override;', ASL);
+          WriteLine('class property ItemClass: '+AClassDef.BaseClassName+'Class read FItemClass write FItemClass;', ASL);
           WriteLine('{ Return count (1) if successful. }', ASL);
           WriteLine('function    FindByOID(const AOID: string): integer;', ASL);
           WriteClassSelectsInf(ASL, AClassDef);
@@ -1230,6 +1349,7 @@ var
   lCtr: integer;
   lPropMap: TPropMapping;
   lClassProp: TMapClassProp;
+  lNeedsHelper: Boolean;
 begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
@@ -1260,6 +1380,35 @@ begin
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsFloat[''' + lPropMap.FieldName + '''];', ASL);
         ptInt64, ptInteger:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsInteger[''' + lPropMap.FieldName + '''];', ASL);
+        ptStream:
+          begin
+            lNeedsHelper := (lPropMap.PropertyType = ptStream)
+                            and (Lowercase(AClassDef.ClassProps.FindByName(lPropMap.PropName).PropTypeName) <> 'tstream');
+            if lNeedsHelper and (lPropMap.PropertySetter = '') then
+                Raise Exception.CreateFmt(ClassName + '.WriteMapRowToObject: Property mapping for %s.%s must have setter',[AClassDef.BaseClassName, AClassDef.ClassProps.Items[lCtr].PropTypeName]);
+
+            WriteLine('lStream := TMemoryStream.Create;', ASL);
+            WriteLine('try', ASL);
+            IncTab;
+              WriteLine('Query.AssignFieldAsStream(''' + lPropMap.FieldName + ''', lStream);', ASL);
+              WriteLine('lStream.Position := 0;', ASL);
+            if lNeedsHelper then
+              WriteLine('lObj.' + lPropMap.PropertySetter + '(lStream);', ASL)
+            else
+            begin
+              WriteLine('lObj.' + lPropMap.PropName + ' := lStream;', ASL);
+              WriteLine('lStreamFree := False;', ASL);
+            end;
+            DecTab;
+            WriteLine('finally', ASL);
+            IncTab;
+              WriteLine('if lStreamFree then', ASL);
+              IncTab;
+                WriteLine('lStream.Free', ASL);
+              DecTab;
+            DecTab;
+            WriteLine('end;', ASL);
+          end;
       end;
     end;
 end;
@@ -1270,6 +1419,7 @@ var
   lCtr: integer;
   lPropMap: TPropMapping;
   lClassProp: TMapClassProp;
+  lNeedsHelper: Boolean;
 begin
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
     begin
@@ -1293,6 +1443,35 @@ begin
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsFloat[''' + lPropMap.FieldName + '''];', ASL);
         ptInt64, ptInteger:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsInteger[''' + lPropMap.FieldName + '''];', ASL);
+        ptStream:
+          begin
+            lNeedsHelper := (lPropMap.PropertyType = ptStream)
+                            and (Lowercase(AClassDef.ClassProps.Items[lCtr].PropTypeName) <> 'tstream');
+            if lNeedsHelper and (lPropMap.PropertySetter = '') then
+                Raise Exception.CreateFmt(ClassName + '.WriteMapRowToObjectForList: Property mapping for %s must have accessor',[AClassDef.ClassProps.Items[lCtr].PropTypeName]);
+
+            WriteLine('lStream := TMemoryStream.Create;', ASL);
+            WriteLine('try', ASL);
+            IncTab;
+              WriteLine('Query.AssignFieldAsStream(''' + lPropMap.FieldName + ''', lStream);', ASL);
+              WriteLine('lStream.Position := 0;', ASL);
+            if lNeedsHelper then
+              WriteLine('lObj.' + lPropMap.PropertySetter + '(lStream);', ASL)
+            else
+            begin
+              WriteLine('lObj.' + lPropMap.PropName + ' := lStream;', ASL);
+              WriteLine('lStreamFree := False;', ASL);
+            end;
+            DecTab;
+            WriteLine('finally', ASL);
+            IncTab;
+              WriteLine('if lStreamFree then', ASL);
+              IncTab;
+                WriteLine('lStream.Free', ASL);
+              DecTab;
+            DecTab;
+            WriteLine('end;', ASL);
+          end;
       end;
     end;
 
@@ -1319,12 +1498,33 @@ begin
           DecTab;
         if AClassDef.NotifyObserversOfPropertyChanges then
           WriteLine('BeginUpdate;', ASL);
-        WriteLine('F' + lMap.Name + ' := AValue;', ASL);
+        if lMap.PropertyType = ptStream then
+        begin
+          WriteLine('if Assigned(F' + lMap.Name + ') then', ASL);
+          WriteLine('  FreeAndNil(F' + lMap.Name + ');', ASL);
+        end;
+          WriteLine('F' + lMap.Name + ' := AValue;', ASL);
         if AClassDef.NotifyObserversOfPropertyChanges then
           WriteLine('EndUpdate;', ASL);
         DecTab;
       WriteLine('end;', ASL);
       WriteBreak(ASL);
+    end;
+end;
+
+procedure TMapperProjectWriter.WriteClassIntfDestructor(ASL: TStringList; AClassDef: TMapClassDef);
+var
+  lCtr: integer;
+  lMapping: TPropMapping;
+begin
+  for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+    begin
+      lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+      if lMapping.PropertyType = ptStream then
+      begin
+        WriteLine('destructor  Destroy; override;', ASL);
+        Exit;
+      end;
     end;
 end;
 
@@ -1399,6 +1599,18 @@ begin
   WriteLine('procedure   Set' + APropDef.Name + '(const AValue: ' + APropDef.PropTypeName + '); virtual;', ASL);
 end;
 
+procedure TMapperProjectWriter.WritePropStreamGetter(ASL: TStringList; APropMap: TPropMapping);
+begin
+  if APropMap.PropertyAccessorsAreAbstract then
+    WriteLine('function    '+APropMap.PropertyGetter+': TStream; virtual; abstract;', ASL);
+end;
+
+procedure TMapperProjectWriter.WritePropStreamSetter(ASL: TStringList; APropMap: TPropMapping);
+begin
+  if APropMap.PropertyAccessorsAreAbstract then
+    WriteLine('procedure   '+APropMap.PropertySetter+'(const AValue: TStream); virtual; abstract;', ASL);
+end;
+
 procedure TMapperProjectWriter.WriteSelectSQL(ASL: TStringList;
   AClassDef: TMapClassDef);
 var
@@ -1433,6 +1645,8 @@ var
   lPropMap: TPropMapping;
   lClassProp: TMapClassProp;
   lCtr: integer;
+  lGetter: String;
+  lNeedsHelper: Boolean;
 begin
   WriteLine('lObj.' + AClassDef.ClassMapping.PKName + '.AssignToTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count - 1 do
@@ -1469,6 +1683,44 @@ begin
         ptInt64, ptInteger:
           WriteLine('Query.ParamAsInteger[''' + lPropMap.FieldName + '''] := ' +
             'lObj.' + lPropMap.PropName + ';', ASL);
+        ptStream:
+          begin
+            lNeedsHelper := LowerCase(AClassDef.ClassProps.FindByName(lPropMap.PropName).PropTypeName) <> 'tstream';
+            if lNeedsHelper then
+            begin
+              lGetter := lPropMap.PropertyGetter;
+              if lGetter = '' then
+                Raise Exception.CreateFmt(ClassName + '.WriteSetupParams: Property mapping for %s.%s must have getter',[AClassDef.BaseClassName, lPropMap.PropName]);
+            end;
+            WriteLine('try', ASL);
+            IncTab;
+              if lNeedsHelper then
+                WriteLine('lStream := lObj.'+lGetter+'();', ASL)
+              else
+              begin
+                WriteLine('lStreamFree := False;', ASL);
+                WriteLine('lStream := '+'lObj.' + lPropMap.PropName+ ';', ASL);
+              end;
+              WriteLine('if Assigned(lStream) then', ASL);
+              WriteLine('begin', ASL);
+              IncTab;
+                WriteLine('lStream.Position := 0;', ASL);
+                WriteLine('Query.AssignParamFromStream(''' + lPropMap.FieldName + ''', lStream);', ASL);
+              DecTab;
+              WriteLine('end;', ASL);
+            DecTab;
+            WriteLine('finally', ASL);
+            IncTab;
+              WriteLine('if lStreamFree then', ASL);
+              IncTab;
+                WriteLine('lStream.Free;', ASL);
+              DecTab;
+            Dectab;
+            WriteLine('end;', ASL);
+
+
+          end;
+
       end;
     end;
 end;
@@ -1501,7 +1753,7 @@ begin
   // Event Notification
   if Assigned(FOnWriteClass) then
     FOnWriteClass(AClassDef);
-
+  WriteLine(AClassDef.BaseClassName+'Class = class of '+AClassDef.BaseClassName+';', ASL);
   WriteLine('{ Generated Class: ' + AClassDef.BaseClassName + '}', ASL);
   WriteLine(AClassDef.BaseClassName + ' = class(' + AClassDef.BaseClassParent + ')', ASL);
 
@@ -1515,6 +1767,7 @@ begin
 
   WriteLine('public', ASL);
     IncTab;
+      WriteClassIntfDestructor(ASL, AClassDef);
       WriteClassIntfReadMethod(ASL, AClassDef);
       WriteClassIntfSaveMethod(ASL, AClassDef);
       if AClassDef.Validators.Count > 0 then
@@ -1674,6 +1927,7 @@ begin
       for lCtr := 0 to AUnit.UnitClasses.Count - 1 do
         begin
           lClassDef := AUnit.UnitClasses.Items[lCtr];
+          WriteClassImpDestructor(ASL, lClassDef);
           WriteClassImpSettersGetters(ASL, lClassDef);
           WriteClassImpReadMethod(ASL, lClassDef);
           WriteClassImpSavemethod(ASL, lClassDef);
@@ -1810,6 +2064,7 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -1928,6 +2183,7 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -1981,6 +2237,7 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
@@ -2081,10 +2338,19 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
+      WriteLine('lItemClass : '+AClassDef.BaseClassName+'Class = '+AClassDef.BaseClassName+';', ASL);
+      WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('lObj := ' + AClassDef.BaseClassName + '.Create;', ASL);
+      if AClassDef.AutoCreateListClass then
+      begin
+        WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
+        IncTab;
+          WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
+        DecTab;
+      end;
+      WriteLine('lObj := lItemClass.Create;', ASL);
       WriteLine('lObj.' + AClassDef.ClassMapping.PKName +'.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
       WriteLine('lObj.ObjectState := posClean;', ASL);
