@@ -690,7 +690,8 @@ begin
     begin
       lProp := AClassDef.ClassProps.Items[lCtr];
 
-      WritePropGetter(ASL, lProp);
+      if lProp.VirtualGetter then
+        WritePropGetter(ASL, lProp);
 
       if not lProp.IsReadOnly then
         WritePropSetter(ASL, lProp);
@@ -1471,6 +1472,17 @@ begin
   for lCtr := 0 to AClassDef.ClassProps.Count -1 do
     begin
       lMap := AClassDef.ClassProps.Items[lCtr];
+      if lMap.VirtualGetter then
+      begin
+        WriteLine('function ' + AClassDef.BaseClassName + '.Get' + lMap.Name +
+          ': ' + lMap.PropTypeName + ';', ASL);
+        WriteLine('begin', ASL);
+        IncTab;
+          WriteLine('Result := F' + lMap.Name + ';', ASL);
+        DecTab;
+        WriteLine('end;', ASL);
+        WriteBreak(ASL);
+      end;
       if lMap.IsReadOnly then
         Continue;
       WriteLine('procedure ' + AClassDef.BaseClassName + '.Set' + lMap.Name +
@@ -1560,7 +1572,7 @@ end;
 procedure TMapperProjectWriter.WritePropGetter(ASL: TStringList;
   APropDef: TMapClassProp);
 begin
-
+  WriteLine('function    Get' + APropDef.Name + ': ' + APropDef.PropTypeName + '; virtual;', ASL);
 end;
 
 procedure TMapperProjectWriter.WritePropPrivateVars(ASL: TStringList;
@@ -1718,8 +1730,11 @@ procedure TMapperProjectWriter.WriteSingleClassProp(ASL: TStringList; AClassProp
 var
   lTemp: string;
 begin
-  lTemp := 'property    ' + AClassProp.Name + ': ' + AClassProp.PropTypeName + ' read F' +
-    AClassProp.Name;
+  lTemp := 'property    ' + AClassProp.Name + ': ' + AClassProp.PropTypeName + ' read ';
+  if AClassProp.VirtualGetter then
+    lTemp := lTemp + 'Get' + AClassProp.Name
+  else
+    lTemp := lTemp +'F' + AClassProp.Name;
 
   if not AClassProp.IsReadOnly then
     lTemp := lTemp + ' write Set' + AClassProp.Name + ';'
