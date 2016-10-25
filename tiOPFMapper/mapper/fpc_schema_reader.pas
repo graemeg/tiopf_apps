@@ -601,8 +601,8 @@ begin
                         if lSelectNode.NodeType <> COMMENT_NODE then
                           begin
                             lNewSelect := TClassMappingSelect.Create;
-                            lTemp := StringReplace(lSelectNode.FindNode('sql').ChildNodes.Item[0].NodeValue, #13, '', [rfReplaceAll]);
-                            lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
+                            lTemp := StringReplace(lSelectNode.FindNode('sql').ChildNodes.Item[0].NodeValue, #13, ' ', [rfReplaceAll]);
+                            lTemp := StringReplace(lTemp, #10, ' ', [rfReplaceAll]);
                             lTemp := tiNormalizeStr(lTemp);
                             // Change variable ${field_list} into list of field names in sql format
                             if POS('${field_list}', lTemp) > 0 then
