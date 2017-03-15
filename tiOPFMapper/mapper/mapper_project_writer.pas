@@ -1198,6 +1198,7 @@ begin
     IncTab;
       WriteLine('tiUtils', ASL);
       WriteLine(',tiLog', ASL);
+      WriteLine(',tiRTTI', ASL);
       WriteLine(';', ASL);
     DecTab;
   WriteBreak(ASL);
@@ -1673,7 +1674,7 @@ begin
               'lObj.' + lPropMap.PropName+ ');', ASL)
           else
             WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
-            'tiGetProperty(lObj, ' + lPropMap.PropName + ');', ASL);
+            'tiGetProperty(lObj, ''' + lPropMap.PropName + ''');', ASL);
         ptDateTime:
           WriteLine('Query.ParamAsDateTime[''' + lPropMap.FieldName + '''] := ' +
           'lObj.' + lPropMap.PropName + ';', ASL);
