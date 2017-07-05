@@ -321,8 +321,9 @@ end;
 procedure TMapperProjectWriter.WriteExtraVarsMaybe(ASL: TStringList; AClassDef: TMapClassDef);
 var
   i: Integer;
-  HasStream: Boolean = False;
+  HasStream: Boolean;
 begin
+  HasStream := False;
   for i := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
   begin
     if not HasStream and (AClassDef.ClassMapping.PropMappings.Items[I].PropertyType = ptStream) then
@@ -464,9 +465,10 @@ procedure TMapperProjectWriter.WriteClassImpDestructor(ASL: TStringList; AClassD
 var
   lCtr: integer;
   lMapping: TPropMapping;
-  lNeedDestructor: Boolean = False;
+  lNeedDestructor: Boolean;
   lBaseClassName: String;
 begin
+  lNeedDestructor := False;
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
     begin
       lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];

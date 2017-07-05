@@ -2002,7 +2002,7 @@ begin
             else
               Query.ParamAsInteger[lParam.SQLParamName] := Integer(lParam.Value);
           end;
-        ptStream: Query.AssignParamFromStream(lParam.SQLParamName, TStream(PtrUInt(lParam.Value)));
+        ptStream: Query.AssignParamFromStream(lParam.SQLParamName, TStream(NativeUInt(lParam.Value)));
       end;
     end;
 end;
