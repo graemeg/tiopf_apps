@@ -290,8 +290,8 @@ uses
   ,enum_edit_ctrl
   ,vcl_controllers
   ,app_consts
-  ,tiOPFStreamer
-  ,tiopf_super_streamer
+//  ,tiOPFStreamer
+//  ,tiopf_super_streamer
   ;
 
 procedure RegisterCommands(AController: TMVCController);
