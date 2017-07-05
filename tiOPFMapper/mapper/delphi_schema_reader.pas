@@ -528,6 +528,10 @@ begin
             else
               lNewClass.AutoCreateListClass := true;
 
+            lClassAttr := lClassNode.Attributes.GetNamedItem('notify-observers');
+            if lClassAttr <> nil then
+              lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
+
             lClassAttr := lClassNode.Attributes.GetNamedItem('oid-type');
             if lClassAttr <> nil then
               begin
