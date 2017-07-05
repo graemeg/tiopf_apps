@@ -20,9 +20,6 @@ uses
     ,SynEdit
     ,SynHighlighterSQL
   {$ENDIF}
-  {$IFDEF FPC}
-  , LResources
-  {$ENDIF}
   {$IFDEF MSWINDOWS}
   ,Windows
   {$ENDIF}
@@ -487,9 +484,5 @@ begin
   end;
 end;
 
-initialization
-{$IFDEF FPC}
-  {$i FSQLEditor.lrs}
-{$ENDIF}
 
 end.

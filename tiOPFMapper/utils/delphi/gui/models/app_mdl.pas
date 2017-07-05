@@ -87,7 +87,6 @@ uses
   ;
 
 var
-
   mModel: TAppModel;
 
 { TAppModel }

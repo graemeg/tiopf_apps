@@ -27,7 +27,6 @@ uses
   ,tiSQLMgrDataSet_Srv // This has to be used somewhere in the ap, and this is a good a place as any
   ,tiSQLMgrDataSet_BOM
   {$IFDEF FPC}
-  ,LResources
   ,LCLProc
   {$ENDIF}
   ,Grids
@@ -619,9 +618,6 @@ begin
 end;
 
 initialization
-  {$IFDEF FPC}
-  {$i FSQLMgrBrowse.lrs}
-  {$ENDIF}
   uSaveFileName := '' ;
 
 end.
