@@ -531,7 +531,7 @@ begin
             lClassAttr := lClassNode.Attributes.GetNamedItem('oid-type');
             if lClassAttr <> nil then
               begin
-                if lClassAttr.NodeValue = 'guid' then
+                if (lClassAttr.NodeValue = 'string') or (lClassAttr.NodeValue = 'guid') then
                   lNewClass.ClassMapping.OIDType := otString
                 else
                   lNewClass.ClassMapping.OIDType := otInt;
