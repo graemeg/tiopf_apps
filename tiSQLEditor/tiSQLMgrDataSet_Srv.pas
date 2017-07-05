@@ -177,9 +177,9 @@ var
   lRow  : TtiDataBufferRow ;
   lCell : TtiDataBufferCell ;
 begin
-  lRow := TtiDataBufferRow.Create ;
+  lRow := TtiDataBufferRow.Create(Query.FieldCount-1);
   FtiDataSet.Add( lRow ) ;
-  for i := 0 to Query.FieldCount - 1 do
+  for i := 0 to Query.FieldCount-1 do
   begin
     lCell := TtiDataBufferCell.Create ;
     lCell.ValueAsString := Query.FieldAsString[ Query.FieldName( i )] ;
