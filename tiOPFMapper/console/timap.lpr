@@ -1,7 +1,10 @@
 program timap;
 
 {$IFDEF FPC}
-{$mode objfpc}{$H+}
+  {$mode objfpc}{$H+}
+{$ENDIF}
+{$IFDEF WINDOWS}
+  {$apptype console}
 {$ENDIF}
 
 uses
