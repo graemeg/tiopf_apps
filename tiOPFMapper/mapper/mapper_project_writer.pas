@@ -1308,7 +1308,7 @@ begin
       if AClassDef.ClassMapping.OIDType = otString then
         WriteLine('Criteria.AddEqualTo(''' + AClassDef.ClassMapping.PKField + ''', AOID);', ASL)
       else
-        WriteLine('Criteria.AddEqualTo(' + AClassDef.ClassMapping.PKField + ', StrToInt(AOID));', ASL);
+        WriteLine('Criteria.AddEqualTo(''' + AClassDef.ClassMapping.PKField + ''', StrToInt(AOID));', ASL);
 
       WriteLine('Read;', ASL);
       WriteLine('result := Count;', ASL);
