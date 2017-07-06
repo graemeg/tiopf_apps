@@ -2341,11 +2341,12 @@ begin
   WriteLine('var', ASL);
     IncTab;
       WriteLine('lObj: ' + AClassDef.BaseClassName + ';', ASL);
-      WriteLine('lItemClass : '+AClassDef.BaseClassName+'Class = '+AClassDef.BaseClassName+';', ASL);
+      WriteLine('lItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
       WriteExtraVarsMaybe(ASL, AClassDef);
     DecTab;
   WriteLine('begin', ASL);
     IncTab;
+      WriteLine('lItemClass := '+AClassDef.BaseClassName+';', ASL);
       if AClassDef.AutoCreateListClass then
       begin
         WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
