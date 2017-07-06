@@ -36,7 +36,7 @@
 			<DCC_DebugInformation>false</DCC_DebugInformation>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
-			<DCC_UnitSearchPath>.\commands;.\controllers;.\views;.\models;..\..\..\mapper\;C:\devel\tiMVC;C:\devel\omnixml;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+			<DCC_UnitSearchPath>.\commands;.\controllers;.\views;.\models;..\..\..\mapper\;C:\devel\tiMVC\src;C:\devel\omnixml;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_DcuOutput>units</DCC_DcuOutput>
 			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
 			<DCC_MapFile>3</DCC_MapFile>
