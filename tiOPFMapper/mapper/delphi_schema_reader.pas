@@ -532,15 +532,6 @@ begin
             if lClassAttr <> nil then
               lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
 
-            lClassAttr := lClassNode.Attributes.GetNamedItem('oid-type');
-            if lClassAttr <> nil then
-              begin
-                if (lClassAttr.NodeValue = 'string') or (lClassAttr.NodeValue = 'guid') then
-                  lNewClass.ClassMapping.OIDType := otString
-                else
-                  lNewClass.ClassMapping.OIDType := otInt;
-              end;
-
             if lClassNode.SelectSingleNode('class-props') = nil then
               raise Exception.Create(ClassName + '.ReadUnitClasses: Class PrNode is not present.');
 
