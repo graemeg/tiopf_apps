@@ -26,6 +26,7 @@ type
     function    CreateSQLSelectList(AClassDef: TMapClassDef): string;
     function    ExtractBaseClassName(const AName: string): string;
     procedure   LoadXMLDoc(const AFile: string);
+    procedure   ReadProjectInfo;
     procedure   ReadProjectUnits(AUnitList: IXMLNodeList);
     procedure   ReadUnitClasses(AUnit: TMapUnitDef; ANode: IXMLNode);
     procedure   ReadUnitEnums(AUnit: TMapUnitDef; ANode: IXMLNode);
@@ -38,6 +39,7 @@ type
     constructor Create; override;
     destructor  Destroy; override;
   end;
+
 
   TProjectWriter = class(TBaseMapObject)
   protected
@@ -62,7 +64,6 @@ type
 
 implementation
 
-
 { TOmniXMLSchemaReader }
 
 constructor TOmniXMLSchemaReader.Create;
@@ -85,13 +86,12 @@ begin
     end;
 
   result := UpperCase(result);
-
 end;
 
 destructor TOmniXMLSchemaReader.Destroy;
 begin
   FXML := nil;
-  inherited;
+  inherited Destroy;
 end;
 
 function TOmniXMLSchemaReader.ExtractBaseClassName(const AName: string): string;
@@ -304,6 +304,10 @@ begin
           AClass.Validators.Add(lVal);
         end;
     end;
+end;
+
+procedure TOmniXMLSchemaReader.ReadProjectInfo;
+begin
 
 end;
 
@@ -311,12 +315,12 @@ procedure TOmniXMLSchemaReader.ReadProjectUnits(AUnitList: IXMLNodeList);
 var
   lUnitsList: IXMLNodeList;
   lCtr: Integer;
-  lNewUnit: TMapUnitDef;
+  lUnit: TMapUnitDef;
   lRefNodeList, lRefNode: IXMLNode;
   lRefCtr: integer;
   lUnitNode: IXMLNode;
+  lName: string;
 begin
-
   if AUnitList = nil then exit;
 
   for lCtr := 0 to AUnitList.Length - 1 do
@@ -324,10 +328,17 @@ begin
       lUnitNode := AUnitList.Item[lCtr];
       if lUnitNode.NodeType = ELEMENT_NODE then
         begin
-          lNewUnit := TMapUnitDef.Create;
-          lNewUnit.Name := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
-          ReadUnitEnums(lNewUnit, lUnitNode.SelectSingleNode('enums'));
-          ReadUnitClasses(lNewUnit, lUnitNode.SelectSingleNode('classes'));
+          lName := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
+          lUnit := TMapUnitDef(FProject.Units.FindByProps(['Name'], [lName]));
+          if lUnit = nil then
+            begin
+              lUnit := TMapUnitDef.Create;
+              lUnit.Name := lName;
+              FProject.Units.Add(lUnit);
+            end;
+
+          ReadUnitEnums(lUnit, lUnitNode.SelectSingleNode('enums'));
+          ReadUnitClasses(lUnit, lUnitNode.SelectSingleNode('classes'));
 
           // Reference (uses)
           lRefNodeList := lUnitNode.SelectSingleNode('references');
@@ -337,13 +348,11 @@ begin
                 begin
                   lRefNode := lRefNodeList.ChildNodes.Item[lRefCtr];
                   if lRefNodeList.NodeType = ELEMENT_NODE then
-                    lNewUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
+                    lUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
                 end;
             end;
-          FProject.Units.Add(lNewUnit);
         end;
     end;
-
 end;
 
 procedure TOmniXMLSchemaReader.ReadSchema(AProject: TMapProject;
