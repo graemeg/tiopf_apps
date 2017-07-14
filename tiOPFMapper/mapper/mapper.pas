@@ -668,7 +668,7 @@ type
   {: Converts AValType into its string equiv. }
   function  gValTypeToStr(const AValType: TValidatorType): string;
   {: Returns the absolute path of Source Path given Relative path. }
-  function  GetabsolutePath(Source, Relative: string): string;
+  function  GetAbsolutePath(Source, Relative: string): string;
   {: Converts a string representation to TOIDType. }
   function  gStrToOIDType(const AString: string): TOIDType;
 
@@ -793,7 +793,7 @@ begin
   end;
 end;
 
-function GetabsolutePath(Source, Relative: string): string;
+function GetAbsolutePath(Source, Relative: string): string;
 var
     i, Num, num1: integer;
     St: TStringList;
@@ -814,7 +814,13 @@ begin
     if Pos('\', Relative) > 0 then
       s := CopyRightNum('..\', Relative, 1)
     else
-      s := CopyRightNum('../', Relative, 1);
+    begin
+      if Pos('/', Relative) > 0 then
+        s := CopyRightNum('../', Relative, 1)
+      else
+        // if we got here it means the Relative value is simply a directory name with no slashes
+        s := PathDelim + Relative;
+    end;
 
     Result := Result + s;
     st.Free;
