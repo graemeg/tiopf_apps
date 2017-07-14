@@ -119,7 +119,7 @@ begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
       lNode := ANode.Item[lCtr];
-      if lNode.NodeType <> COMMENT_NODE then
+      if lNode.NodeType = ELEMENT_NODE then
         begin
           lMapPropNOde := lNode.Attributes.GetNamedItem('field');
           if lMapPropNode = nil then
@@ -193,7 +193,7 @@ begin
       begin
         if lPropAttr.NodeValue <> '' then
         begin
-          if (Copy(lPropAttr.NodeValue, 1,1) = 'T') and (Lowercase(lPropAttr.NodeValue) <> 'tdatetime') then
+          if (Copy(lPropAttr.NodeValue, 1,1) = 'T') and (LowerCase(lPropAttr.NodeValue) <> 'tdatetime') then
             lNewProp.PropertyType := ptEnum
           else
             lNewProp.PropertyType := gStrToPropType(lPropAttr.NodeValue);
@@ -309,7 +309,7 @@ begin
   for lCtr := 0 to AUnitList.Length - 1 do
     begin
       lUnitNode := AUnitList.Item[lCtr];
-      if lUnitNode.NodeType <> COMMENT_NODE then
+      if lUnitNode.NodeType = ELEMENT_NODE then
         begin
           lName := lUnitNode.Attributes.GetNamedItem('name').NodeValue;
           lUnit := TMapUnitDef(FProject.Units.FindByProps(['Name'], [lName]));
@@ -330,7 +330,8 @@ begin
               for lRefCtr := 0 to lRefNodeList.ChildNodes.Length - 1 do
                 begin
                   lRefNode := lRefNodeList.ChildNodes.Item[lRefCtr];
-                  lUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
+                  if lRefNodeList.NodeType = ELEMENT_NODE then
+                    lUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
                 end;
             end;
         end;
