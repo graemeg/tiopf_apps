@@ -304,7 +304,6 @@ var
   lUnitNode: TDomNode;
   lName: string;
 begin
-
   if AUnitList = nil then exit;
 
   for lCtr := 0 to AUnitList.Length - 1 do
@@ -354,15 +353,13 @@ var
   lPath: string;
 begin
   FProject := AProject;
-
-  FProject.Units.Clear;
-  FProject.Includes.Clear;
+  FProject.ClearAll;
 
   LoadXMLDoc(AFileName);
 
   lNode := FXML.DocumentElement;
   if lNode.Attributes.GetNamedItem('project-name') = nil then
-    raise Exception.Create(ClassName + '.ReadSchema: Missing <project-name> node.');
+    raise Exception.Create(ClassName + '.ReadSchema: Missing <project-name> attribute.');
 
   FProject.ProjectName := lNode.Attributes.GetNamedItem('project-name').NodeValue;
 
@@ -388,18 +385,18 @@ begin
       FProject.BaseDirectory := lPath;
     end;
 
-  if lNode.Attributes.GetNamedItem('outputdir') = nil then
+  lDirNode := lNode.Attributes.GetNamedItem('outputdir');
+  if lDirNode = nil then
     FProject.OrigOutDirectory := FProject.BaseDirectory
   else
-    FProject.OrigOutDirectory := lNode.Attributes.GetNamedItem('outputdir').NodeValue;
+    FProject.OrigOutDirectory := lDirNode.NodeValue;
 
   // Establish the Output directory, if present.
-  lDirNode := lNode.Attributes.GetNamedItem('outputdir');
   if lDirNode <> nil then
     begin
       if lDirNode.NodeValue <> '' then
         begin
-          lPath := GetabsolutePath(FProject.BaseDirectory, lNode.Attributes.GetNamedItem('outputdir').NodeValue);
+          lPath := GetAbsolutePath(FProject.BaseDirectory, lDirNode.NodeValue);
           FProject.OutputDirectory := lPath;
         end
       else
