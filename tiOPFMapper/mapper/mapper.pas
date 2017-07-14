@@ -685,8 +685,11 @@ var
   mSchemaReaderClass: TMapSchemaReaderClass;
 
 function  gStrToOIDType(const AString: string): TOIDType;
+var
+  s: string;
 begin
-  if LowerCase(AString) = 'string' then
+  s := LowerCase(AString);
+  if (s = 'string') or (s = 'guid') then
     Result := otString
   else
     Result := otInt;
