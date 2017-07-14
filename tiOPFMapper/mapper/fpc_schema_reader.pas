@@ -115,6 +115,7 @@ var
   lNewMapProp: TPropMapping;
   lLastGood: string;
   lAbstractValue: Boolean;
+  s: string;
 begin
   for lCtr := 0 to ANode.Length - 1 do
     begin
@@ -993,15 +994,12 @@ var
   lEnumEl: TDOMElement;
   lValuesEl: TDOMElement;
   lSingleValNode: TDOMElement;
-  lItemEl: TDOMElement;
   lCtr: integer;
   lItemCtr: integer;
   lEnum: TMapEnum;
   lEnumVal: TMapEnumValue;
-
 begin
   lEnumsNode := AUnitNode.FindNode('enums');
-
   for lCtr := 0 to AUnitDef.UnitEnums.Count - 1 do
     begin
       lEnum := AUnitDef.UnitEnums.Items[lCtr];
@@ -1020,7 +1018,6 @@ begin
           // Append to <values> node
           lValuesEl.AppendChild(lSingleValNode);
         end;
-
       lEnumsNode.AppendChild(lEnumEl);
     end;
 end;
