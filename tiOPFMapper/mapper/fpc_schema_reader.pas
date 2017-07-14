@@ -56,8 +56,8 @@ type
     procedure   WriteClassSelections(AClassDef: TMapClassDef; AClassNode: TDOMElement);
 
   public
-    procedure   WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string); virtual; overload;
-    procedure   WriteProject(Aproject: TMapProject; const AFilePath: string); virtual; overload;
+    procedure   WriteProject(AProject: TMapProject; const ADirectory: String; const AFileName: string); overload; virtual;
+    procedure   WriteProject(Aproject: TMapProject; const AFilePath: string); overload; virtual;
     destructor  Destroy; override;
   end;
 
@@ -70,8 +70,7 @@ begin
   inherited Create;
 end;
 
-function TFPCSchemaXMLReader.CreateSQLSelectList(AClassDef: TMapClassDef
-  ): string;
+function TFPCSchemaXMLReader.CreateSQLSelectList(AClassDef: TMapClassDef): string;
 var
   lCtr: integer;
   lPropMap: TPropMapping;
@@ -91,7 +90,6 @@ destructor TFPCSchemaXMLReader.Destroy;
 begin
   if FXML <>nil then
     FXML.Free;
-
   inherited Destroy;
 end;
 
@@ -108,8 +106,7 @@ begin
   ReadXMLFile(FXML, AFile);
 end;
 
-procedure TFPCSchemaXMLReader.ReadClassMapping(AClass: TMapClassDef;
-  ANode: TDomNodeList);
+procedure TFPCSchemaXMLReader.ReadClassMapping(AClass: TMapClassDef; ANode: TDomNodeList);
 var
   lCtr: integer;
   lNode: TDomNode;
