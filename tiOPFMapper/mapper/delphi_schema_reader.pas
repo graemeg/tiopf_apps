@@ -355,8 +355,7 @@ begin
     end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadSchema(AProject: TMapProject;
-  const AFileName: string);
+procedure TOmniXMLSchemaReader.ReadSchema(AProject: TMapProject; const AFileName: string);
 var
   lNode: IXMLNode;
   lNodeList: IXMLNodeList;
@@ -376,8 +375,10 @@ begin
   LoadXMLDoc(AFileName);
 
   lNode := FXML.DocumentElement;
-  lAttr := lNode.Attributes.GetNamedItem('project-name');
-  FProject.ProjectName := lAttr.NodeValue;
+  if lNode.Attributes.GetNamedItem('project-name') = nil then
+    raise Exception.Create(ClassName + '.ReadSchema: Missing <project-name> attribute.');
+
+  FProject.ProjectName := lNode.Attributes.GetNamedItem('project-name').NodeValue;
 
   // Establish the base directory
   lDirNode := lNode.Attributes.GetNamedItem('base-directory');
@@ -386,21 +387,33 @@ begin
       if lDirNode.NodeValue <> '' then
         FProject.BaseDirectory := lNode.Attributes.GetNamedItem('base-directory').NodeValue
       else
-        FProject.BaseDirectory := ExtractFileDir(AFileName);
+      begin
+        lPath := ExtractFileDir(AFileName);
+        if lPath = '' then  // means only the filename was passed in, without any path details
+          lPath := GetCurrentDir;
+        FProject.BaseDirectory := lPath;
+      end;
     end
   else
     begin
-      FProject.BaseDirectory := ExtractFileDir(AFileName);
+      lPath := ExtractFileDir(AFileName);
+      if lPath = '' then  // means only the filename was passed in, without any path details
+        lPath := GetCurrentDir;
+      FProject.BaseDirectory := lPath;
     end;
 
-  // Establish the Output directory, if present.
   lDirNode := lNode.Attributes.GetNamedItem('outputdir');
+  if lDirNode = nil then
+    FProject.OrigOutDirectory := FProject.BaseDirectory
+  else
+    FProject.OrigOutDirectory := lDirNode.NodeValue;
+
+  // Establish the Output directory, if present.
   if lDirNode <> nil then
     begin
       if lDirNode.NodeValue <> '' then
         begin
-          lPath := GetabsolutePath(FProject.BaseDirectory, lNode.Attributes.GetNamedItem('outputdir').NodeValue);
-          FProject.OrigOutDirectory := lNode.Attributes.GetNamedItem('outputdir').NodeValue;
+          lPath := GetAbsolutePath(FProject.BaseDirectory, lDirNode.NodeValue);
           FProject.OutputDirectory := lPath;
         end
       else
@@ -410,9 +423,6 @@ begin
     begin
       FProject.OutputDirectory := FProject.BaseDirectory;
     end;
-
-
-  lIncPath := FProject.OutputDirectory;
 
   lAttr := lNode.Attributes.GetNamedItem('tab-spaces');
   if lAttr <> nil then
@@ -517,7 +527,7 @@ begin
             lNewClass := TMapClassDef.Create;
 
             lClassAttr := lClassNode.Attributes.GetNamedItem('def-type');
-            if lClassAttr <>nil then
+            if lClassAttr <> nil then
               lNewClass.DefType := gStrToClassDefType(lClassAttr.NodeValue)
             else
               lNewClass.DefType := dtReference;
