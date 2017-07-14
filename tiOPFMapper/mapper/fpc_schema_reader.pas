@@ -557,15 +557,6 @@ begin
             if lClassAttr <> nil then
               lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
 
-            lClassAttr := lClassNode.Attributes.GetNamedItem('oid-type');
-            if lClassAttr <> nil then
-              begin
-                if (lClassAttr.NodeValue = 'string') or (lClassAttr.NodeValue = 'guid')  then
-                  lNewClass.ClassMapping.OIDType := otString
-                else
-                  lNewClass.ClassMapping.OIDType := otInt;
-              end;
-
             if lClassNode.FindNode('class-props') = nil then
               raise Exception.Create(ClassName + '.ReadUnitClasses: "class-props" node is not present.');
 
@@ -579,6 +570,7 @@ begin
                 lNewClass.ClassMapping.PKName := lClassMapNode.Attributes.GetNamedItem('pk').NodeValue;
                 lNewClass.ClassMapping.TableName := lClassMapNode.Attributes.GetNamedItem('table').NodeValue;
                 lNewClass.ClassMapping.PKField := lClassMapNode.Attributes.GetNamedItem('pk-field').NodeValue;
+                lNewClass.ClassMapping.OIDType := gStrToOIDType(lClassMapNode.Attributes.GetNamedItem('oid-type').NodeValue);
                 lClassMappings := lClassMapNode.ChildNodes;
 
                 if lClassMappings <> nil then
