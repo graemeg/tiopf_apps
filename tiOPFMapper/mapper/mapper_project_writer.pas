@@ -1537,8 +1537,8 @@ var
   lSL: TStringList;
   lUnit: TMapUnitDef;
 begin
-
   BaseDir := ADirectory;
+  tiForceDirectories1(BaseDir);
 
   lSL := TStringList.create;
   try
@@ -1554,14 +1554,13 @@ begin
   end;
 end;
 
-procedure TMapperProjectWriter.WriteProject(const ADirectory: string;
-  ASL: TStringList);
+procedure TMapperProjectWriter.WriteProject(const ADirectory: string; ASL: TStringList);
 var
   lCtr: Integer;
   lUnit: TMapUnitDef;
 begin
-
   BaseDir := ADirectory;
+  tiForceDirectories1(BaseDir);
 
   for lCtr := 0 to Project.Units.Count - 1 do
     begin
@@ -1574,7 +1573,6 @@ begin
       WriteUnit(lUnit, ASL);
       ASL.SaveToFile(BaseDir + PathDelim + lUnit.Name + '.pas');
     end;
-
 end;
 
 procedure TMapperProjectWriter.WritePropGetter(ASL: TStringList;
