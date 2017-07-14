@@ -140,13 +140,15 @@ begin
             lNewMapProp.PropertySetter := lMapPropNode.NodeValue;
           lMapPropNode := lNode.Attributes.GetNamedItem('abstract');
           if Assigned(lMapPropNode) then
-            case LowerCase(lMapPropNode.NodeValue) of
-              'false','0','no': lAbstractValue:=False;
+          begin
+            s := LowerCase(lMapPropNode.NodeValue);
+            if (s = 'false') or (s = '0') or (s = 'no') then
+              lAbstractValue := False
             else
-              lAbstractValue:=True;
-            end
+              lAbstractValue := True;
+          end
           else
-            lAbstractValue:=True;
+            lAbstractValue := True;
           lNewMapProp.PropertyAccessorsAreAbstract := lAbstractValue;
 
           lLastGood := lNewMapProp.PropName;
