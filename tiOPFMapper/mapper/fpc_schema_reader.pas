@@ -407,8 +407,6 @@ begin
       FProject.OutputDirectory := FProject.BaseDirectory;
     end;
 
-  lIncPath := FProject.OutputDirectory;
-
   lAttr := lNode.Attributes.GetNamedItem('tab-spaces');
   if lAttr <> nil then
     FProject.TabSpaces := StrToInt(lAttr.NodeValue)
