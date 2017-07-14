@@ -124,8 +124,8 @@ begin
           lMapPropNOde := lNode.Attributes.GetNamedItem('field');
           if lMapPropNode = nil then
             begin
-              WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
-              Raise Exception.Create(ClassName + '.ReadClassMapping: Mapping node Attribute "field" not found ' +
+              //WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
+              raise Exception.Create(ClassName + '.ReadClassMapping: Mapping node Attribute "field" not found ' +
                 'reading schema for ' + AClass.BaseClassName);
             end;
 

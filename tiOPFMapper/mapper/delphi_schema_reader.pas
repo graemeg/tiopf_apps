@@ -129,12 +129,12 @@ begin
 
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassMapping(AClass: TMapClassDef;
-  ANode: IXMLNodeList);
+procedure TOmniXMLSchemaReader.ReadClassMapping(AClass: TMapClassDef; ANode: IXMLNodeList);
 var
   lCtr: integer;
   lNode: IXMLNode;
   lMapNode: IXMLNode;
+  lMapPropNode: IXMLNode;
   lNewMapProp: TPropMapping;
 begin
   for lCtr := 0 to ANode.Length - 1 do
@@ -142,24 +142,27 @@ begin
       lNode := ANode.Item[lCtr];
       if lNode.NodeType = ELEMENT_NODE then
         begin
+          lMapPropNOde := lNode.Attributes.GetNamedItem('field');
+          if lMapPropNode = nil then
+            begin
+              //WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
+              raise Exception.Create(ClassName + '.ReadClassMapping: Mapping node Attribute "field" not found ' +
+                'reading schema for ' + AClass.BaseClassName);
+            end;
+
           lNewMapProp := TPropMapping.create;
           lNewMapProp.FieldName := lNode.Attributes.GetNamedItem('field').NodeValue;
           lNewMapProp.PropName := lNode.Attributes.GetNamedItem('prop').NodeValue;
 
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
-            begin
-              lNewMapProp.PropertyType := gStrToPropType('string');
-            end
+            lNewMapProp.PropertyType := gStrToPropType('string')
           else
-            begin
-              lNewMapProp.PropertyType := gStrToPropType(lNode.Attributes.GetNamedItem('type').NodeValue);
-            end;
+            lNewMapProp.PropertyType := gStrToPropType(lMapNode.NodeValue);
 
           AClass.ClassMapping.PropMappings.Add(lNewMapProp);
         end;
     end;
-
 end;
 
 procedure TOmniXMLSchemaReader.ReadClassProps(AClass: TMapClassDef;
