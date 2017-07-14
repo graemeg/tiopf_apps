@@ -71,8 +71,7 @@ begin
   inherited Create;
 end;
 
-function TOmniXMLSchemaReader.CreateSQLSelectList(
-  AClassDef: TMapClassDef): string;
+function TOmniXMLSchemaReader.CreateSQLSelectList(AClassDef: TMapClassDef): string;
 var
   lCtr: integer;
   lPropMap: TPropMapping;
@@ -244,13 +243,13 @@ begin
 
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassValidators(AClass: TMapClassDef;
-  ANode: IXMLNode);
+procedure TOmniXMLSchemaReader.ReadClassValidators(AClass: TMapClassDef; ANode: IXMLNode);
 var
   lCtr: Integer;
   lVal: TMapValidator;
   lValNode: IXMLNode;
   lValueNode: IXMLNode;
+  lTypeNode: IXMLNode;
   lProp: TMapClassProp;
   lValStr: string;
   lTempStr: string;
@@ -265,42 +264,42 @@ begin
       if lValNode.NodeType = ELEMENT_NODE then
         begin
           lVal := TMapValidator.Create;
-          lVal.ValidatorType := gStrToValType(lValNode.Attributes.GetNamedItem('type').NodeValue);
+          // Get validator type.  "required" is the default.
+          lTypeNode := lValNode.Attributes.GetNamedItem('type');
+          if lTypeNode <> nil then
+            lVal.ValidatorType := gStrToValType(lTypeNode.NodeValue)
+          else
+            lVal.ValidatorType := vtRequired;
+
           lVal.ClassProp := lValNode.Attributes.GetNamedItem('prop').NodeValue;
           lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
               lProp := TMapClassProp(AClass.ClassProps.FindByProps(['Name'], [lVal.ClassProp]));
+              if lProp = nil then
+                raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lVal.ClassProp +'"');
               lTempStr := lProp.Name;
               lType := lProp.PropertyType;
-              if lProp = nil then
-                raise Exception.Create('No register property in class "' + AClass.BaseClassName + '" found with name ' +
-                  lVal.ClassProp);
 
-                lValueNode := lValNode.SelectSingleNode('value');
-
-                if lValueNode <> nil then
-                  begin
-                    lValStr := lValueNode.Text;
-
-                    case lProp.PropertyType of
-                      ptAnsiString, ptString:
-                        lVal.Value := lValStr;
-                      ptBoolean:
-                        lVal.Value := StrtoBool(lValStr);
-                      ptInt64, ptInteger:
-                        lVal.Value := StrToInt(lValStr);
-                      ptDateTime:
-                        //lVal.Value := tiIntlDateStorAsDateTime(lValStr);
-                        lVal.Value := StrToDateTime(lValStr);
-                      ptEnum:;
-                      ptDouble, ptSingle, ptCurrency:
-                        lVal.Value := StrToFloat(lValStr);
-                    end;
+              lValueNode := lValNode.SelectSingleNode('value');
+              if lValueNode <> nil then
+                begin
+                  lValStr := lValueNode.Text;
+                  case lProp.PropertyType of
+                    ptAnsiString, ptString:
+                      lVal.Value := lValStr;
+                    ptBoolean:
+                      lVal.Value := StrtoBool(lValStr);
+                    ptInt64, ptInteger:
+                      lVal.Value := StrToInt(lValStr);
+                    ptDateTime:
+                      lVal.Value := tiIntlDateStorAsDateTime(lValStr);
+                    ptEnum:;
+                    ptDouble, ptCurrency, ptSingle:
+                      lVal.Value := StrToFloat(lValStr);
                   end;
-
+                end;
             end;
-
           AClass.Validators.Add(lVal);
         end;
     end;
