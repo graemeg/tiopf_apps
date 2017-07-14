@@ -251,7 +251,7 @@ begin
           // Get validator type.  "required" is the default.
           lTypeNode := lValNode.Attributes.GetNamedItem('type');
           if lTypeNode <> nil then
-            lVal.ValidatorType := gStrToValType(lValNode.Attributes.GetNamedItem('type').NodeValue)
+            lVal.ValidatorType := gStrToValType(lTypeNode.NodeValue)
           else
             lVal.ValidatorType := vtRequired;
 
@@ -268,7 +268,7 @@ begin
               lValueNode := lValNode.ChildNodes.Item[0];
               if lValueNode <> nil then
                 begin
-                  lValStr := lValNode.ChildNodes.Item[0].TextContent;
+                  lValStr := lValueNode.TextContent;
                   case lProp.PropertyType of
                     ptAnsiString, ptString:
                       lVal.Value := lValStr;
