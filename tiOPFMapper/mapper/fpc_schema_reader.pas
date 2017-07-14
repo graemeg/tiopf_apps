@@ -35,7 +35,7 @@ type
   public
     procedure   ReadSchema(AProject: TMapProject; const AFileName: string = ''); overload; override;
     procedure   WriteAll; override;
-    constructor Create;
+    constructor Create; override;
     destructor  Destroy; override;
   end;
 
@@ -67,7 +67,7 @@ implementation
 
 constructor TFPCSchemaXMLReader.Create;
 begin
-
+  inherited Create;
 end;
 
 function TFPCSchemaXMLReader.CreateSQLSelectList(AClassDef: TMapClassDef
@@ -75,7 +75,6 @@ function TFPCSchemaXMLReader.CreateSQLSelectList(AClassDef: TMapClassDef
 var
   lCtr: integer;
   lPropMap: TPropMapping;
-  lMapping: TClassMapping;
 begin
   result := AClassDef.ClassMapping.TableName + '.OID ';
 
