@@ -346,7 +346,7 @@ begin
               for lRefCtr := 0 to lRefNodeList.ChildNodes.Length - 1 do
                 begin
                   lRefNode := lRefNodeList.ChildNodes.Item[lRefCtr];
-                  if lRefNodeList.NodeType = ELEMENT_NODE then
+                  if lRefNode.NodeType = ELEMENT_NODE then
                     lUnit.References.Add(lRefNode.Attributes.GetNamedItem('name').NodeValue);
                 end;
             end;
