@@ -3,20 +3,25 @@ program timap;
 {$IFDEF FPC}
   {$mode objfpc}{$H+}
 {$ENDIF}
-{$IFDEF WINDOWS}
+{$IFDEF MSWINDOWS}
   {$apptype console}
 {$ENDIF}
 
 uses
-  {$IFDEF UNIX}
-  cthreads,
-  {$ENDIF}
-  Classes, SysUtils, CustApp, mapper, fpc_schema_writer,
-  mapper_project_writer, fpc_schema_reader;
+  Classes,
+  SysUtils,
+  mapper,
+  {$ifdef FPC}
+  custapp,
+  fpc_schema_reader,
+  {$endif}
+  {$ifndef FPC}
+  delphi_custom_app,
+  delphi_schema_reader,
+  {$endif}
+  mapper_project_writer;
 
 type
-
-  { TMapperCmd }
 
   TMapperCmd = class(TCustomApplication)
   protected
@@ -44,7 +49,7 @@ var
   lProj: TMapProject;
   lPath: string;
   lSL: TStringList;
-  lProjWriter: TProjectWriter;
+//  lProjWriter: TProjectWriter;
 begin
   if (ParamCount = 0) or HasOption('h','help') then
   begin
@@ -64,13 +69,11 @@ begin
   lProj := TMapProject.Create;
   lRead := gGetSchemaReaderClass.Create;
   try
-
     lPath := GetOptionValue('f', 'file');
     lRead.ReadSchema(lProj, lPath);
     lWriter := TMapperProjectWriter.Create(lProj);
     lSL := TStringList.create;
     try
-
       WriteLn('');
 
       if HasOption('v', '-verbose') then
@@ -178,13 +181,13 @@ begin
 
 end;
 
+
+
 var
   Application: TMapperCmd;
-
 begin
   Application:=TMapperCmd.Create(nil);
   Application.Title:='TtiMapper';
   Application.Run;
   Application.Free;
 end.
-

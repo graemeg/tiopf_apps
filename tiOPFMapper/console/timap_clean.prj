@@ -1,5 +1,5 @@
 [projectoptions]
-mainfile=timap.lpr
+mainfile=timap.pas
 targetfile=timap${EXEEXT}
 messageoutputfile=
 makecommand=${COMPILER}
