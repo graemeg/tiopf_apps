@@ -1961,8 +1961,7 @@ begin
   FEnumType:=AValue;
 end;
 
-procedure TtiMapParameterListReadVisitor.SetObjClass(const AValue: TtiObjectClass
-  );
+procedure TtiMapParameterListReadVisitor.SetObjClass(const AValue: TtiObjectClass);
 begin
   if FObjClass=AValue then exit;
   FObjClass:=AValue;
@@ -1981,10 +1980,9 @@ var
   lList: TtiMappedFilteredObjectList;
   lProp: TMapClassProp;
 begin
-
   inherited SetupParams;
-  exit;
 
+(*
   lList := TtiMappedFilteredObjectList(Visited);
 
   for lCtr := 0 to lList.Params.Count - 1 do
@@ -1992,28 +1990,38 @@ begin
       lParam := lList.Params.Items[lCtr];
 
       case lParam.ParamType of
-        ptString, ptAnsiString:
+        ptString,
+        ptAnsiString:
           Query.ParamAsString[lParam.SQLParamName] := lParam.Value;
+
         ptBoolean:
           Query.ParamAsBoolean[lParam.SQLParamName] := lParam.Value;
+
         ptDateTime:
           Query.ParamAsDateTime[lParam.SQLParamName] := lParam.Value;
-        ptDouble, ptCurrency, ptSingle:
+
+        ptDouble,
+        ptCurrency,
+        ptSingle:
           Query.ParamAsFloat[lParam.SQLParamName] := lParam.Value;
-        ptInt64, ptInteger:
+
+        ptInt64,
+        ptInteger:
           Query.ParamAsInteger[lParam.SQLParamName] := lParam.Value;
+
         ptEnum:
           begin
             if lList.EnumType = etString then
-              begin
-                Query.ParamAsString[lParam.SQLParamName] := GetEnumName(TypeInfo(TMapPropType), Integer(lParam.Value));
-              end
+              Query.ParamAsString[lParam.SQLParamName] := GetEnumName(TypeInfo(TMapPropType), Integer(lParam.Value))
             else
               Query.ParamAsInteger[lParam.SQLParamName] := Integer(lParam.Value);
           end;
-        ptStream: Query.AssignParamFromStream(lParam.SQLParamName, TStream(NativeUInt(lParam.Value)));
+
+        ptStream:
+          Query.AssignParamFromStream(lParam.SQLParamName, TStream(lParam.Value));
       end;
     end;
+*)
 end;
 
 { TtiMappedFilteredObjectList }
