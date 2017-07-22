@@ -496,7 +496,7 @@ type
     property    BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
     property    Crud: string read FCrud write SetCrud;
     property    DefType: TClassDefType read FDefType write SetDefType;
-    property    FowardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
+    property    ForwardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
     property    ORMClassName: string read FORMClassName write SetORMClassName;
     property    NotifyObserversOfPropertyChanges: boolean read FNotifyObserversOfPropertyChanges write SetNotifyObserversOfPropertyChanges default False;
   end;
