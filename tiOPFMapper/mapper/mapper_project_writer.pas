@@ -2153,7 +2153,7 @@ begin
   WriteLine('function ' + AClassDef.BaseClassName + '_Read.AcceptVisitor: Boolean;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and ((Visited.ObjectState = posPK) OR (Visited.ObjectState = posClean));', ASL);
+      WriteLine('result := (Visited is ' + AClassDef.BaseClassName + ') and ((Visited.ObjectState = posPK) OR (Visited.ObjectState = posEmpty));', ASL);
       WriteLine('Log([ClassName, Visited.ClassName, Visited.ObjectStateAsString, Result], lsAcceptVisitor);', ASL);
     DecTab;
   WriteLine('end;', ASL);
