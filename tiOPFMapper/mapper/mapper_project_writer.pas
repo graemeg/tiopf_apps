@@ -2249,8 +2249,7 @@ begin
   WriteBreak(ASL);
 end;
 
-procedure TMapperProjectWriter.WriteVisListReadIntf(ASL: TStringList;
-  AClassDef: TMapClassDef);
+procedure TMapperProjectWriter.WriteVisListReadIntf(ASL: TStringList; AClassDef: TMapClassDef);
 begin
   if not AClassDef.AutoCreateListClass then
     exit;
@@ -2265,15 +2264,11 @@ begin
       WriteLine('procedure   MapRowToObject; override;', ASL);
     DecTab;
   WriteLine('end;', ASL);
-
   WriteBreak(ASL);
-
 end;
 
-procedure TMapperProjectWriter.WriteVisListReadImp(ASL: TStringList;
-  AClassDef: TMapClassDef);
+procedure TMapperProjectWriter.WriteVisListReadImp(ASL: TStringList; AClassDef: TMapClassDef);
 begin
-
   if not AClassDef.AutoCreateListClass then
     exit;
 
