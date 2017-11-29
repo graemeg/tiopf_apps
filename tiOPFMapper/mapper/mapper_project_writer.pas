@@ -634,6 +634,7 @@ begin
             ptCurrency: lParamStr := 'ptCurrency';
             ptInt64, ptInteger: lParamStr := 'ptInteger';
             ptEnum: lParamStr := 'ptEnum';
+            ptEnumSet: lParamStr := 'ptEnumSet';
             ptStream: lParamStr := 'ptStream';
           end;
 
@@ -744,7 +745,7 @@ begin
       else
         lParamSig := '(';
 
-      if lParam.ParamType = ptEnum then
+      if lParam.ParamType in [ptEnum, ptEnumSet] then
         lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName
       else
         lParamSig := lParamSig + lParam.PassBy + ' ' + lParam.ParamName + ': ' + lParam.ParamTypeName;
@@ -1360,6 +1361,8 @@ begin
             end
           else
             WriteLine('tiSetProperty(lObj, ''' + lPropMap.PropName + ''', Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
+        ptEnumSet:
+          WriteLine('SetSetProp(lObj, ''' + lPropMap.PropName + ''',  Query.FieldAsString[''' + lPropMap.FieldName + ''']);', ASL);
         ptDateTime:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsDatetime[''' + lPropMap.FieldName + '''];', ASL);
         ptDouble, ptCurrency, ptSingle:
@@ -1423,6 +1426,8 @@ begin
             end
           else
             WriteLine('tiSetProperty(lObj, ''' + lPropMap.PropName + ''', Query.FieldAsString[''' + lPropMap.FieldName + '''];', ASL);
+        ptEnumSet:
+          WriteLine('SetSetProp(lObj, ''' + lPropMap.PropName + ''',  Query.FieldAsString[''' + lPropMap.FieldName + ''']);', ASL);
         ptDateTime:
           WriteLine('lObj.' + lPropMap.PropName + ' := Query.FieldAsDatetime[''' + lPropMap.FieldName + '''];', ASL);
         ptDouble, ptCurrency, ptSingle:
@@ -1669,6 +1674,11 @@ begin
           else
             WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
             'tiGetProperty(lObj, ''' + lPropMap.PropName + ''');', ASL);
+        ptEnumSet:
+          begin
+            WriteLine('Query.ParamAsString[''' + lPropMap.FieldName + '''] := ' +
+            'GetSetProp(lObj, ''' + lPropMap.PropName + ''');', ASL);
+          end;
         ptDateTime:
           WriteLine('Query.ParamAsDateTime[''' + lPropMap.FieldName + '''] := ' +
           'lObj.' + lPropMap.PropName + ';', ASL);
@@ -1825,6 +1835,9 @@ begin
     lTemp := lTemp + lValues + ');';
 
     WriteLine(lTemp + sLineBreak, ASL);
+
+    if AEnumDef.EnumSetName <> '' then
+      WriteLine(Format('%s = set of %s;'+sLineBreak, [AEnumDef.EnumSetName, AEnumDef.EnumName]), ASL);
 
   finally;
     IncTab(-1);

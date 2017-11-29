@@ -51,7 +51,7 @@ type
 
   {: Type of class property. }
   TMapPropType = (ptString, ptAnsiString, ptDouble, ptSingle, ptCurrency, ptInteger, ptInt64,
-    ptDateTime, ptBoolean, ptEnum, ptStream);
+    ptDateTime, ptBoolean, ptEnum, ptEnumSet, ptStream);
 
   {: Type of class definition to create. }
   TClassDefType = (dtCreate, dtReference);
@@ -220,10 +220,13 @@ type
   TMapEnum = class(TBaseMapObject)
   private
     FEnumName: string;
+    FEnumSetName: string;
     FValues: TMapEnumValueList;
     procedure SetEnumName(const AValue: string);
+    procedure SetEnumSetName(const AValue: string);
     procedure SetValues(const AValue: TMapEnumValueList);
   published
+    property    EnumSetName: String read FEnumSetName write SetEnumSetName;
     property    EnumName: string read FEnumName write SetEnumName;
   public
     property    Values: TMapEnumValueList read FValues write SetValues;
@@ -877,6 +880,8 @@ begin
     result := ptBoolean
   else if lType = 'enum' then
     result := ptEnum
+  else if lType = 'enumset' then
+    result := ptEnumSet
   else if lType = 'currency' then
     result := ptCurrency
   else if lType = 'double' then
@@ -903,6 +908,7 @@ begin
     ptDouble: result := 'Double';
     ptCurrency: result := 'Currency';
     ptEnum: result := 'enum';
+    ptEnumSet: result := 'enumset';
     ptStream: result := 'blob';
   end;
 end;
@@ -1288,6 +1294,13 @@ begin
   if FEnumName=AValue then exit;
   FEnumName:=AValue;
 end;
+
+procedure TMapEnum.SetEnumSetName(const AValue: string);
+begin
+  if FEnumSetName=AValue then exit;
+  FEnumSetName:=AValue;
+end;
+
 
 procedure TMapEnum.SetValues(const AValue: TMapEnumValueList);
 begin
