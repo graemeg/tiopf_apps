@@ -553,6 +553,12 @@ begin
             else
               lNewClass.AutoCreateListClass := true;
 
+            lClassAttr := lClassNode.Attributes.GetNamedItem('list-saves-database-name');
+            if lClassAttr <> nil then
+              lNewClass.ListSavesDatabaseName := StrToBool(lClassAttr.NodeValue)
+            else
+              lNewClass.ListSavesDatabaseName := true;
+
             lClassAttr := lClassNode.Attributes.GetNamedItem('notify-observers');
             if lClassAttr <> nil then
               lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
@@ -945,6 +951,7 @@ begin
   lNewClassNode.SetAttribute('base-class-parent', AClassDef.BaseClassParent);
   lNewClassNode.SetAttribute('auto-map', LowerCase(BoolToStr(AClassDef.AutoMap, true)));
   lNewClassNode.SetAttribute('auto-create-list', LowerCase(BoolToStr(AClassDef.AutoCreateListClass, true)));
+  lNewClassNode.SetAttribute('list-saves-database-name', LowerCase(BoolToStr(AClassDef.ListSavesDatabaseName, true)));
 
   WriteClassProps(AClassDef, lNewClassNode);
   WriteClassValidators(AClassDef, lNewClassNode);

@@ -471,6 +471,7 @@ type
     FCrud: string;
     FDefType: TClassDefType;
     FForwardDeclare: boolean;
+    FListSavesDatabaseName: boolean;
     FNotifyObserversOfPropertyChanges: boolean;
     FORMClassName: string;
     FSelections: TClassMappingSelectList;
@@ -485,6 +486,7 @@ type
     procedure SetCrud(const AValue: string);
     procedure SetDefType(const AValue: TClassDefType);
     procedure SetForwardDeclare(const AValue: boolean);
+    procedure SetListSavesDatabaseName(const AValue: boolean);
     procedure SetNotifyObserversOfPropertyChanges(const AValue: boolean);
     procedure SetORMClassName(const AValue: string);
   public
@@ -506,6 +508,7 @@ type
     property    Crud: string read FCrud write SetCrud;
     property    DefType: TClassDefType read FDefType write SetDefType;
     property    ForwardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
+    property    ListSavesDatabaseName: boolean read FListSavesDatabaseName write SetListSavesDatabaseName;
     property    ORMClassName: string read FORMClassName write SetORMClassName;
     property    NotifyObserversOfPropertyChanges: boolean read FNotifyObserversOfPropertyChanges write SetNotifyObserversOfPropertyChanges default False;
   end;
@@ -1387,6 +1390,12 @@ procedure TMapClassDef.SetForwardDeclare(const AValue: boolean);
 begin
   if FForwardDeclare=AValue then exit;
   FForwardDeclare:=AValue;
+end;
+
+procedure TMapClassDef.SetListSavesDatabaseName(const AValue: boolean);
+begin
+  if FListSavesDatabaseName=AValue then exit;
+  FListSavesDatabaseName:=AValue;
 end;
 
 procedure TMapClassDef.SetNotifyObserversOfPropertyChanges(const AValue: boolean);

@@ -500,12 +500,34 @@ end;
 procedure TMapperProjectWriter.WriteClassImpReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
 var
   lBaseClassName: string;
+  lBaseListClassName: string;
 begin
   lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
+  lBaseListClassName := AClassDef.BaseClassName+'List';
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + ''', self);', ASL);
+      if AClassDef.AutoCreateListClass and AClassDef.ListSavesDatabaseName then
+        begin
+          WriteLine('if Assigned(Owner) and Owner.InheritsFrom('+lBaseListClassName+') then', ASL);
+          IncTab;
+            WriteLine('Read('+lBaseListClassName+'(Owner).F_DBConnectionName, '+lBaseListClassName+'(Owner).F_PersistenceLayerName)', ASL);
+          DecTab;
+          WriteLine('else', ASL);
+          IncTab;
+            WriteLine('Read('''', '''');', ASL);
+          DecTab;
+        end
+      else
+        WriteLine('Read('''', '''');', ASL);
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
+
+  WriteLine('procedure ' + AClassDef.BaseClassName + '.Read(const ADBConnectionName: string; APersistenceLayerName: string);', ASL);
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + ''', self, ADBConnectionName, APersistenceLayerName);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -514,12 +536,34 @@ end;
 procedure TMapperProjectWriter.WriteClassImpSaveMethod(ASL: TStringList; AClassDef: TmapClassDef);
 var
   lBaseClassName: string;
+  lBaseListClassName: string;
 begin
   lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
+  lBaseListClassName := AClassDef.BaseClassName+'List';
   WriteLine('procedure ' + AClassDef.BaseClassName + '.Save;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self);', ASL);
+      if AClassDef.AutoCreateListClass and AClassDef.ListSavesDatabaseName then
+        begin
+          WriteLine('if Assigned(Owner) and Owner.InheritsFrom('+lBaseListClassName+') then', ASL);
+          IncTab;
+            WriteLine('Save('+lBaseListClassName+'(Owner).F_DBConnectionName, '+lBaseListClassName+'(Owner).F_PersistenceLayerName)', ASL);
+          DecTab;
+          WriteLine('else', ASL);
+          IncTab;
+            WriteLine('Save('''', '''');', ASL);
+          DecTab;
+        end
+      else
+        WriteLine('Save('''', '''');', ASL);
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
+
+  WriteLine('procedure ' + AClassDef.BaseClassName + '.Save(const ADBConnectionName: string; APersistenceLayerName: string);', ASL);
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self, ADBConnectionName, APersistenceLayerName);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -570,12 +614,14 @@ procedure TMapperProjectWriter.WriteClassIntfReadMethod(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
   WriteLine('procedure   Read; override;', ASL);
+  WriteLine('procedure   Read(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteClassIntfSaveMethod(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
   WriteLine('procedure   Save; override;', ASL);
+  WriteLine('procedure   Save(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteClassListSelectMethodImp(ASL: TStringList;
@@ -670,8 +716,10 @@ begin
           end;
         DecTab;
 
-
-      WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self);', ASL);
+      if AClassDef.ListSavesDatabaseName then
+        WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self, F_DBConnectionName, F_PersistenceLayerName);', ASL)
+      else
+        WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self);', ASL);
       WriteLine('result := self.Count;', ASL);
 
     DecTab;
@@ -1027,6 +1075,17 @@ begin
                   end;
 
               end;
+            ptEnumSet:
+              begin
+                  begin
+                    WriteLine('begin', ASL);
+                      IncTab;
+                        WriteLine('Query.ParamAsString[''' + lParam.ParamName + '''] := '''+ lParam.Value+''';', ASL);
+                      DecTab;
+                    WriteLine('end;', ASL);
+                  end;
+
+              end;
             ptStream:
               begin
                 lNeedsHelper := LowerCase(lParam.ParamTypeName) <> 'tstream';
@@ -1203,6 +1262,11 @@ begin
         DecTab;
       WriteLine('protected', ASL);
         IncTab;
+          if AClassDef.ListSavesDatabaseName then
+            begin
+              WriteLine('F_DBConnectionName: string;', ASL);
+              WriteLine('F_PersistenceLayerName: string;', ASL);
+            end;
           WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
           writeLine('function    GetItems(i: integer): ' + AClassDef.BaseClassName + '; reintroduce;', ASL);
         DecTab;
@@ -1212,7 +1276,14 @@ begin
           WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
           WriteLine('procedure   Read; override;', ASL);
           WriteLine('procedure   Save; override;', ASL);
+          WriteLine('procedure   Read(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
+          WriteLine('procedure   Save(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
           WriteLine('class property ItemClass: '+AClassDef.BaseClassName+'Class read FItemClass write FItemClass;', ASL);
+          if AClassDef.ListSavesDatabaseName then
+            begin
+              WriteLine('constructor CreateNew(const AOwner: TtiObject; const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
+              WriteLine('constructor CreateNew(const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
+            end;
           WriteLine('{ Return count (1) if successful. }', ASL);
           WriteLine('function    FindByOID(const AOID: string): integer;', ASL);
           WriteClassSelectsInf(ASL, AClassDef);
@@ -1257,7 +1328,18 @@ begin
   WriteLine('procedure ' + lListName + '.Read;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + 'List'', self);', ASL);
+      if AClassDef.ListSavesDatabaseName then
+        WriteLine('Read(F_DBConnectionName, F_PersistenceLayerName);', ASL)
+      else
+        WriteLine('Read('''', '''');', ASL);
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
+
+  WriteLine('procedure ' + lListName + '.Read(const ADBConnectionName: string; APersistenceLayerName: string = '''');', ASL);
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Load' + lBaseClassName + 'List'', self, ADBConnectionName, APersistenceLayerName);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
@@ -1265,10 +1347,42 @@ begin
   WriteLine('procedure ' + lListName + '.Save;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self);', ASL);
+      if AClassDef.ListSavesDatabaseName then
+        WriteLine('Save(F_DBConnectionName, F_PersistenceLayerName);', ASL)
+      else
+        WriteLine('Save('''', '''');', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
+
+  WriteLine('procedure ' + lListName + '.Save(const ADBConnectionName: string; APersistenceLayerName : string = '''');', ASL);
+  WriteLine('begin', ASL);
+    IncTab;
+      WriteLine('GTIOPFManager.VisitorManager.Execute(''Save' + lBaseClassName + ''', self, ADBConnectionName, APersistenceLayerName);', ASL);
+    DecTab;
+  WriteLine('end;', ASL);
+  WriteBreak(ASL);
+
+  if AClassDef.ListSavesDatabaseName then
+    begin
+      WriteLine('constructor ' + lListName + '.CreateNew(const AOwner: TtiObject; const ADatabaseName: string = ''''; const APersistenceLayerName: string = '''');', ASL);
+      WriteLine('begin', ASL);
+      IncTab;
+        WriteLine('F_DBConnectionName := ADatabaseName;', ASL);
+        WriteLine('F_PersistenceLayerName := APersistenceLayerName;', ASL);
+        WriteLine('inherited CreateNew(Owner, ADatabaseName, APersistenceLayerName);', ASL);
+      DecTab;
+      WriteLine('end;', ASL);
+      WriteBreak(ASL);
+
+      WriteLine('constructor ' + lListName + '.CreateNew(const ADatabaseName: string = ''''; const APersistenceLayerName: string = '''');', ASL);
+      WriteLine('begin', ASL);
+      IncTab;
+        WriteLine('CreateNew(nil, ADatabaseName, APersistenceLayerName);', ASL);
+      DecTab;
+      WriteLine('end;', ASL);
+      WriteBreak(ASL);
+    end;
 
   WriteLine('procedure ' + lListName + '.SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + ');', ASL);
   WriteLine('begin', ASL);
