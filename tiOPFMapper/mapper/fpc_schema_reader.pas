@@ -230,8 +230,6 @@ var
   lSelectList: TDomNodeList;
 begin
   lSelectList := ANode.FindNode('enums').ChildNodes;
-
-
 end;
 
 procedure TFPCSchemaXMLReader.ReadClassValidators(AClass: TMapClassDef; ANode: TDOMNode);

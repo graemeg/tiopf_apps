@@ -153,11 +153,36 @@ Resulting class definition:
   end;
 
 
+<class>
+This node describes more information about the class timap must generate, and
+about related classes.
+
+  base-class=         Specifies the name of the class.
+
+  base-class-parent=  Specifies the parent class when class must descend from.
+
+  auto-map="true"     Values are True/False. This attribute is currently ignored.
+                      Auto-mapping information is always written to the generated
+                      unit.
+
+  auto-create-list="true"  Values are True/False. Specifies if a list class should
+                      be generated as well. This attribute also controls whether
+                      a Read List visitor class is generated.
+
+  notify-observers="true"  Values are True/False. Specifies whether the setter
+                      method of properties should generate calls to notify any
+                      observers that the property value has changed.
+
+
 <class-props>
 These describe the properties of a class.  Default is "String" so omitting the "type"
 attribute will register the property as String.  All base type (string, Boolean, TDateTime)
 as well as enumerated types.  The types that get registered are written directly out to the
 pascal class definition.
+
+  virtual="true"    Will notify timap that the getter for the property must be
+                    a virtual getter method. If False or ommitted, the read
+                    portion of the property will read the field variable directly.
 
 <validators>
 Basic validators are supported including "required" (string types only) which ensures that
