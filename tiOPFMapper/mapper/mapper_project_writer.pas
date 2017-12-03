@@ -347,16 +347,16 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
-        begin
-          lClassDef := AUnitDef.UnitClasses.Items[lCtr];
-          WriteClassRegisterAutoMapImp(ASL, lClassDef);
-        end;
+      begin
+        lClassDef := AUnitDef.UnitClasses.Items[lCtr];
+        WriteClassRegisterAutoMapImp(ASL, lClassDef);
+        if lCtr < AUnitDef.UnitClasses.Count-1 then // we don't want a blank line at the end
+          WriteBreak(ASL);
+      end;
     DecTab;
   WriteLine('end;', ASL);
 
   WriteBreak(ASL);
-
-
 end;
 
 procedure TMapperProjectWriter.WriteAllCustomListVisIntfs(ASL: TStringList;
@@ -456,9 +456,6 @@ begin
   if AClassDef.AutoCreateListClass then
     WriteLine('GTIOPFManager.ClassDBMappingMgr.RegisterCollection(' +
       AClassDef.BaseClassName + 'List, ' + AClassDef.BaseClassName + ');', ASL);
-
-  WriteBreak(ASL);
-
 end;
 
 procedure TMapperProjectWriter.WriteClassImpDestructor(ASL: TStringList; AClassDef: TMapClassDef);
@@ -2297,7 +2294,8 @@ begin
               WriteLine('lWhere := '''';', ASL);
             DecTab;
 
-          WriteLine('if lFiltered.GetCriteria.hasOrderBy then', ASL);
+          WriteBreak(ASL);
+          WriteLine('if lFiltered.GetCriteria.HasOrderBy then', ASL);
             IncTab;
               WriteLine('lOrder := tiCriteriaOrderByAsSQL(lFiltered.GetCriteria)', ASL);
             DecTab;
@@ -2315,7 +2313,6 @@ begin
       WriteLine('Query.SQLText := gFormatSQL(Format(lSQL, [lWhere, lOrder]), ' +
         AClassDef.BaseClassName + ');', ASL);
 
-      WriteBreak(ASL);
     DecTab;
 
   WriteLine('end;', ASL);
@@ -2358,10 +2355,12 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
-        begin
-          lMap := AUnitDef.UnitClasses.Items[lCtr];
-          WriteClassVisitorRegistrations(ASL, lMap);
-        end;
+      begin
+        lMap := AUnitDef.UnitClasses.Items[lCtr];
+        WriteClassVisitorRegistrations(ASL, lMap);
+        if lCtr < AUnitDef.UnitClasses.Count-1 then // we don't want a blank line at the end
+          WriteBreak(ASL);
+      end;
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
