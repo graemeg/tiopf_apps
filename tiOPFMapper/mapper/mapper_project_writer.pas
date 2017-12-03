@@ -427,10 +427,9 @@ var
   lPropMap: TPropMapping;
   lCtr: Integer;
 begin
-
   lMapping := AClassDef.ClassMapping;
   if lMapping.PropMappings.Count = 0 then
-    exit;
+    Exit;
 
   WriteLine('{ Automap registrations for ' + AClassDef.BaseClassName + ' }', ASL);
 
@@ -442,14 +441,14 @@ begin
     DecTab;
 
   for lCtr := 0 to lMapping.PropMappings.Count - 1 do
-    begin
-      lPropMap := lMapping.PropMappings.Items[lCtr];
-      WriteLine('GTIOPFManager.ClassDBMappingMgr.RegisterMapping(' + AClassDef.BaseClassName + ',', ASL);
-      IncTab;
-        WriteLine(QuotedStr(lMapping.TableName) + ',' + QuotedStr(lPropMap.PropName) + ', ' +
-          QuotedStr(lPropMap.FieldName) + ');', ASL);
-      DecTab;
-    end;
+  begin
+    lPropMap := lMapping.PropMappings.Items[lCtr];
+    WriteLine('GTIOPFManager.ClassDBMappingMgr.RegisterMapping(' + AClassDef.BaseClassName + ',', ASL);
+    IncTab;
+      WriteLine(QuotedStr(lMapping.TableName) + ',' + QuotedStr(lPropMap.PropName) + ', ' +
+        QuotedStr(lPropMap.FieldName) + ');', ASL);
+    DecTab;
+  end;
 
   // Finally, register list class for class.
 
@@ -467,14 +466,14 @@ var
 begin
   lNeedDestructor := False;
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
+  begin
+    lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
+    if lMapping.PropertyType = ptStream then
     begin
-      lMapping := AClassDef.ClassMapping.PropMappings.Items[lCtr];
-      if lMapping.PropertyType = ptStream then
-      begin
-        lNeedDestructor := True;
-        Break;
-      end;
+      lNeedDestructor := True;
+      Break;
     end;
+  end;
 
   if not lNeedDestructor then
     Exit;
@@ -916,9 +915,7 @@ begin
   WriteLine('        Read, Delete, Update, Create }', ASL);
 
   if AClassMap.AutoCreateListClass then
-  begin
     WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Load%sList'', %sList_Read);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
-  end;
 
   WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Load%s'', %s_Read);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
   WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Delete);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
@@ -926,16 +923,14 @@ begin
   WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Create);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
 
   if AClassMap.Selections.Count > 0 then
+  begin
+    for lCtr := 0 to AClassMap.Selections.Count - 1 do
     begin
-      for lCtr := 0 to AClassMap.Selections.Count - 1 do
-        begin
-          lSelect := AClassMap.Selections.Items[lCtr];
-          lBaseSig := AClassMap.BaseClassName + 'List_' + lSelect.Name + 'Vis';
-          WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + lBaseSig + ''', ' + lBaseSig + ');', ASL);
-        end;
+      lSelect := AClassMap.Selections.Items[lCtr];
+      lBaseSig := AClassMap.BaseClassName + 'List_' + lSelect.Name + 'Vis';
+      WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + lBaseSig + ''', ' + lBaseSig + ');', ASL);
     end;
-
-  WriteBreak(ASL);
+  end;
 end;
 
 procedure TMapperProjectWriter.WriteCustomListVisImp(ASL: TStringList;
@@ -950,9 +945,8 @@ var
   lPropIndex: Integer;
   lPropMap: TPropMapping;
 begin
-
   if not AClassDef.AutoCreateListClass then
-    exit;
+    Exit;
 
   lBaseSig := AClassDef.BaseClassName + 'List_' + ASelect.Name + 'Vis';
 
