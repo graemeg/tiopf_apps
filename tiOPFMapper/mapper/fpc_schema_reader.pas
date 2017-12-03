@@ -188,6 +188,13 @@ begin
       else
         lNewProp.IsReadOnly := false;
 
+      // virtual getter?
+      lPropAttr := lPropNode.Attributes.GetNamedItem('virtual');
+      if lPropAttr <> nil then
+        lNewProp.VirtualGetter := StrToBool(lPropAttr.NodeValue)
+      else
+        lNewProp.VirtualGetter := false;
+
       // Property type?
       lPropAttr := lPropNode.Attributes.GetNamedItem('type');
       if lPropAttr <> nil then
@@ -223,8 +230,6 @@ var
   lSelectList: TDomNodeList;
 begin
   lSelectList := ANode.FindNode('enums').ChildNodes;
-
-
 end;
 
 procedure TFPCSchemaXMLReader.ReadClassValidators(AClass: TMapClassDef; ANode: TDOMNode);

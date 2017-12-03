@@ -242,21 +242,27 @@ type
   end;
 
   {: Stores information about a class property. }
+
+  { TMapClassProp }
+
   TMapClassProp = class(TBaseMapObject)
   private
     FIsReadOnly: boolean;
     FName: string;
     FPropertyType: TMapPropType;
     FPropTypeName: string;
+    FVirtualGetter: boolean;
     procedure SetIsReadOnly(const AValue: boolean);
     procedure SetPropName(const AValue: string);
     procedure SetPropType(const AValue: TMapPropType);
     procedure SetPropTypeName(const AValue: string);
+    procedure SetVirtualGetter(AValue: boolean);
   published
     property    Name: string read FName write SetPropName;
     property    PropertyType: TMapPropType read FPropertyType write SetPropType;
     property    PropTypeName: string read FPropTypeName write SetPropTypeName;
     property    IsReadOnly: boolean read FIsReadOnly write SetIsReadOnly;
+    property    VirtualGetter: boolean read FVirtualGetter write SetVirtualGetter;
   end;
 
   TMapClassPropList = class(TBaseMapObjectList)
@@ -1442,6 +1448,12 @@ procedure TMapClassProp.SetPropTypeName(const AValue: string);
 begin
   if FPropTypeName=AValue then exit;
   FPropTypeName:=AValue;
+end;
+
+procedure TMapClassProp.SetVirtualGetter(AValue: boolean);
+begin
+  if FVirtualGetter=AValue then Exit;
+  FVirtualGetter:=AValue;
 end;
 
 { TMapClassPropList }
