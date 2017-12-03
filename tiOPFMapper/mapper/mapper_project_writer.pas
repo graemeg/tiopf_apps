@@ -796,7 +796,10 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('Result := inherited IsValid(AErrors);', ASL);
-      WriteLine('if not result then exit;', ASL);
+      WriteLine('if not Result then', ASL);
+      IncTab;
+      WriteLine('Exit;', ASL);
+      DecTab;
 
       WriteBreak(ASL);
 
@@ -816,84 +819,72 @@ begin
             vtRequired:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, ''' + lProp.Name + ''');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateRequiredValidatorMsg(self, ''' + lProp.Name + ''');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
             vtGreater:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      incTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterValidatorMsg(self, ''' + lProp.Name + ''', ' +
-                          lProp.Name + ');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateGreaterValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                      lProp.Name + ');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
             vtGreaterEqual:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
-                          lProp.Name + ');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateGreaterOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                      lProp.Name + ');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
             vtLess:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanValidatorMsg(self, ''' + lProp.Name + ''', ' +
-                          lProp.Name + ');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateLessThanValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                      lProp.Name + ');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
             vtLessEqual:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateLessThanOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
-                          lProp.Name + ');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateLessThanOrEqualValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                      lProp.Name + ');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
             vtNotEqual:
               begin
                 WriteLine(lIfStub, ASL);
+                WriteLine('begin', ASL);
                   IncTab;
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, ''' + lProp.Name + ''', ' +
-                          lProp.Name + ');', ASL);
-                        WriteLine('AErrors.AddError(lMsg);', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
+                    WriteLine('lMsg := ValidatorStringClass.CreateNotEqualToValidatorMsg(self, ''' + lProp.Name + ''', ' +
+                      lProp.Name + ');', ASL);
+                    WriteLine('AErrors.AddError(lMsg);', ASL);
                   DecTab;
+                WriteLine('end;', ASL);
               end;
           end;
           WriteBreak(ASL);
         end;
-      WriteLine('result := AErrors.Count = 0;', ASL);
+      WriteLine('Result := AErrors.Count = 0;', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
