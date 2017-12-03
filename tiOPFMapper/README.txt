@@ -5,26 +5,29 @@ tiOPFMapper
 
 Description
 -----------
-tiOPF [http://tiopf.sourceforge.net] is a wonderful framework, but the tasks of writing
-all of the boiler plate code can be a lot of work.  So I wrote the tiMapper utility in
-the spirit of some existing PHP frameworks that use YML or XML to describe a project's
-classes and other types which are then transformed into the base class files with all of
-hard coded boiler plate code already written.
+tiOPF [http://tiopf.sourceforge.net] is a wonderful framework, but the tasks of
+writing all of the boiler plate code can be a lot of work.  So I wrote the
+tiMapper utility in the spirit of some existing PHP frameworks that use YML or
+XML to describe a project's classes and other types which are then transformed
+into the base class files with all of hard coded boiler plate code already
+written.
 
-The tiMapper utility uses one or more XML documents to describe a "schema".  The schema
-describes any TtiObject based classes and enumerations as well as mappings that use
-the tiAutoMap registration mechanism to store meta data about the types described
-in the schema.  There is one main "schema" file which can have INCLUDES pointing to
-other XML files which describe yet additional classes, enums and mappings if necessary.
+The tiMapper utility uses one or more XML documents to describe a "schema". The
+schema describes any TtiObject based classes and enumerations as well as
+mappings that use the tiAutoMap registration mechanism to store meta data about
+the types described in the schema. There is one main "schema" file which can
+have INCLUDES pointing to other XML files which describe yet additional classes,
+enums and mappings if necessary.
 
-Eventually, I'll write a GUI utility front end for it, but for now I am content writing
-out the xml.  A typical 200 line xml schema will produce about 2K lines or more of pascal
-code for defining the classes, their visitors, registering visitors, mappings, etc and
-gluing everything up so that you're basically able to just start writing code.
+Eventually, I'll write a GUI utility front end for it, but for now I am content
+writing out the xml. A typical 200 line xml schema will produce about 2000 lines
+or more of pascal code for defining the classes, their visitors, registering
+visitors, mappings, etc and gluing everything up so that you're basically able
+to just start writing code.
 
-The utility uses the schema to create unit (.pas) files and within those unit files, each
-class, enumeration mappings, etc described in the schema.  Take the following project
-schema definition:
+The utility uses the schema to create unit (.pas) files and within those unit
+files, each class, enumeration mappings, etc described in the schema. Take the
+following project schema definition as an example:
 
 
 <project
@@ -37,7 +40,7 @@ schema definition:
   >
   <!-- Includes are added to this schema before build-time. -->
     <includes>
-        <item file-name="/jobs_schema.xml"/>
+        <item file-name="jobs_schema.xml"/>
     </includes>
 
     <!-- Units (pas) files that will be created along with defined types, classes, etc. -->
@@ -65,22 +68,38 @@ schema definition:
 <project>:
 The root <project> node should include the bare parameters required.  There are:
 
-tab-spaces, etc:
-These control formatting of the code in the pascal units produced by the utility.
+  tab-spaces=         These control formatting of the code in the pascal units
+                      produced by the utility.
 
-enum-type:
-The mapping framework takes into consideration whether you are storing
-your enumerated types as either the String representation (ala "bsNone") or the
-integer representation such as 0.  Valid values are "string" or "int".
+  begin-end-tabs=     Defines the block indentation size in tabs. The size of a
+                      tab is defined by the "tab-spaces" attribute.
 
-outputdir:
-Determines the directory where the mapping utility should dump the unit files
-which it creates.  If the outputdir parameter is omitted, the output directory defaults to the
-same directory in which the schema file itself resides.
+  visibility-tabs=    More control on code formatting. This defines whether the
+                      visibility keywords in a class definition should be
+                      indented or now, and by how many tabs.
 
-The <project> contains one node called <project-units> which contains one or more <unit> nodes.
-These <unit> nodes contain mainly 2 nodes, <enums> and <classes>.  A more detailed example of
-a single <class> node is shown below.
+  project-name=       The name of the project. This attribute is not really
+                      used for anything yet.
+
+  enum-type=          The mapping framework takes into consideration whether you
+                      are storing your enumerated types as either the String
+                      representation (eg "bsNone") or the integer representation
+                      such as 0. Valid values are "string" or "int".
+
+  outputdir=          Determines the directory where the mapping utility should
+                      dump the unit files which it creates. You can specify a
+                      relative or absolute directory path. If the outputdir
+                      parameter is omitted, the output directory defaults to the
+                      same directory in which the schema file itself resides.
+
+
+The <project> contains one node called <project-units> which contains one or
+more <unit> nodes. The <unit> nodes define the Object Pascal code units (files)
+that need to be generated. The <unit> node has an attribute "name=" that
+specifies the name of the (pascal) unit that the utility needs to generate.
+
+These <unit> nodes contain mainly 2 nodes, <enums> and <classes>.  A more
+detailed example of a single <class> node is shown below.
 
 <class
     base-class="TPerson"
@@ -184,6 +203,7 @@ pascal class definition.
                     a virtual getter method. If False or ommitted, the read
                     portion of the property will read the field variable directly.
 
+
 <validators>
 Basic validators are supported including "required" (string types only) which ensures that
 there is not an empty string.  There is also "greater"/"greater-equal", "less"/"less-equal"
@@ -242,11 +262,12 @@ hard coded CRUD visitors including Read, Update, Delete, Create and write out th
 as well as register them with gTIOPFManager.
 
 <selections> and Automatically generated lists:
-The mapper can automatically create TtiFilteredObjectList descendants for each class that
-you define by setting the "auto-create-list" attribute of the <class> node to "true".  The
-mapper will then create a TYourClassNameList object for the class and give it a FindByOID.
-The mapper will also created hard coded CRUD visitors for each List its creates for a
-class that you define as well as register those visitors.
+The mapper can automatically create TtiFilteredObjectList descendants for each
+class that you define by setting the "auto-create-list" attribute of the <class>
+node to "true". The mapper will then create a TYourClassNameList object for the
+class and give it a FindByOID. The mapper will also create a hard coded Read
+visitor for each List it creates for a class that you define as well as register
+those visitors.
 
 A quick note on Auto-Mapping...
 If you are using the auto map feature of tiOPF, the mapper will write code to make calls to
@@ -319,3 +340,5 @@ The utility also creates a specialised visitor and fleshes it out.
     procedure   MapRowToObject; override;
   end;
 
+
+                    -------------[ END  ]-------------
