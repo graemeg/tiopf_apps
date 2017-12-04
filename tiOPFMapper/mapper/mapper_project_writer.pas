@@ -1075,16 +1075,13 @@ begin
                   end;
 
               end;
-            ptEnumSet:
-              begin
-                  begin
-                    WriteLine('begin', ASL);
-                      IncTab;
-                        WriteLine('Query.ParamAsString[''' + lParam.ParamName + '''] := '''+ lParam.Value+''';', ASL);
-                      DecTab;
-                    WriteLine('end;', ASL);
-                  end;
-
+           ptEnumSet:
+             begin
+               WriteLine('begin', ASL);
+                 IncTab;
+                   WriteLine('Query.ParamAsString[''' + lParam.ParamName + '''] := '''+ lParam.Value+''';', ASL);
+                 DecTab;
+               WriteLine('end;', ASL);
               end;
             ptStream:
               begin
