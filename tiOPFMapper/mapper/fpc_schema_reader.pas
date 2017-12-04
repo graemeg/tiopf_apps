@@ -671,7 +671,8 @@ begin
           // Crate the Enum Class Def.
           lNewEnum := TMapEnum.Create;
           lNewEnum.EnumName := lEnum.Attributes.GetNamedItem('name').NodeValue;
-          lNewEnum.EnumSetName := lEnum.Attributes.GetNamedItem('set').NodeValue;
+          if lEnum.Attributes.GetNamedItem('set') <> nil then
+            lNewEnum.EnumSetName := lEnum.Attributes.GetNamedItem('set').NodeValue;
 
           // Retrieve its values
           lValuesNode := lEnum.FindNode('values');
