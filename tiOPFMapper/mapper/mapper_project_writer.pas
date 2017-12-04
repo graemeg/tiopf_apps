@@ -492,7 +492,6 @@ begin
     WriteLine('inherited Destroy;', ASL);
   DecTab;
   WriteLine('end;', ASL);
-
 end;
 
 procedure TMapperProjectWriter.WriteClassImpReadMethod(ASL: TStringList; AClassDef: TMapClassDef);
@@ -509,7 +508,7 @@ begin
         begin
           WriteLine('if Assigned(Owner) and Owner.InheritsFrom('+lBaseListClassName+') then', ASL);
           IncTab;
-            WriteLine('Read('+lBaseListClassName+'(Owner).F_DBConnectionName, '+lBaseListClassName+'(Owner).F_PersistenceLayerName)', ASL);
+            WriteLine('Read('+lBaseListClassName+'(Owner).FDBConnectionName, '+lBaseListClassName+'(Owner).FPersistenceLayerName)', ASL);
           DecTab;
           WriteLine('else', ASL);
           IncTab;
@@ -545,7 +544,7 @@ begin
         begin
           WriteLine('if Assigned(Owner) and Owner.InheritsFrom('+lBaseListClassName+') then', ASL);
           IncTab;
-            WriteLine('Save('+lBaseListClassName+'(Owner).F_DBConnectionName, '+lBaseListClassName+'(Owner).F_PersistenceLayerName)', ASL);
+            WriteLine('Save('+lBaseListClassName+'(Owner).FDBConnectionName, '+lBaseListClassName+'(Owner).FPersistenceLayerName)', ASL);
           DecTab;
           WriteLine('else', ASL);
           IncTab;
@@ -715,7 +714,7 @@ begin
         DecTab;
 
       if AClassDef.ListSavesDatabaseName then
-        WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self, F_DBConnectionName, F_PersistenceLayerName);', ASL)
+        WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self, FDBConnectionName, FPersistenceLayerName);', ASL)
       else
         WriteLine('GTIOPFManager.VisitorManager.Execute(' + QuotedStr(lBaseSig) + ', self);', ASL);
       WriteLine('result := self.Count;', ASL);
@@ -1258,8 +1257,8 @@ begin
         IncTab;
           if AClassDef.ListSavesDatabaseName then
             begin
-              WriteLine('F_DBConnectionName: string;', ASL);
-              WriteLine('F_PersistenceLayerName: string;', ASL);
+              WriteLine('FDBConnectionName: string;', ASL);
+              WriteLine('FPersistenceLayerName: string;', ASL);
             end;
           WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
           writeLine('function    GetItems(i: integer): ' + AClassDef.BaseClassName + '; reintroduce;', ASL);
@@ -1323,7 +1322,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       if AClassDef.ListSavesDatabaseName then
-        WriteLine('Read(F_DBConnectionName, F_PersistenceLayerName);', ASL)
+        WriteLine('Read(FDBConnectionName, FPersistenceLayerName);', ASL)
       else
         WriteLine('Read('''', '''');', ASL);
     DecTab;
@@ -1342,7 +1341,7 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       if AClassDef.ListSavesDatabaseName then
-        WriteLine('Save(F_DBConnectionName, F_PersistenceLayerName);', ASL)
+        WriteLine('Save(FDBConnectionName, FPersistenceLayerName);', ASL)
       else
         WriteLine('Save('''', '''');', ASL);
     DecTab;
@@ -1362,8 +1361,8 @@ begin
       WriteLine('constructor ' + lListName + '.CreateNew(const AOwner: TtiObject; const ADatabaseName: string = ''''; const APersistenceLayerName: string = '''');', ASL);
       WriteLine('begin', ASL);
       IncTab;
-        WriteLine('F_DBConnectionName := ADatabaseName;', ASL);
-        WriteLine('F_PersistenceLayerName := APersistenceLayerName;', ASL);
+        WriteLine('FDBConnectionName := ADatabaseName;', ASL);
+        WriteLine('FPersistenceLayerName := APersistenceLayerName;', ASL);
         WriteLine('inherited CreateNew(Owner, ADatabaseName, APersistenceLayerName);', ASL);
       DecTab;
       WriteLine('end;', ASL);
