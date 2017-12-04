@@ -462,7 +462,6 @@ var
   lCtr: integer;
   lMapping: TPropMapping;
   lNeedDestructor: Boolean;
-  lBaseClassName: String;
 begin
   lNeedDestructor := False;
   for lCtr := 0 to AClassDef.ClassMapping.PropMappings.Count-1 do
@@ -478,7 +477,6 @@ begin
   if not lNeedDestructor then
     Exit;
 
-  lBaseClassName := Copy(AClassDef.BaseClassName, 2, Length(AClassDef.BaseClassName));
   WriteLine('destructor ' + AClassDef.BaseClassName + '.Destroy;', ASL);
   WriteLine('begin', ASL);
   IncTab;
@@ -824,7 +822,6 @@ end;
 procedure TMapperProjectWriter.WriteClassIsValidImp(ASL: TStringList;
   AClassDef: TMapClassDef);
 var
-  lValList: TMapValidatorList;
   lVal: TMapValidator;
   lCtr: Integer;
   lProp: TMapClassProp;
