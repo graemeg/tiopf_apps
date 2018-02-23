@@ -529,6 +529,12 @@ begin
             else
               lNewClass.BaseClassParent := 'TtiObject';
 
+            lClassAttr := lClassNode.Attributes.GetNamedItem('base-listclass-parent');
+            if lClassAttr <> nil then
+              lNewClass.BaseListClassParent := lClassAttr.NodeValue
+            else
+              lNewClass.BaseListClassParent:='TtiMappedFilteredObjectList';
+
             lClassAttr := lClassNode.Attributes.GetNamedItem('auto-map');
             if lClassAttr <> nil then
               lNewClass.AutoMap := StrToBool(lClassAttr.NodeValue);

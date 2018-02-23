@@ -477,6 +477,8 @@ type
   end;
 
 
+  { TMapClassDef }
+
   TMapClassDef = class(TBaseMapObject)
   private
     FAutoCreateBase: boolean;
@@ -484,6 +486,7 @@ type
     FAutoMap: boolean;
     FBaseClassName: string;
     FBaseClassParent: string;
+    FBaseListClassParent: string;
     FBaseUnitName: string;
     FClassMapping: TClassMapping;
     FClassProps: TMapClassPropList;
@@ -500,6 +503,7 @@ type
     procedure SetAutoMap(const AValue: boolean);
     procedure SetBaseClassName(const AValue: string);
     procedure SetBaseClassParent(const AValue: string);
+    procedure SetBaseListClassParent(AValue: string);
     procedure SetBaseUnitName(const AValue: string);
     procedure SetClassProps(const AValue: TMapClassPropList);
     procedure SetCrud(const AValue: string);
@@ -522,6 +526,7 @@ type
     property    AutoMap: Boolean read FAutoMap write SetAutoMap;
     property    BaseClassName: string read FBaseClassName write SetBaseClassName;
     property    BaseClassParent: string read FBaseClassParent write SetBaseClassParent;
+    property    BaseListClassParent: string read FBaseListClassParent write SetBaseListClassParent;
     property    BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
     property    Crud: string read FCrud write SetCrud;
     property    DefType: TClassDefType read FDefType write SetDefType;
@@ -1391,6 +1396,12 @@ procedure TMapClassDef.SetBaseClassParent(const AValue: string);
 begin
   if FBaseClassParent=AValue then exit;
   FBaseClassParent:=AValue;
+end;
+
+procedure TMapClassDef.SetBaseListClassParent(AValue: string);
+begin
+  if FBaseListClassParent=AValue then Exit;
+  FBaseListClassParent:=AValue;
 end;
 
 procedure TMapClassDef.SetBaseUnitName(const AValue: string);

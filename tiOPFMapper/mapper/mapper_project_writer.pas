@@ -1248,7 +1248,7 @@ begin
   if AClassDef.AutoCreateListClass then
     begin
       WriteLine('{ List of ' + AClassDef.BaseClassName + '.  TtiMappedFilteredObjectList descendant. }', ASL);
-      WriteLine(AClassDef.BaseClassName + 'List = class(TtiMappedFilteredObjectList)', ASL);
+      WriteLine(AClassDef.BaseClassName + 'List = class('+AClassDef.BaseListClassParent+')', ASL);
       WriteLine('private', ASL);
         IncTab;
           WriteLine('class var FItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
