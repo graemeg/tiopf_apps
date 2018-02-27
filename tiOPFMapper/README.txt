@@ -178,7 +178,10 @@ about related classes.
 
   base-class=         Specifies the name of the class.
 
-  base-class-parent=  Specifies the parent class when class must descend from.
+  base-class-parent=  Specifies the parent class which a BOM class must descend from.
+  
+  base-listclass-parent= Specifies the parent class which a list class must
+                         descend from
 
   auto-map="true"     Values are True/False. This attribute is currently ignored.
                       Auto-mapping information is always written to the generated
