@@ -1016,13 +1016,10 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lItemClass := '+AClassDef.BaseClassName+';', ASL);
-      if AClassDef.AutoCreateListClass then
-      begin
-        WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
-        IncTab;
-          WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
-        DecTab;
-      end;
+      WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
+      IncTab;
+        WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
+      DecTab;
       WriteLine('lObj := lItemClass.Create;', ASL);
       WriteLine('lObj.OID.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKName + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
