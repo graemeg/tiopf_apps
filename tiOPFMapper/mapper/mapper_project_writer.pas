@@ -311,11 +311,14 @@ var
   lSelect: TClassMappingSelect;
   lCtr: integer;
 begin
+  if not AClassDef.AutoCreateListClass then
+    exit;
+
   for lCtr := 0 to AClassDef.Selections.Count - 1 do
-    begin
-      lSelect := AClassDef.Selections.Items[lCtr];
-      WriteCustomListVisImp(ASL, AClassDef, lSelect);
-    end;
+  begin
+    lSelect := AClassDef.Selections.Items[lCtr];
+    WriteCustomListVisImp(ASL, AClassDef, lSelect);
+  end;
 end;
 
 procedure TMapperProjectWriter.WriteExtraVarsMaybe(ASL: TStringList; AClassDef: TMapClassDef);
@@ -365,6 +368,9 @@ var
   lSelect: TClassMappingSelect;
   lCtr: integer;
 begin
+  if not AClassDef.AutoCreateListClass then
+    exit;
+
   for lCtr := 0 to AClassDef.Selections.Count - 1 do
     begin
       lSelect := AClassDef.Selections.Items[lCtr];
@@ -412,6 +418,8 @@ var
   lSelect: TClassMappingSelect;
   lCtr: integer;
 begin
+  if not AClassDef.AutoCreateListClass then
+    exit;
 
   for lCtr := 0 to AClassDef.Selections.Count - 1 do
   begin
@@ -968,13 +976,16 @@ begin
   WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Update);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
   WriteLine(Format('GTIOPFManager.VisitorManager.RegisterVisitor(''Save%s'', %s_Create);', [lBaseClassName, AClassMap.BaseClassName]), ASL);
 
-  if AClassMap.Selections.Count > 0 then
+  if AClassMap.AutoCreateListClass then
   begin
-    for lCtr := 0 to AClassMap.Selections.Count - 1 do
+    if AClassMap.Selections.Count > 0 then
     begin
-      lSelect := AClassMap.Selections.Items[lCtr];
-      lBaseSig := AClassMap.BaseClassName + 'List_' + lSelect.Name + 'Vis';
-      WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + lBaseSig + ''', ' + lBaseSig + ');', ASL);
+      for lCtr := 0 to AClassMap.Selections.Count - 1 do
+      begin
+        lSelect := AClassMap.Selections.Items[lCtr];
+        lBaseSig := AClassMap.BaseClassName + 'List_' + lSelect.Name + 'Vis';
+        WriteLine('GTIOPFManager.VisitorManager.RegisterVisitor(''' + lBaseSig + ''', ' + lBaseSig + ');', ASL);
+      end;
     end;
   end;
 end;
@@ -1251,46 +1262,46 @@ end;
 procedure TMapperProjectWriter.WriteListClassIntf(ASL: TStringList;
   AClassDef: TMapClassDef);
 begin
-  if AClassDef.AutoCreateListClass then
-    begin
-      WriteLine('{ List of ' + AClassDef.BaseClassName + '.  TtiMappedFilteredObjectList descendant. }', ASL);
-      WriteLine(AClassDef.BaseClassName + 'List = class('+AClassDef.BaseListClassParent+')', ASL);
-      WriteLine('private', ASL);
-        IncTab;
-          WriteLine('class var FItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
-        DecTab;
-      WriteLine('protected', ASL);
-        IncTab;
-          if AClassDef.ListSavesDatabaseName then
-            begin
-              WriteLine('FDBConnectionName: string;', ASL);
-              WriteLine('FPersistenceLayerName: string;', ASL);
-            end;
-          WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
-          writeLine('function    GetItems(i: integer): ' + AClassDef.BaseClassName + '; reintroduce;', ASL);
-        DecTab;
-      WriteLine('public', ASL);
-        IncTab;
-          WriteLine('property    Items[i:integer] : ' + AClassDef.BaseClassName + ' read GetItems write SetItems;', ASL);
-          WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
-          WriteLine('procedure   Read; override;', ASL);
-          WriteLine('procedure   Save; override;', ASL);
-          WriteLine('procedure   Read(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
-          WriteLine('procedure   Save(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
-          WriteLine('class property ItemClass: '+AClassDef.BaseClassName+'Class read FItemClass write FItemClass;', ASL);
-          if AClassDef.ListSavesDatabaseName then
-            begin
-              WriteLine('constructor CreateNew(const AOwner: TtiObject; const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
-              WriteLine('constructor CreateNew(const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
-            end;
-          WriteLine('{ Return count (1) if successful. }', ASL);
-          WriteLine('function    FindByOID(const AOID: string): integer;', ASL);
-          WriteClassSelectsInf(ASL, AClassDef);
-        DecTab;
-      WriteLine('end;', ASL);
+  if not AClassDef.AutoCreateListClass then
+    exit;
 
-      WriteBreak(ASL);
-    end;
+  WriteLine('{ List of ' + AClassDef.BaseClassName + '.  TtiMappedFilteredObjectList descendant. }', ASL);
+  WriteLine(AClassDef.BaseClassName + 'List = class('+AClassDef.BaseListClassParent+')', ASL);
+  WriteLine('private', ASL);
+    IncTab;
+      WriteLine('class var FItemClass: '+AClassDef.BaseClassName+'Class;', ASL);
+    DecTab;
+  WriteLine('protected', ASL);
+    IncTab;
+      if AClassDef.ListSavesDatabaseName then
+        begin
+          WriteLine('FDBConnectionName: string;', ASL);
+          WriteLine('FPersistenceLayerName: string;', ASL);
+        end;
+      WriteLine('procedure   SetItems(i: integer; const AValue: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
+      writeLine('function    GetItems(i: integer): ' + AClassDef.BaseClassName + '; reintroduce;', ASL);
+    DecTab;
+  WriteLine('public', ASL);
+    IncTab;
+      WriteLine('property    Items[i:integer] : ' + AClassDef.BaseClassName + ' read GetItems write SetItems;', ASL);
+      WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
+      WriteLine('procedure   Read; override;', ASL);
+      WriteLine('procedure   Save; override;', ASL);
+      WriteLine('procedure   Read(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
+      WriteLine('procedure   Save(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
+      WriteLine('class property ItemClass: '+AClassDef.BaseClassName+'Class read FItemClass write FItemClass;', ASL);
+      if AClassDef.ListSavesDatabaseName then
+        begin
+          WriteLine('constructor CreateNew(const AOwner: TtiObject; const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
+          WriteLine('constructor CreateNew(const ADatabaseName: string = ''''; const APersistenceLayerName: string = ''''); override;', ASL);
+        end;
+      WriteLine('{ Return count (1) if successful. }', ASL);
+      WriteLine('function    FindByOID(const AOID: string): integer;', ASL);
+      WriteClassSelectsInf(ASL, AClassDef);
+    DecTab;
+  WriteLine('end;', ASL);
+
+  WriteBreak(ASL);
 end;
 
 procedure TMapperProjectWriter.WriteListClassImp(ASL: TStringList;
@@ -2460,13 +2471,10 @@ begin
   WriteLine('begin', ASL);
     IncTab;
       WriteLine('lItemClass := '+AClassDef.BaseClassName+';', ASL);
-      if AClassDef.AutoCreateListClass then
-      begin
-        WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
-        IncTab;
-          WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
-        DecTab;
-      end;
+      WriteLine('if Assigned('+AClassDef.BaseClassName+'List.ItemClass) then', ASL);
+      IncTab;
+        WriteLine('lItemClass := '+AClassDef.BaseClassName+'List.ItemClass;', ASL);
+      DecTab;
       WriteLine('lObj := lItemClass.Create;', ASL);
       WriteLine('lObj.' + AClassDef.ClassMapping.PKName +'.AssignFromTIQuery(''' + AClassDef.ClassMapping.PKField + ''',Query);', ASL);
       WriteMapRowToObject(ASL, AClassDef);
