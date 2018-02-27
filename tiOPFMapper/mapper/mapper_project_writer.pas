@@ -1967,8 +1967,6 @@ begin
   if Assigned(FOnWriteUnit) then
     FOnWriteUnit(AUnit);
 
-
-  ASL.Add(sLineBreak);
   ASL.Add('unit ' + AUnit.Name + ';');
   if Verbose then
   begin
