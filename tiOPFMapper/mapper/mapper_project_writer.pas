@@ -375,7 +375,7 @@ end;
 procedure TMapperProjectWriter.WriteAutoMapIntf(ASL: TStringList);
 begin
   WriteLine('{ Register Auto Mappings }', ASL);
-  WRiteLine('procedure RegisterMappings;', ASL);
+  WriteLine('procedure RegisterMappings;', ASL);
 end;
 
 procedure TMapperProjectWriter.WriteBaseSelectSQL(ASL: TStringList;
@@ -414,10 +414,10 @@ var
 begin
 
   for lCtr := 0 to AClassDef.Selections.Count - 1 do
-    begin
-      lSelect := AClassDef.Selections.Items[lCtr];
-      WriteClassListSelectMethodImp(ASL, AClassDef, lSelect);
-    end;
+  begin
+    lSelect := AClassDef.Selections.Items[lCtr];
+    WriteClassListSelectMethodImp(ASL, AClassDef, lSelect);
+  end;
 end;
 
 procedure TMapperProjectWriter.WriteClassRegisterAutoMapImp(ASL: TStringList;
@@ -992,7 +992,7 @@ var
   lPropMap: TPropMapping;
 begin
   if not AClassDef.AutoCreateListClass then
-    Exit;
+    exit;
 
   lBaseSig := AClassDef.BaseClassName + 'List_' + ASelect.Name + 'Vis';
 
@@ -1133,9 +1133,9 @@ procedure TMapperProjectWriter.WriteCustomListVisIntf(ASL: TStringList;
 var
   lBaseSig: string;
 begin
-
   if not AClassDef.AutoCreateListClass then
     exit;
+
   lBaseSig := AClassDef.BaseClassName + 'List_' + ASelect.Name + 'Vis';
 
   WriteLine('{ ' + lBaseSig + ' }', ASL);
@@ -1963,7 +1963,6 @@ var
   lCtr: Integer;
   lClassDef: TMapClassDef;
 begin
-
   // Event Notification
   if Assigned(FOnWriteUnit) then
     FOnWriteUnit(AUnit);
@@ -2019,7 +2018,7 @@ begin
                 WriteClassVisitorIntfs(ASL, lClassDef);
                 WriteVisListReadIntf(ASL, lClassDef);
 
-                // Write Out any custom list visitors
+                // Write out any custom list visitors
                 WriteAllCustomListVisIntfs(ASL, lClassDef);
               end;
           DecTab;
