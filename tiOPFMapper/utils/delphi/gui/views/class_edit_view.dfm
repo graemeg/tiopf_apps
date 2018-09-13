@@ -1,12 +1,10 @@
 inherited ClassEditView: TClassEditView
-  BorderStyle = bsDialog
   Caption = 'Edit Class Definition'
   ClientHeight = 524
   ClientWidth = 545
-  Position = poMainFormCenter
   OnCreate = FormCreate
   ExplicitWidth = 551
-  ExplicitHeight = 550
+  ExplicitHeight = 553
   PixelsPerInch = 96
   TextHeight = 13
   object lblBaseClassName: TLabel [0]
@@ -32,21 +30,21 @@ inherited ClassEditView: TClassEditView
   end
   object eBaseClassName: TEdit
     Left = 8
-    Top = 27
+    Top = 23
     Width = 215
     Height = 21
     TabOrder = 0
   end
   object eBaseClassParent: TEdit
     Left = 247
-    Top = 27
+    Top = 23
     Width = 215
     Height = 21
     TabOrder = 1
   end
   object ckAutoMap: TCheckBox
     Left = 8
-    Top = 64
+    Top = 54
     Width = 298
     Height = 17
     Caption = 'Register Auto Map (Required for Querying)'
@@ -54,7 +52,7 @@ inherited ClassEditView: TClassEditView
   end
   object ckAutoCreateList: TCheckBox
     Left = 8
-    Top = 87
+    Top = 73
     Width = 298
     Height = 17
     Caption = 'Create List Class for resulting Class'
@@ -168,7 +166,6 @@ inherited ClassEditView: TClassEditView
           Width = 181
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
           TabOrder = 1
           Items.Strings = (
             'string'
@@ -237,6 +234,22 @@ inherited ClassEditView: TClassEditView
         TabOrder = 0
       end
     end
+  end
+  object ckListSavesDBName: TCheckBox
+    Left = 8
+    Top = 92
+    Width = 298
+    Height = 17
+    Caption = 'List saves database name'
+    TabOrder = 6
+  end
+  object ckNotifyObservers: TCheckBox
+    Left = 328
+    Top = 54
+    Width = 209
+    Height = 17
+    Caption = 'Generate NotifyObserver calls'
+    TabOrder = 7
   end
   object pmProps: TPopupMenu
     Left = 371

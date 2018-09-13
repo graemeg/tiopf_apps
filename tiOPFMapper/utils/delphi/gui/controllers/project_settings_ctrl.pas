@@ -60,10 +60,9 @@ var
 begin
   AddController(TEditController.Create(Model, View.eProjName, 'ProjectName'));
   AddController(TEditController.Create(Model, View.eOutDir, 'OrigOutDirectory'));
-
   AddController(TComboBoxIndexController.Create(Model, View.EnumTypeCombo, 'EnumType'));
-
   AddController(TLabelController.Create(Model, View.lblFileName, 'FileName'));
+  AddController(TSpinEditController.Create(Model, View.edtIndentationWidth, 'TabSpaces'));
 
   // hook up native event
   View.btnOK.OnClick := Self.HandleOKClick;

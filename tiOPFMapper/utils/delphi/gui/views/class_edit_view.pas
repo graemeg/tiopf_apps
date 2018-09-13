@@ -54,6 +54,8 @@ type
     mnuSortMapsByField: TMenuItem;
     mnuMapSort: TMenuItem;
     mnuPropSort: TMenuItem;
+    ckListSavesDBName: TCheckBox;
+    ckNotifyObservers: TCheckBox;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

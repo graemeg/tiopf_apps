@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, base_dialog_view, StdCtrls;
+  Dialogs, base_dialog_view, StdCtrls, Vcl.Samples.Spin;
 
 type
   TProjectSettingsView = class(TBaseDialogView)
@@ -15,6 +15,8 @@ type
     lblOutDir: TLabel;
     EnumTypeCombo: TComboBox;
     lblEnumType: TLabel;
+    edtIndentationWidth: TSpinEdit;
+    Label1: TLabel;
   private
     { Private declarations }
   public

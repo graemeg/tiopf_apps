@@ -63,6 +63,8 @@ begin
   AddController(TEditController.Create(Model, View.eBaseClassParent, 'BaseClassParent'));
   AddController(TCheckBoxController.Create(Model, View.ckAutoMap, 'AutoMap'));
   AddController(TCheckBoxController.Create(Model, View.ckAutoCreateList, 'AutoCreateListClass'));
+  AddController(TCheckBoxController.Create(Model, View.ckListSavesDBName, 'ListSavesDatabaseName'));
+  AddController(TCheckBoxController.Create(Model, View.ckNotifyObservers, 'NotifyObserversOfPropertyChanges'));
 
   // Class mapping
   AddController(TEditController.Create(Model.ClassMapping, View.ePKName, 'PKName'));
