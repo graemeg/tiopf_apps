@@ -25,8 +25,7 @@ type
     procedure   SetActive(const AValue: Boolean); override;
     procedure   HandleOKClick(Sender: TObject);
   public
-    procedure   Update(ASubject: TtiObject; AOperation: TNotifyOperation);
-       overload; override;
+    procedure   Update(ASubject: TtiObject; AOperation: TNotifyOperation); overload; override;
     function    Model: TMapProject; reintroduce;
     function    View: TProjectSettingsview; reintroduce;
     constructor Create(AModel: TMapProject; AView: TProjectSettingsView); reintroduce; overload; virtual;
