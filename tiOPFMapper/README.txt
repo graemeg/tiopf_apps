@@ -76,7 +76,7 @@ The root <project> node should include the bare parameters required.  There are:
 
   visibility-tabs=    More control on code formatting. This defines whether the
                       visibility keywords in a class definition should be
-                      indented or now, and by how many tabs.
+                      indented or not, and by how many tabs.
 
   project-name=       The name of the project. This attribute is not really
                       used for anything yet.
@@ -342,6 +342,19 @@ The utility also creates a specialised visitor and fleshes it out.
     function    AcceptVisitor: Boolean; override;
     procedure   MapRowToObject; override;
   end;
+
+
+
+Delphi GUI Utility - compilation requirements
+---------------------------------------------
+To compile the GUI utility in Delphi, you need the following additional
+components. Make sure they are in the Delphi search path and you should
+be good to go.
+
+ * MVC for tiOPF
+   https://github.com/graemeg/timvc.git
+ * OmniXML
+   https://github.com/mremec/omnixml.git
 
 
                     -------------[ END  ]-------------
