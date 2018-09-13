@@ -944,6 +944,7 @@ begin
   lNewClassNode.SetAttribute('auto-map', LowerCase(BoolToStr(AClassDef.AutoMap, true)));
   lNewClassNode.SetAttribute('auto-create-list', LowerCase(BoolToStr(AClassDef.AutoCreateListClass, true)));
   lNewClassNode.SetAttribute('list-saves-database-name', LowerCase(BoolToStr(AClassDef.ListSavesDatabaseName, true)));
+  lNewClassNode.SetAttribute('notify-observers', LowerCase(BoolToStr(AClassDef.NotifyObserversOfPropertyChanges, true)));
 
   WriteClassProps(AClassDef, lNewClassNode);
   WriteClassValidators(AClassDef, lNewClassNode);
