@@ -1029,23 +1029,23 @@ end;
 function TMapProject.FindEnumForPropName(const AUnitName: string; const AClassName: string;
   const APropName: string): TMapEnum;
 var
-  lProp: TMapClassProp;
   lClassDef: TMapClassDef;
-  lPropDef: TMapClassProp;
+  lProp: TMapClassProp;
   lUnit: TMapUnitDef;
 begin
-  result := nil;
-
-  lUnit := Units.FindByName(AUnitName);
-  lClassDef := lUnit.UnitClasses.FindByName(AClassName);
-  lPropDef := lClassDef.ClassProps.FindByName(APropName);
-  result := lUnit.UnitEnums.FindByName(lProp.PropTypeName);
+  try
+    lUnit := Units.FindByName(AUnitName);
+    lClassDef := lUnit.UnitClasses.FindByName(AClassName);
+    lProp := lClassDef.ClassProps.FindByName(APropName);
+    result := lUnit.UnitEnums.FindByName(lProp.PropTypeName);
+  except
+    result := nil;
+  end;
 end;
 
 function TMapProject.HasCustomSelects: boolean;
 var
   lClassCtr, lUnitCtr: integer;
-  lClassMap: TMapClassDef;
   lUnit: TMapUnitDef;
   lClassDef: TMapClassDef;
 begin
@@ -1137,7 +1137,7 @@ end;
 
 function TBaseMapObjectList.Add(AObject: TBaseMapObject): Integer;
 begin
-  inherited Add(AObject);
+  Result := inherited Add(AObject);
 end;
 
 function TBaseMapObjectList.GetItems(i: Integer): TBaseMapObject;
