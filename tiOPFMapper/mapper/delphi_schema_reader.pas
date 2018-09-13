@@ -208,6 +208,13 @@ begin
       else
         lNewProp.IsReadOnly := false;
 
+      // virtual getter?
+      lPropAttr := lPropNode.Attributes.GetNamedItem('virtual');
+      if lPropAttr <> nil then
+        lNewProp.VirtualGetter := StrToBool(lPropAttr.NodeValue)
+      else
+        lNewProp.VirtualGetter := false;
+
       // Property type?
       lPropAttr := lPropNode.Attributes.GetNamedItem('type');
       if lPropAttr <> nil then
@@ -239,8 +246,10 @@ end;
 
 procedure TOmniXMLSchemaReader.ReadClassSelects(AClass: TMapClassDef;
   ANode: IXMLNode);
+//var
+//  lSelectList: IXMLNodeList;
 begin
-
+//  lSelectList := ANode.FindNode('enums').ChildNodes;
 end;
 
 procedure TOmniXMLSchemaReader.ReadClassValidators(AClass: TMapClassDef; ANode: IXMLNode);
@@ -275,7 +284,7 @@ begin
           lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
-              lProp := TMapClassProp(AClass.ClassProps.FindByProps(['Name'], [lVal.ClassProp]));
+              lProp := TMapClassProp(AClass.ClassProps.FindByName(lVal.ClassProp));
               if lProp = nil then
                 raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lVal.ClassProp +'"');
               lTempStr := lProp.Name;
@@ -547,6 +556,12 @@ begin
             else
               lNewClass.BaseClassParent := 'TtiObject';
 
+            lClassAttr := lClassNode.Attributes.GetNamedItem('base-listclass-parent');
+            if lClassAttr <> nil then
+              lNewClass.BaseListClassParent := lClassAttr.NodeValue
+            else
+              lNewClass.BaseListClassParent:='TtiMappedFilteredObjectList';
+
             lClassAttr := lClassNode.Attributes.GetNamedItem('auto-map');
             if lClassAttr <> nil then
               lNewClass.AutoMap := StrToBool(lClassAttr.NodeValue);
@@ -567,12 +582,18 @@ begin
             else
               lNewClass.AutoCreateListClass := true;
 
+            lClassAttr := lClassNode.Attributes.GetNamedItem('list-saves-database-name');
+            if lClassAttr <> nil then
+              lNewClass.ListSavesDatabaseName := StrToBool(lClassAttr.NodeValue)
+            else
+              lNewClass.ListSavesDatabaseName := true;
+
             lClassAttr := lClassNode.Attributes.GetNamedItem('notify-observers');
             if lClassAttr <> nil then
               lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
 
             if lClassNode.SelectSingleNode('class-props') = nil then
-              raise Exception.Create(ClassName + '.ReadUnitClasses: Class PrNode is not present.');
+              raise Exception.Create(ClassName + '.ReadUnitClasses: "class-props" node is not present.');
 
             lClassProps := lClassNode.SelectSingleNode('class-props').ChildNodes;
             if lClassProps <> nil then
@@ -680,6 +701,7 @@ var
   lValueCtr: integer;
   lNewEnum: TMapEnum;
   lNewEnumValue: TMapEnumValue;
+  lValuesNode: IXMLNode;
 begin
 
   if (ANode = nil) or (not ANode.HasChildNodes) then
@@ -692,13 +714,16 @@ begin
       lEnum := lEnumList.Item[lCtr];
       if lEnum.NodeType = ELEMENT_NODE then
         begin
-          // Crate the Enum Class Def.
+          // Create the Enum Class Def.
           lNewEnum := TMapEnum.Create;
           lNewEnum.EnumName := lEnum.Attributes.GetNamedItem('name').NodeValue;
+          if lEnum.Attributes.GetNamedItem('set') <> nil then
+            lNewEnum.EnumSetName := lEnum.Attributes.GetNamedItem('set').NodeValue;
 
           // Retrieve its values
-          lEnumValuesList := lEnum.SelectSingleNode('values').ChildNodes;
-
+          lValuesNode := lEnum.SelectSingleNode('values');
+          if lValuesNode <> nil then
+            lEnumValuesList := lValuesNode.ChildNodes;
 
           if lEnumValuesList <> nil then
             begin
@@ -744,7 +769,6 @@ var
   lNewMapNode: IXMLElement;
   lNewMapPropNode: IXMLElement;
 begin
-
   lNewMapNode := FDoc.CreateElement('mapping');
   AClassNode.AppendChild(lNewMapNode);
 
@@ -766,8 +790,6 @@ begin
       lNewMapPropNode.SetAttribute('type', gPropTypeToStr(lMapProp.PropertyType));
       lNewMapNode.AppendChild(lNewMapPropNode);
     end;
-
-
 end;
 
 procedure TProjectWriter.WriteClassProps(AClassDef: TMapClassDef;
@@ -778,7 +800,6 @@ var
   lCtr: integer;
   lProp: TMapClassProp;
 begin
-
   lClassPropsNode := FDoc.CreateElement('class-props');
   AClassNode.AppendChild(lClassPropsNode);
 
@@ -794,7 +815,6 @@ begin
 
       lClassPropsNode.AppendChild(lNewPropNode);
     end;
-
 end;
 
 procedure TProjectWriter.WriteClassSelections(AClassDef: TMapClassDef;
@@ -810,7 +830,6 @@ var
   lNewCDATA: IXMLCDATASection;
   lNewSQLNode: IXMLElement;
 begin
-
   lNewSelectionsNode := FDoc.CreateElement('selections');
   AClassNode.AppendChild(lNewSelectionsNode);
 
@@ -821,7 +840,7 @@ begin
       lNewSelNode.SetAttribute('name', lSelect.Name);
       // SQL
       lNewSQLNode := FDoc.CreateElement('sql');
-      lNewCDATA := FDoc.CreateCDATASection(lSelect.SQL);
+      lNewCDATA := FDoc.CreateCDATASection(WrapText(lSelect.SQL, 40));
       lNewSQLNode.AppendChild(lNewCDATA);
       lNewSelNode.AppendChild(lNewSQLNode);
 
@@ -851,7 +870,6 @@ begin
       // finally add the selection node to the <selections> node.
       lNewSelectionsNode.AppendChild(lNewSelNode);
     end;
-
 end;
 
 procedure TProjectWriter.WriteClassValidators(AClassDef: TMapClassDef;
@@ -864,7 +882,6 @@ var
   lNewValueNode: IXMLElement;
   lCtr, lItemCtr: integer;
 begin
-
   lNewValidatorsNode := FDoc.CreateElement('validators');
   AClassNode.AppendChild(lNewValidatorsNode);
 
@@ -882,7 +899,6 @@ begin
         end;
       lNewValidatorsNode.AppendChild(lNewValNode);
     end;
-
 end;
 
 procedure TProjectWriter.WriteProject(Aproject: TMapProject;
@@ -961,7 +977,6 @@ begin
       WriteUnit(lUnit, lNewUnitNode);
       lUnitsElem.AppendChild(lNewUnitNode);
     end;
-
 end;
 
 procedure TProjectWriter.WriteSingleUnitClass(AClassDef: TMapClassDef;
@@ -976,13 +991,12 @@ begin
   lNewClassNode.SetAttribute('base-class-parent', AClassDef.BaseClassParent);
   lNewClassNode.SetAttribute('auto-map', LowerCase(BoolToStr(AClassDef.AutoMap, true)));
   lNewClassNode.SetAttribute('auto-create-list', LowerCase(BoolToStr(AClassDef.AutoCreateListClass, true)));
+  lNewClassNode.SetAttribute('list-saves-database-name', LowerCase(BoolToStr(AClassDef.ListSavesDatabaseName, true)));
 
   WriteClassProps(AClassDef, lNewClassNode);
   WriteClassValidators(AClassDef, lNewClassNode);
   WriteClassMappings(AClassDef, lNewClassNode);
   WriteClassSelections(AClassDef, lNewClassNode);
-
-
 end;
 
 procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef;
@@ -1003,7 +1017,6 @@ begin
   WriteUnitEnums(AUnitDef, AUnitNode);
 
   WriteUnitClasses(AUnitDef, lClassesNode);
-
 end;
 
 procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef;
@@ -1018,7 +1031,6 @@ begin
       lClassDef := AUnitDef.UnitClasses.Items[lCtr];
       WriteSingleUnitClass(lClassDef, AClassesNode);
     end;
-
 end;
 
 procedure TProjectWriter.WriteUnitEnums(AUnitDef: TMapUnitDef;
@@ -1033,10 +1045,8 @@ var
   lItemCtr: integer;
   lEnum: TMapEnum;
   lEnumVal: TMapEnumValue;
-
 begin
   lEnumsNode := AUnitNode.SelectSingleNode('enums');
-
   for lCtr := 0 to AUnitDef.UnitEnums.Count - 1 do
     begin
       lEnum := AUnitDef.UnitEnums.Items[lCtr];
@@ -1055,10 +1065,8 @@ begin
           // Append to <values> node
           lValuesEl.AppendChild(lSingleValNode);
         end;
-
       lEnumsNode.AppendChild(lEnumEl);
     end;
-
 end;
 
 initialization
