@@ -2050,11 +2050,13 @@ begin
 end;
 
 procedure TtiMapParameterListReadVisitor.SetupParams;
+(*
 var
   lCtr: integer;
   lParam: TSelectParam;
   lList: TtiMappedFilteredObjectList;
   lProp: TMapClassProp;
+*)
 begin
   inherited SetupParams;
 
@@ -2255,7 +2257,6 @@ class function TValidatorStringGenerator.GetValueAsString(AObject: TtiObject;
   const APropName: string; AValue: Variant): string;
 var
   lType: TtiTypeKind;
-  lValue: string;
 begin
   lType := tiGetSimplePropType(AObject, APropName);
 
