@@ -12,7 +12,7 @@ begin
   Application.Initialize;
   with base_connected_test.mDBConnect do
     begin
-      DBPath := ExtractFileDir(Application.ExeName)+'..\..\database\jobs.fdb';
+      DBPath := ExtractFileDir(Application.ExeName)+'..\database\jobs.fdb';
       DBHost := 'localhost';
       UserName := 'sysdba';
       Password := 'masterkey';
