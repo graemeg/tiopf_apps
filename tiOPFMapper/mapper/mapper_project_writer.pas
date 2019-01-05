@@ -1284,7 +1284,7 @@ begin
   WriteLine('public', ASL);
     IncTab;
       WriteLine('property    Items[i:integer] : ' + AClassDef.BaseClassName + ' read GetItems write SetItems;', ASL);
-      WriteLine('procedure   Add(AObject: ' + AClassDef.BaseClassName + '); reintroduce;', ASL);
+      WriteLine('function    Add(const AObject: ' + AClassDef.BaseClassName + '): integer; reintroduce;', ASL);
       WriteLine('procedure   Read; override;', ASL);
       WriteLine('procedure   Save; override;', ASL);
       WriteLine('procedure   Read(const ADBConnectionName: string; APersistenceLayerName: string = ''''); override;', ASL);
@@ -1319,10 +1319,10 @@ begin
   WriteLine(' {' + lListName + ' }', ASL);
   WriteBreak(ASL);
 
-  WriteLine('procedure ' + lListName + '.Add(AObject: ' + AClassDef.BaseClassName + ');', ASL);
+  WriteLine('function ' + lListName + '.Add(const AObject: ' + AClassDef.BaseClassName + '): integer;', ASL);
   WriteLine('begin', ASL);
     IncTab;
-      WriteLine('inherited Add(AObject);', ASL);
+      WriteLine('result := inherited Add(AObject);', ASL);
     DecTab;
   WriteLine('end;', ASL);
   WriteBreak(ASL);
