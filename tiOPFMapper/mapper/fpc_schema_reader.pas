@@ -113,7 +113,6 @@ var
   lMapNode: TDomNode;
   lMapPropNode: TDOMNode;
   lNewMapProp: TPropMapping;
-  lLastGood: string;
   lAbstractValue: Boolean;
   s: string;
 begin
@@ -151,8 +150,6 @@ begin
           else
             lAbstractValue := True;
           lNewMapProp.PropertyAccessorsAreAbstract := lAbstractValue;
-
-          lLastGood := lNewMapProp.PropName;
 
           lMapNode := lNode.Attributes.GetNamedItem('type');
           if lMapNode = nil then
@@ -229,6 +226,7 @@ procedure TFPCSchemaXMLReader.ReadClassSelects(AClass: TMapClassDef;
 var
   lSelectList: TDomNodeList;
 begin
+  // TODO: What are we supposed to do here?
   lSelectList := ANode.FindNode('enums').ChildNodes;
 end;
 
@@ -241,8 +239,6 @@ var
   lTypeNode: TDOMNode;
   lProp: TMapClassProp;
   lValStr: string;
-  lTempStr: string;
-  lType: TMapPropType;
 begin
   if not ANode.HasChildNodes then
     exit;
@@ -261,14 +257,11 @@ begin
             lVal.ValidatorType := vtRequired;
 
           lVal.ClassProp := lValNode.Attributes.GetNamedItem('prop').NodeValue;
-          lTempStr := lVal.ClassProp;
           if lVal.ValidatorType <> vtRequired then
             begin
               lProp := TMapClassProp(AClass.ClassProps.FindByName(lVal.ClassProp));
               if lProp = nil then
                 raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lVal.ClassProp +'"');
-              lTempStr := lProp.Name;
-              lType := lProp.PropertyType;
 
               lValueNode := lValNode.ChildNodes.Item[0];
               if lValueNode <> nil then
@@ -301,7 +294,6 @@ end;
 
 procedure TFPCSchemaXMLReader.ReadProjectUnits(AUnitList: TDOMNodeList);
 var
-  lUnitsList: TDomNodeList;
   lCtr: Integer;
   lUnit: TMapUnitDef;
   lRefNodeList, lRefNode: TDomNode;
@@ -485,7 +477,6 @@ var
   lClassMappings: TDOMNodeList;
   lClassMapNode: TDomNode;
   lClassProps: TDOMNodeList;
-  lClassSelects: TDOMNodeList;
   lNewClass: TMapClassDef;
   lClassAttr: TDomNode;
   lSelListNode: TDOMNode;
@@ -835,9 +826,8 @@ var
   lVal: TMapValidator;
   lNewValidatorsNode: TDOMElement;
   lNewValNode: TDOMElement;
-  lNewValItemNode: TDOMElement;
   lNewValueNode: TDOMElement;
-  lCtr, lItemCtr: integer;
+  lCtr: integer;
 begin
   lNewValidatorsNode := FDoc.CreateElement('validators');
   AClassNode.AppendChild(lNewValidatorsNode);
@@ -862,8 +852,6 @@ procedure TProjectWriter.WriteProject(Aproject: TMapProject;
   const AFilePath: string);
 var
   lDocElem: TDOMElement;
-  lNewElem: TDOMElement;
-  lDir: string;
 begin
   if FDoc <> nil then
     begin
@@ -955,11 +943,8 @@ end;
 procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef;
   AUnitNode: TDOMElement);
 var
-  lCtr: integer;
   lEnumNode: TDOMElement;
   lClassesNode: TDOMElement;
-  lEnum: TMapEnum;
-  lClass: TMapClassDef;
 begin
   lEnumNode := FDoc.CreateElement('enums');
   AUnitNode.AppendChild(lEnumNode);
@@ -977,7 +962,6 @@ procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef;
 var
   lCtr: integer;
   lClassDef: TMapClassDef;
-  lClassesNode: TDOMNode;
 begin
   for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
     begin
