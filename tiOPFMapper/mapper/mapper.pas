@@ -473,11 +473,9 @@ type
     procedure   SetItems(i: integer; const AValue: TMapValidator); reintroduce;
   public
     property    Items[i:integer] : TMapValidator read GetItems write SetItems;
-    procedure   Add(AObject : TMapValidator); reintroduce;
+    function    Add(AObject : TMapValidator): integer; reintroduce;
   end;
 
-
-  { TMapClassDef }
 
   TMapClassDef = class(TBaseMapObject)
   private
@@ -2173,9 +2171,9 @@ end;
 
 { TMapValidatorList }
 
-procedure TMapValidatorList.Add(AObject: TMapValidator);
+function TMapValidatorList.Add(AObject: TMapValidator): integer;
 begin
-  inherited Add(AObject);
+  result := inherited Add(AObject);
 end;
 
 function TMapValidatorList.GetItems(i: integer): TMapValidator;
