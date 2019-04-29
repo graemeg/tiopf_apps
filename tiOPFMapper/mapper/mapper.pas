@@ -4,22 +4,11 @@ unit mapper;
   {$mode objfpc}{$H+}
 {$ENDIF}
 
-
 interface
 
 uses
-  Classes
-  ,SysUtils
-  ,contnrs
-  ,variants
-  ,tiObject
-  ,tiRTTI
-  ,tiAutoMap
-  ,typinfo
-  ,tiVisitorDB
-  ,tiOPFManager
-  ,tiFilteredObjectList
-  ;
+  Classes, SysUtils, contnrs, variants, tiObject, tiRTTI, tiAutoMap, typinfo,
+  tiVisitorDB, tiOPFManager, tiFilteredObjectList;
 
 type
 
@@ -28,12 +17,19 @@ type
   // -----------------------------------------------------------------
 
   TBaseMapObject = class;
+
   TMapUnitDef = class;
+
   TMapUnitDefList = class;
+
   TMapEnum = class;
+
   TMapEnumList = class;
+
   TMapClassDef = class;
+
   TMapClassDefList = class;
+
   TClassMapping = class;
 
   // -----------------------------------------------------------------
@@ -41,8 +37,11 @@ type
   // -----------------------------------------------------------------
 
   TOnWriteUnit = procedure(AUnitDef: TMapUnitDef) of object;
+
   TOnWriteClassIntf = procedure(AClassDef: TMapClassDef) of object;
+
   TOnWriteEnum = procedure(AEnum: TMapEnum) of object;
+
   TOnWriteMapping = procedure(AClassDef: TMapClassDef; AMapping: TClassMapping) of object;
 
   // -----------------------------------------------------------------
@@ -50,15 +49,13 @@ type
   // -----------------------------------------------------------------
 
   {: Type of class property. }
-  TMapPropType = (ptString, ptAnsiString, ptDouble, ptSingle, ptCurrency, ptInteger, ptInt64,
-    ptDateTime, ptBoolean, ptEnum, ptEnumSet, ptStream);
+  TMapPropType = (ptString, ptAnsiString, ptDouble, ptSingle, ptCurrency, ptInteger, ptInt64, ptDateTime, ptBoolean, ptEnum, ptEnumSet, ptStream);
 
   {: Type of class definition to create. }
   TClassDefType = (dtCreate, dtReference);
 
   {: Filter type to use when filtering objects. }
-  TFilterType = (ftEqual, ftNotEqual, ftGreater, ftGreaterOrEqual, ftLess, ftLessOrEqual,
-    ftLike, ftNotLike, ftStartingWith, ftNotEmpty);
+  TFilterType = (ftEqual, ftNotEqual, ftGreater, ftGreaterOrEqual, ftLess, ftLessOrEqual, ftLike, ftNotLike, ftStartingWith, ftNotEmpty);
 
   {: Indicates an objects state. }
   TORMObjectState = (osUnchanged, osChanged, osDeleted, osCreated);
@@ -73,8 +70,7 @@ type
   TEnumType = (etInt, etString);
 
   {: Describes validators types. }
-  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual,
-    vtNotEqual, vtRegExp);
+  TValidatorType = (vtRequired, vtGreater, vtGreaterEqual, vtLess, vtLessEqual, vtNotEqual, vtRegExp);
 
 
   // -----------------------------------------------------------------
@@ -90,82 +86,119 @@ type
   {: Base Mapper Object. }
   {$M+}
   TBaseMapObject = class(TtiObject)
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   end;
   {$M-}
 
-
   TBaseMapObjectList = class(TtiObjectList)
   protected
-    function    GetItems(i: Integer): TBaseMapObject; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TBaseMapObject); reintroduce;
+    function GetItems(i: Integer): TBaseMapObject; reintroduce;
+    procedure SetItems(i: Integer; AObject: TBaseMapObject); reintroduce;
   public
-    property    Items[AIndex: Integer]: TBaseMapObject read GetItems write SetItems; default;
-    function    Add(AObject: TBaseMapObject): Integer; reintroduce;
+    property Items[AIndex: Integer]: TBaseMapObject read GetItems write SetItems; default;
+    function Add(AObject: TBaseMapObject): Integer; reintroduce;
+  end;
+
+  TBaseMapOptions = class(TBaseMapObject)
+  private
+    FGroupName: string;
+    procedure SetGroupName(const Value: string);
+  published
+    property GroupName: string read FGroupName write SetGroupName;
+  end;
+
+  TBaseMapOptionsList = class(TBaseMapObjectList)
+
+  end;
+
+  TMapGeneralProjectOptions = class(TBaseMapOptions)
+  private
+    FFileName: string;
+    FProjectName: string;
+    FOrigOutDirectory: string;
+    FBaseDirectory: string;
+    procedure SetBaseDirectory(const Value: string);
+    procedure SetOrigOutDirectory(const Value: string);
+    procedure SetProjectName(const Value: string);
+    function GetOutputDirectory: string;
+  published
+    property BaseDirectory: string read FBaseDirectory write SetBaseDirectory;
+    property OrigOutDirectory: string read FOrigOutDirectory write SetOrigOutDirectory;
+    property OutputDirectory: string read GetOutputDirectory;
+    property ProjectName: string read FProjectName write SetProjectName;
+  end;
+
+  TMapCodeGenerationProjectOptions = class(TBaseMapOptions)
+  private
+    FBeginEndTabs: integer;
+    FMaxEditorCodeWidth: integer;
+    FTabSpaces: integer;
+    FVisibilityTabs: integer;
+    procedure SetBeginEndTabs(const Value: integer);
+    procedure SetMaxEditorCodeWidth(const Value: integer);
+    procedure SetTabSpaces(const Value: integer);
+    procedure SetVisibilityTabs(const Value: integer);
+  published
+    property BeginEndTabs: integer read FBeginEndTabs write SetBeginEndTabs;
+    property MaxEditorCodeWidth: integer read FMaxEditorCodeWidth write SetMaxEditorCodeWidth;
+    property TabSpaces: integer read FTabSpaces write SetTabSpaces;
+    property VisibilityTabs: integer read FVisibilityTabs write SetVisibilityTabs;
+  end;
+
+  TMapDatabaseProjectOptions = class(TBaseMapOptions)
+  private
+    FDoubleQuoteDBFieldNames: boolean;
+    FEnumerationType: TEnumType;
+    procedure SetDoubleQuoteDBFieldNames(const Value: boolean);
+    procedure SetEnumerationType(const Value: TEnumType);
+  published
+    property DoubleQuoteDBFieldNames: boolean read FDoubleQuoteDBFieldNames write SetDoubleQuoteDBFieldNames;
+    property EnumerationType: TEnumType read FEnumerationType write SetEnumerationType;
   end;
 
 
   {: Base project class. }
   TMapProject = class(TBaseMapObject)
   private
-    FBaseDirectory: string;
-    FBeginEndTabs: integer;
-    FEnumType: TEnumType;
     FIncludes: TStringList;
     FFileName: string;
-    FMaxEditorCodeWidth: integer;
-    FOrigOutDirectory: string;
-    FOutputDirectory: string;
     FProjectClasses: TMapClassDefList;
     FProjectEnums: TMapEnumList;
-    FProjectName: string;
-    FTabSpaces: integer;
     FUnits: TMapUnitDefList;
-    FVisibilityTabs: integer;
-    procedure SetBaseDirectory(const AValue: string);
-    procedure SetBeginEndTabs(const AValue: integer);
-    procedure SetEnumType(const AValue: TEnumType);
+    FGeneralOptions: TMapGeneralProjectOptions;
+    FCodeGenerationOptions: TMapCodeGenerationProjectOptions;
+    FDatabaseOptions: TMapDatabaseProjectOptions;
     procedure SetFileName(const AValue: string);
-    procedure SetMaxEditorCodeWidth(const AValue: integer);
-    procedure SetOrigOutDirectory(const AValue: string);
-    procedure SetOutputDirectory(const AValue: string);
     procedure SetProjectClasses(const AValue: TMapClassDefList);
-    procedure SetProjectName(const AValue: string);
-    procedure SetTabSpaces(const AValue: integer);
-    procedure SetVisibilityTabs(const AValue: integer);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    function    FindEnumForPropName(const AUnitName: string; const AClassName: string; const APropName: string): TMapEnum;
-    function    HasCustomSelects: boolean;
-    procedure   ClearAll;
-    // object properties
-    property    Units: TMapUnitDefList read FUnits;
-    property    ProjectClasses: TMapClassDefList read FProjectClasses write SetProjectClasses;
-    property    ProjectEnums: TMapEnumList read FProjectEnums;
-  published
-    property    FileName: string read FFileName write SetFileName;
-    property    ProjectName: string read FProjectName write SetProjectName;
-    property    Includes: TStringList read FIncludes;
-    property    OrigOutDirectory: string read FOrigOutDirectory write SetOrigOutDirectory;
-    property    OutputDirectory: string read FOutputDirectory write SetOutputDirectory;
-    property    BaseDirectory: string read FBaseDirectory write SetBaseDirectory;
-    property    TabSpaces: integer read FTabSpaces write SetTabSpaces;
-    property    BeginEndTabs: integer read FBeginEndTabs write SetBeginEndTabs;
-    property    VisibilityTabs: integer read FVisibilityTabs write SetVisibilityTabs;
-    property    MaxEditorCodeWidth: integer read FMaxEditorCodeWidth write SetMaxEditorCodeWidth;
-    property    EnumType: TEnumType read FEnumType write SetEnumType;
-  end;
+    destructor Destroy; override;
 
+    function FindEnumForPropName(const AUnitName: string; const AClassName: string; const APropName: string): TMapEnum;
+    function HasCustomSelects: boolean;
+    procedure ClearAll;
+  published
+    property CodeGenerationOptions: TMapCodeGenerationProjectOptions read FCodeGenerationOptions;
+    property DatabaseOptions: TMapDatabaseProjectOptions read FDatabaseOptions;
+    property FileName: string read FFileName write SetFileName;
+    property GeneralOptions: TMapGeneralProjectOptions read FGeneralOptions;
+    property Includes: TStringList read FIncludes;
+    property ProjectClasses: TMapClassDefList read FProjectClasses write SetProjectClasses;
+    property ProjectEnums: TMapEnumList read FProjectEnums;
+    property Units: TMapUnitDefList read FUnits;
+  end;
 
   TMapProjectList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapProject; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapProject); reintroduce;
+    function GetItems(i: Integer): TMapProject; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapProject); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapProject read GetItems write SetItems; default;
-    function    Add(AObject: TMapProject): Integer; reintroduce;
+    property Items[AIndex: Integer]: TMapProject read GetItems write SetItems; default;
+    function Add(AObject: TMapProject): Integer; reintroduce;
   end;
-
 
   TMapConnectionDef = class(TBaseMapObject)
   private
@@ -178,26 +211,106 @@ type
     procedure SetHost(const AValue: string);
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    property    ConnType: string read FConnType write SetConnType;
-    property    Host: string read FHost write SetHost;
-    property    DataSource: string read FDataSource write SetDataSource;
-    property    Params: TStringList read FParams;
+    destructor Destroy; override;
+    property ConnType: string read FConnType write SetConnType;
+    property Host: string read FHost write SetHost;
+    property DataSource: string read FDataSource write SetDataSource;
+    property Params: TStringList read FParams;
   end;
-
 
   TMapConnectionDefList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapConnectionDef; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapConnectionDef); reintroduce;
+    function GetItems(i: Integer): TMapConnectionDef; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapConnectionDef); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapConnectionDef read GetItems write SetItems; default;
-    function    Add(AObject: TMapConnectionDef): Integer; reintroduce;
+    property Items[AIndex: Integer]: TMapConnectionDef read GetItems write SetItems; default;
+    function Add(AObject: TMapConnectionDef): Integer; reintroduce;
   end;
 
+  TMapPropertyType = class(TBaseMapObject)
+  private
+    FTypeName: string;
+    FBaseType: TMapPropType;
+    procedure SetTypeName(const Value: string);
+    procedure SetBaseType(const Value: TMapPropType);
+  published
+    property BaseType: TMapPropType read FBaseType write SetBaseType;
+    property TypeName: string read FTypeName write SetTypeName;
+  end;
+
+  TMapPropertyTypeList = class(TBaseMapObjectList)
+  protected
+    function GetItems(i: Integer): TMapPropertyType; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapPropertyType); reintroduce;
+  public
+    function Add(AObject: TMapPropertyType): Integer; reintroduce; overload;
+    function Add(const AName: string; const AType: TMapPropType): integer; overload;
+    function FindByTypeName(const ATypeName: string): TMapPropertyType;
+
+    property Items[AIndex: Integer]: TMapPropertyType read GetItems write SetItems; default;
+  end;
+
+  {: Represent Pascal base types. ie: String, Integer, etc. }
+  TMapPropertyBaseType = class(TMapPropertyType)
+
+  end;
+
+  {: Represent a pascal String type. }
+  TMapStringProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal AnsiString type. }
+  TMapAnsiStringProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Double type. }
+  TMapDoubleProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Single type. }
+  TMapSingleProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Currency type. }
+  TMapCurrencyProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Integer type. }
+  TMapIntegerProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Int64 type. }
+  TMapInt64Property = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal TDateTime type. }
+  TMapDateTimeProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
+
+  {: Represent a pascal Boolean type. }
+  TMapBooleanProperty = class(TMapPropertyBaseType)
+  public
+    constructor Create; override;
+  end;
 
   {: Represent a pascal Enumerated type value.  ie: bsNone, bsSolid, etc. }
-  TMapEnumValue = class(TBaseMapObject)
+  TMapEnumValue = class(TMapPropertyBaseType)
   private
     FEnumValue: integer;
     FEnumValueName: string;
@@ -205,51 +318,51 @@ type
     procedure SetEnumValueName(const AValue: string);
   public
     constructor Create; override;
-    destructor  Destroy; override;
+    destructor Destroy; override;
   published
-    property    EnumValueName: string read FEnumValueName write SetEnumValueName;
-    property    EnumValue: integer read FEnumValue write SetEnumValue;
+    property EnumValueName: string read FEnumValueName write SetEnumValueName;
+    property EnumValue: integer read FEnumValue write SetEnumValue;
   end;
-
 
   TMapEnumValueList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapEnumValue; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapEnumValue); reintroduce;
+    function GetItems(i: Integer): TMapEnumValue; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapEnumValue); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapEnumValue read GetItems write SetItems; default;
-    function    Add(AObject: TMapEnumValue): Integer; reintroduce; overload;
-    function    Add(const AName: string; const AValue: integer = -1): integer; overload;
+    property Items[AIndex: Integer]: TMapEnumValue read GetItems write SetItems; default;
+    function Add(AObject: TMapEnumValue): Integer; reintroduce; overload;
+    function Add(const AName: string; const AValue: integer = -1): integer; overload;
   end;
 
 
   {: Represents an enumerated type. }
-  TMapEnum = class(TBaseMapObject)
+  TMapEnum = class(TMapPropertyBaseType)
   private
-    FEnumName: string;
-    FEnumSetName: string;
     FValues: TMapEnumValueList;
-    procedure SetEnumName(const AValue: string);
-    procedure SetEnumSetName(const AValue: string);
+    FEnumerationSet: boolean;
+    FEnumerationSetName: string;
     procedure SetValues(const AValue: TMapEnumValueList);
+    procedure SetEnumerationSet(const Value: boolean);
+    procedure SetEnumerationSetName(const Value: string);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    property    Values: TMapEnumValueList read FValues write SetValues;
+    destructor Destroy; override;
   published
-    property    EnumSetName: String read FEnumSetName write SetEnumSetName;
-    property    EnumName: string read FEnumName write SetEnumName;
+    property EnumerationSet: boolean read FEnumerationSet write SetEnumerationSet;
+    property EnumerationSetName: string read FEnumerationSetName write SetEnumerationSetName;
+    property Values: TMapEnumValueList read FValues write SetValues;
   end;
-
 
   TMapEnumList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapEnum; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapEnum); reintroduce;
+    function GetItems(i: Integer): TMapEnum; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapEnum); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapEnum read GetItems write SetItems; default;
-    function    Add(AObject: TMapEnum): Integer; reintroduce;
-    function    FindByName(const AName: string): TMapEnum;
+    property Items[AIndex: Integer]: TMapEnum read GetItems write SetItems; default;
+    function Add(AObject: TMapEnum): Integer; reintroduce;
+    function FindByName(const AName: string): TMapEnum;
   end;
 
 
@@ -258,32 +371,31 @@ type
   private
     FIsReadOnly: boolean;
     FName: string;
-    FPropertyType: TMapPropType;
+    FPropertyType: TMapPropertyType;
     FPropTypeName: string;
     FVirtualGetter: boolean;
     procedure SetIsReadOnly(const AValue: boolean);
     procedure SetPropName(const AValue: string);
-    procedure SetPropType(const AValue: TMapPropType);
-    procedure SetPropTypeName(const AValue: string);
+    procedure SetPropType(const AValue: TMapPropertyType);
     procedure SetVirtualGetter(AValue: boolean);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   published
-    property    Name: string read FName write SetPropName;
-    property    PropertyType: TMapPropType read FPropertyType write SetPropType;
-    property    PropTypeName: string read FPropTypeName write SetPropTypeName;
-    property    IsReadOnly: boolean read FIsReadOnly write SetIsReadOnly;
-    property    VirtualGetter: boolean read FVirtualGetter write SetVirtualGetter;
+    property Name: string read FName write SetPropName;
+    property PropertyType: TMapPropertyType read FPropertyType write SetPropType;
+    property IsReadOnly: boolean read FIsReadOnly write SetIsReadOnly;
+    property VirtualGetter: boolean read FVirtualGetter write SetVirtualGetter;
   end;
-
 
   TMapClassPropList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapClassProp; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapClassProp); reintroduce;
+    function GetItems(i: Integer): TMapClassProp; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapClassProp); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapClassProp read GetItems write SetItems; default;
-    function    Add(AObject: TMapClassProp): Integer; reintroduce; overload;
-    function    Add(const AName: string; const APropType: TMapPropType): integer; overload;
-    function    FindByName(const AName: string): TMapClassProp;
+    property Items[AIndex: Integer]: TMapClassProp read GetItems write SetItems; default;
+    function Add(AObject: TMapClassProp): Integer; reintroduce; overload;
+    function Add(const AName: string; const APropType: TMapPropertyType): integer; overload;
+    function FindByName(const AName: string): TMapClassProp;
   end;
 
 
@@ -292,34 +404,35 @@ type
   private
     FFieldName: string;
     FPropName: string;
-    FPropertyType: TMapPropType;
-    FPropertyGetter: String;
-    FPropertySetter: String;
+    FPropertyType: TMapPropertyType;
+    FPropertyGetter: string;
+    FPropertySetter: string;
     FPropertyAccessorsAreAbstract: Boolean;
     procedure SetFieldName(const AValue: string);
     procedure SetPropName(const AValue: string);
-    procedure SetPropType(const AValue: TMapPropType);
+    procedure SetPropType(const AValue: TMapPropertyType);
     procedure SetPropertyGetter(const AValue: string);
     procedure SetPropertySetter(const AValue: string);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
-    function    IsValid(const AErrors: TtiObjectErrors): Boolean; override;
+    function IsValid(const AErrors: TtiObjectErrors): Boolean; override;
   published
-    property    PropName: string read FPropName write SetPropName;
-    property    FieldName: string read FFieldName write SetFieldName;
-    property    PropertyType: TMapPropType read FPropertyType write SetPropType;
-    property    PropertyGetter: string read FPropertyGetter write SetPropertyGetter;
-    property    PropertySetter: string read FPropertySetter write SetPropertySetter;
-    property    PropertyAccessorsAreAbstract: Boolean read FPropertyAccessorsAreAbstract write FPropertyAccessorsAreAbstract;
+    property PropName: string read FPropName write SetPropName;
+    property FieldName: string read FFieldName write SetFieldName;
+    property PropertyType: TMapPropertyType read FPropertyType write SetPropType;
+    property PropertyGetter: string read FPropertyGetter write SetPropertyGetter;
+    property PropertySetter: string read FPropertySetter write SetPropertySetter;
+    property PropertyAccessorsAreAbstract: Boolean read FPropertyAccessorsAreAbstract write FPropertyAccessorsAreAbstract;
   end;
-
 
   TPropMappingList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TPropMapping; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TPropMapping); reintroduce;
+    function GetItems(i: Integer): TPropMapping; reintroduce;
+    procedure SetItems(i: Integer; AObject: TPropMapping); reintroduce;
   public
-    property    Items[AIndex: Integer]: TPropMapping read GetItems write SetItems; default;
-    function    Add(AObject: TPropMapping): Integer; reintroduce;
+    property Items[AIndex: Integer]: TPropMapping read GetItems write SetItems; default;
+    function Add(AObject: TPropMapping): Integer; reintroduce;
   end;
 
 
@@ -336,15 +449,17 @@ type
     procedure SetPKField(const AValue: string);
     procedure SetPKName(const AValue: string);
     procedure SetTableName(const AValue: string);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
+    destructor Destroy; override;
   published
-    property    TableName: string read FTableName write SetTableName;
-    property    PKName: string read FPKName write SetPKName;
-    property    PKField: string read FPKField write SetPKField;
-    property    PropMappings: TPropMappingList read FPropMappings;
-    property    OIDType: TOIDType read FOIDType write SetOIDType;
+    property TableName: string read FTableName write SetTableName;
+    property PKName: string read FPKName write SetPKName;
+    property PKField: string read FPKField write SetPKField;
+    property PropMappings: TPropMappingList read FPropMappings;
+    property OIDType: TOIDType read FOIDType write SetOIDType;
   end;
 
 
@@ -353,38 +468,33 @@ type
   TSelectParam = class(TBaseMapObject)
   private
     FParamName: string;
-    FParamType: TMapPropType;
+    FParamType: TMapPropertyType;
     FParamTypeName: string;
     FPassBy: string;
     FSQLParamName: string;
     FTypeName: string;
     FValue: Variant;
     procedure SetParamName(const AValue: string);
-    procedure SetParamType(const AValue: TMapPropType);
-    procedure SetParamTypeName(const AValue: string);
+    procedure SetParamType(const AValue: TMapPropertyType);
     procedure SetPassBy(const AValue: string);
     procedure SetSQLParamName(const AValue: string);
-    procedure SetTypeName(const AValue: string);
     procedure SetValue(const AValue: Variant);
   published
-    property    ParamName: string read FParamName write SetParamName;
-    property    SQLParamName: string read FSQLParamName write SetSQLParamName;
-    property    ParamType: TMapPropType read FParamType write SetParamType;
-    property    ParamTypeName: string read FParamTypeName write SetParamTypeName;
-    property    TypeName: string read FTypeName write SetTypeName;
-    property    PassBy: string read FPassBy write SetPassBy;
-    property    Value: Variant read FValue write SetValue;
+    property ParamName: string read FParamName write SetParamName;
+    property SQLParamName: string read FSQLParamName write SetSQLParamName;
+    property ParamType: TMapPropertyType read FParamType write SetParamType;
+    property PassBy: string read FPassBy write SetPassBy;
+    property Value: Variant read FValue write SetValue;
   end;
-
 
   TSelectParamList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TSelectParam; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TSelectParam); reintroduce;
+    function GetItems(i: Integer): TSelectParam; reintroduce;
+    procedure SetItems(i: Integer; AObject: TSelectParam); reintroduce;
   public
-    property    Items[AIndex: Integer]: TSelectParam read GetItems write SetItems; default;
-    function    Add(AObject: TSelectParam): Integer; reintroduce;
-    function    FindByName(const AName: string): TSelectParam;
+    property Items[AIndex: Integer]: TSelectParam read GetItems write SetItems; default;
+    function Add(AObject: TSelectParam): Integer; reintroduce;
+    function FindByName(const AName: string): TSelectParam;
   end;
 
 
@@ -397,85 +507,85 @@ type
     procedure SetName(const AValue: string);
     procedure SetSQL(const Value: string);
   protected
-    function    GetCaption: string; override;
+    procedure AssignClassProps(ASource: TtiObject); override;
+    function GetCaption: string; override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    property    Params: TSelectParamList read FParams;
+    destructor Destroy; override;
   published
-    property    Name: string read FName write SetName;
-    property    SQL: string read FSQL write SetSQL;
+    property Name: string read FName write SetName;
+    property Params: TSelectParamList read FParams;
+    property SQL: string read FSQL write SetSQL;
   end;
-
 
   TClassMappingSelectList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TClassMappingSelect; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TClassMappingSelect); reintroduce;
+    function GetItems(i: Integer): TClassMappingSelect; reintroduce;
+    procedure SetItems(i: Integer; AObject: TClassMappingSelect); reintroduce;
   public
-    property    Items[AIndex: Integer]: TClassMappingSelect read GetItems write SetItems; default;
-    function    Add(AObject: TClassMappingSelect): Integer; reintroduce;
+    property Items[AIndex: Integer]: TClassMappingSelect read GetItems write SetItems; default;
+    function Add(AObject: TClassMappingSelect): Integer; reintroduce;
   end;
-
 
   TClassMappingList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TClassMapping; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TClassMapping); reintroduce;
+    function GetItems(i: Integer): TClassMapping; reintroduce;
+    procedure SetItems(i: Integer; AObject: TClassMapping); reintroduce;
   public
-    property    Items[AIndex: Integer]: TClassMapping read GetItems write SetItems; default;
-    function    Add(AObject: TClassMapping): Integer; reintroduce;
+    property Items[AIndex: Integer]: TClassMapping read GetItems write SetItems; default;
+    function Add(AObject: TClassMapping): Integer; reintroduce;
   end;
-
 
   TFilterDef = class(TBaseMapObject)
   private
-    FField: String;
+    FField: string;
     FFilterType: TFilterType;
-    procedure SetField(const AValue: String);
+    procedure SetField(const AValue: string);
     procedure SetFilterType(const AValue: TFilterType);
   public
-    property    FilterType: TFilterType read FFilterType write SetFilterType;
-    property    Field: String read FField write SetField;
+    property FilterType: TFilterType read FFilterType write SetFilterType;
+    property Field: string read FField write SetField;
   end;
-
 
   TFilterDefList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TFilterDef; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TFilterDef); reintroduce;
+    function GetItems(i: Integer): TFilterDef; reintroduce;
+    procedure SetItems(i: Integer; AObject: TFilterDef); reintroduce;
   public
-    property    Items[AIndex: Integer]: TFilterDef read GetItems write SetItems; default;
-    function    Add(AObject: TFilterDef): Integer; reintroduce;
+    property Items[AIndex: Integer]: TFilterDef read GetItems write SetItems; default;
+    function Add(AObject: TFilterDef): Integer; reintroduce;
   end;
 
 
   {: Validators get written into the class object's IsValid override. }
   TMapValidator = class(TBaseMapObject)
   private
-    FClassProp: string;
+    FClassProp: TMapClassProp;
     FValidatorType: TValidatorType;
     FValue: variant;
-    procedure SetClassProp(const AValue: string);
+    procedure SetClassProp(const AValue: TMapClassProp);
     procedure SetValidatorType(const AValue: TValidatorType);
     procedure SetValue(const AValue: variant);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
+  public
+    function IsValid(const AErrors: TtiObjectErrors): boolean; override;
   published
-    property    ValidatorType: TValidatorType read FValidatorType write SetValidatorType;
-    property    ClassProp : string read FClassProp write SetClassProp;
-    property    Value: variant read FValue write SetValue;
+    property ValidatorType: TValidatorType read FValidatorType write SetValidatorType;
+    property ClassProp: TMapClassProp read FClassProp write SetClassProp;
+    property Value: variant read FValue write SetValue;
   end;
 
 
   {: List of TValidator objects. }
   TMapValidatorList = class(TtiObjectList)
   protected
-    function    GetItems(i: integer): TMapValidator; reintroduce;
-    procedure   SetItems(i: integer; const AValue: TMapValidator); reintroduce;
+    function GetItems(i: integer): TMapValidator; reintroduce;
+    procedure SetItems(i: integer; const AValue: TMapValidator); reintroduce;
   public
-    property    Items[i:integer] : TMapValidator read GetItems write SetItems;
-    function    Add(AObject : TMapValidator): integer; reintroduce;
+    property Items[i: integer]: TMapValidator read GetItems write SetItems;
+    function Add(AObject: TMapValidator): integer; reintroduce;
   end;
-
 
   TMapClassDef = class(TBaseMapObject)
   private
@@ -510,41 +620,42 @@ type
     procedure SetListSavesDatabaseName(const AValue: boolean);
     procedure SetNotifyObserversOfPropertyChanges(const AValue: boolean);
     procedure SetORMClassName(const AValue: string);
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    // Object Props
-    property    ClassProps: TMapClassPropList read FClassProps write SetClassProps;
-    property    ClassMapping: TClassMapping read FClassMapping;
-    property    Selections: TClassMappingSelectList read FSelections;
-    property    Validators: TMapValidatorList read FValidators;
+    destructor Destroy; override;
   published
-    property    AutoCreateBase: boolean read FAutoCreateBase write SetAutoCreateBase;
-    property    AutoCreateListClass: boolean read FAutoCreateListClass write SetAutoCreateListClass;
-    property    AutoMap: Boolean read FAutoMap write SetAutoMap;
-    property    BaseClassName: string read FBaseClassName write SetBaseClassName;
-    property    BaseClassParent: string read FBaseClassParent write SetBaseClassParent;
-    property    BaseListClassParent: string read FBaseListClassParent write SetBaseListClassParent;
-    property    BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
-    property    Crud: string read FCrud write SetCrud;
-    property    DefType: TClassDefType read FDefType write SetDefType;
-    property    ForwardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
-    property    ListSavesDatabaseName: boolean read FListSavesDatabaseName write SetListSavesDatabaseName;
-    property    ORMClassName: string read FORMClassName write SetORMClassName;
-    property    NotifyObserversOfPropertyChanges: boolean read FNotifyObserversOfPropertyChanges write SetNotifyObserversOfPropertyChanges default False;
-  end;
+    // Object Props
+    property ClassProps: TMapClassPropList read FClassProps write SetClassProps;
+    property ClassMapping: TClassMapping read FClassMapping;
+    property Selections: TClassMappingSelectList read FSelections;
+    property Validators: TMapValidatorList read FValidators;
 
+    property AutoCreateBase: boolean read FAutoCreateBase write SetAutoCreateBase;
+    property AutoCreateListClass: boolean read FAutoCreateListClass write SetAutoCreateListClass;
+    property AutoMap: Boolean read FAutoMap write SetAutoMap;
+    property BaseClassName: string read FBaseClassName write SetBaseClassName;
+    property BaseClassParent: string read FBaseClassParent write SetBaseClassParent;
+    property BaseListClassParent: string read FBaseListClassParent write SetBaseListClassParent;
+    property BaseUnitName: string read FBaseUnitName write SetBaseUnitName;
+    property Crud: string read FCrud write SetCrud;
+    property DefType: TClassDefType read FDefType write SetDefType;
+    property ForwardDeclare: boolean read FForwardDeclare write SetForwardDeclare;
+    property ListSavesDatabaseName: boolean read FListSavesDatabaseName write SetListSavesDatabaseName;
+    property ORMClassName: string read FORMClassName write SetORMClassName;
+    property NotifyObserversOfPropertyChanges: boolean read FNotifyObserversOfPropertyChanges write SetNotifyObserversOfPropertyChanges default False;
+  end;
 
   TMapClassDefList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapClassDef; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapClassDef); reintroduce;
+    function GetItems(i: Integer): TMapClassDef; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapClassDef); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapClassDef read GetItems write SetItems; default;
-    function    Add(AObject: TMapClassDef): Integer; reintroduce;
-    function    FindByName(const AName: string): TMapClassDef;
+    property Items[AIndex: Integer]: TMapClassDef read GetItems write SetItems; default;
+    function Add(AObject: TMapClassDef): Integer; reintroduce;
+    function FindByName(const AName: string): TMapClassDef;
   end;
-
 
   TMapUnitDef = class(TBaseMapObject)
   private
@@ -553,41 +664,44 @@ type
     FUnitEnums: TMapEnumList;
     FName: string;
     procedure SetUnitName(const AValue: string);
-  published
-    property    Name: string read FName write SetUnitName;
-    // Object properties
-    property    UnitClasses: TMapClassDefList read FUnitClasses;
-    property    UnitEnums: TMapEnumList read FUnitEnums;
-    property    References: TStringList read FReferences;
+  protected
+    procedure AssignClassProps(ASource: TtiObject); override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    function    HasValidators: boolean;
-  end;
+    destructor Destroy; override;
 
+    function IsValid(const AErrors: TtiObjectErrors): boolean; override;
+    function HasValidators: boolean;
+  published
+    property Name: string read FName write SetUnitName;
+    // Object properties
+    property UnitClasses: TMapClassDefList read FUnitClasses;
+    property UnitEnums: TMapEnumList read FUnitEnums;
+    property References: TStringList read FReferences;
+  end;
 
   TMapUnitDefList = class(TBaseMapObjectList)
   protected
-    function    GetItems(i: Integer): TMapUnitDef; reintroduce;
-    procedure   SetItems(i: Integer;  AObject: TMapUnitDef); reintroduce;
+    function GetItems(i: Integer): TMapUnitDef; reintroduce;
+    procedure SetItems(i: Integer; AObject: TMapUnitDef); reintroduce;
   public
-    property    Items[AIndex: Integer]: TMapUnitDef read GetItems write SetItems; default;
-    function    Add(AObject: TMapUnitDef): Integer; reintroduce;
-    function    FindByName(const AName: string): TMapUnitDef;
+    property Items[AIndex: Integer]: TMapUnitDef read GetItems write SetItems; default;
+    function Add(AObject: TMapUnitDef): Integer; reintroduce;
+    function FindByName(const AName: string): TMapUnitDef;
   end;
 
   {: Class of TMapSchemaReader. }
   TMapSchemaReader = class;
+
   TMapSchemaReaderClass = class of TMapSchemaReader;
 
 
   {: Abstract class used to read xml schema file into TMapProject. }
   TMapSchemaReader = class(TBaseMapObject)
   public
-    procedure   ReadSchema(AProject: TMapProject; const AFileName: string); overload; virtual; abstract;
-    procedure   WriteAll; virtual; abstract;
+    procedure ReadSchema(AProject: TMapProject; const AFileName: string); overload; virtual; abstract;
+    procedure WriteAll; virtual; abstract;
   end;
-
 
   TMapSchemaWriter = class(TBaseMapObject)
   private
@@ -604,23 +718,23 @@ type
     FOnWriteEnum: TOnWriteEnum;
     FOnWriteMapping: TOnWriteMapping;
     FOnWriteUnit: TOnWriteUnit;
-    property    CurrentIndent: integer read FCurrentIndent write SetCurrentIndent;
-    function    TabToSpaces(const ANumTabs: integer): string;
-    procedure   IncTab(const ANum: integer = 1);
-    procedure   DecTab;
-    procedure   WriteLine(const AText: string; AList: TStringList);
-    procedure   WriteBreak(AList: TStringList);
-    property    Project: TMapProject read FProject write SetProject;
+    property CurrentIndent: integer read FCurrentIndent write SetCurrentIndent;
+    function TabToSpaces(const ANumTabs: integer): string;
+    procedure IncTab(const ANum: integer = 1);
+    procedure DecTab;
+    procedure WriteLine(const AText: string; AList: TStringList);
+    procedure WriteBreak(AList: TStringList);
+    property Project: TMapProject read FProject write SetProject;
   public
     constructor Create(AProject: TMapProject); reintroduce; virtual;
-    destructor  Destroy; override;
-    procedure   WriteProject(const ADirectory: String); overload; virtual; abstract;
-    procedure   WriteProject(const ADirectory: string; ASL: TStringList); overload; virtual; abstract;
+    destructor Destroy; override;
+    procedure WriteProject(const ADirectory: string); overload; virtual; abstract;
+    procedure WriteProject(const ADirectory: string; ASL: TStringList); overload; virtual; abstract;
     // Events
-    property    OnWriteClass: TOnWriteClassIntf read FOnWriteClass write SetOnWriteClass;
-    property    OnWriteUnit: TOnWriteUnit read FOnWriteUnit write SetOnWriteUnit;
-    property    OnWriteEnum: TOnWriteEnum read FOnWriteEnum write SetOnWriteEnum;
-    property    OnWriteMapping: TOnWriteMapping read FOnWriteMapping write SetOnWriteMapping;
+    property OnWriteClass: TOnWriteClassIntf read FOnWriteClass write SetOnWriteClass;
+    property OnWriteUnit: TOnWriteUnit read FOnWriteUnit write SetOnWriteUnit;
+    property OnWriteEnum: TOnWriteEnum read FOnWriteEnum write SetOnWriteEnum;
+    property OnWriteMapping: TOnWriteMapping read FOnWriteMapping write SetOnWriteMapping;
   end;
 
 
@@ -630,19 +744,19 @@ type
     FEnumType: TEnumType;
     FObjClass: TtiObjectClass;
     FParams: TSelectParamList;
-    FSQL: String;
+    FSQL: string;
     procedure SetEnumType(const AValue: TEnumType);
     procedure SetObjClass(const AValue: TtiObjectClass);
-    procedure SetSQL(const AValue: String);
+    procedure SetSQL(const AValue: string);
   public
     constructor Create; override;
-    destructor  Destroy; override;
+    destructor Destroy; override;
     //function IsValid(const AErrors: TtiObjectErrors): boolean; overload; override;
-    property    SQL: String read FSQL write SetSQL;
-    property    ObjClass: TtiObjectClass read FObjClass write SetObjClass;
-    property    EnumType: TEnumType read FEnumType write SetEnumType;
-    property    Params: TSelectParamList read FParams;
-    procedure   AddParam(const AName: string; const ASQLParamName: string; AParamType: TMapPropType; AValue: Variant);
+    property SQL: string read FSQL write SetSQL;
+    property ObjClass: TtiObjectClass read FObjClass write SetObjClass;
+    property EnumType: TEnumType read FEnumType write SetEnumType;
+    property Params: TSelectParamList read FParams;
+    procedure AddParam(const AName: string; const ASQLParamName: string; AParamType: TMapPropertyType; AValue: Variant);
   end;
 
 
@@ -659,15 +773,15 @@ type
     procedure SetSQL(const AValue: string);
   protected
     FParams: TSelectParamList;
-    procedure   Init; override;
-    procedure   SetupParams; override;
+    procedure Init; override;
+    procedure SetupParams; override;
   public
     constructor Create; override;
-    destructor  Destroy; override;
-    property    SQL: string read FSQL write SetSQL;
-    property    ClassDef: TMapClassDef read FClassDef write SetClassDef;
-    property    ObjClass: TtiObjectClass read FObjClass write SetObjClass;
-    property    EnumType: TEnumType read FEnumType write SetEnumType;
+    destructor Destroy; override;
+    property SQL: string read FSQL write SetSQL;
+    property ClassDef: TMapClassDef read FClassDef write SetClassDef;
+    property ObjClass: TtiObjectClass read FObjClass write SetObjClass;
+    property EnumType: TEnumType read FEnumType write SetEnumType;
   end;
 
 
@@ -687,30 +801,38 @@ type
   {: Class of  }
   TValidatorStringGeneratorClass = class of TValidatorStringGenerator;
 
-
-  procedure RegisterMappings;
+procedure RegisterMappings;
 
   // Misc global methods.
   {: Set the class used for reading and writing schema projects from and to XML. }
-  procedure gSetSchemaReaderClass(const AClass: TMapSchemaReaderClass);
+procedure gSetSchemaReaderClass(const AClass: TMapSchemaReaderClass);
   {: Set the class of the default schema reader. }
-  function  gGetSchemaReaderClass: TMapSchemaReaderClass;
+
+function gGetSchemaReaderClass: TMapSchemaReaderClass;
   {: Converts AString into a TClassDefType. }
-  function  gStrToClassDefType(const AString: String): TClassDefType;
+
+function gStrToClassDefType(const AString: string): TClassDefType;
   {: Converts AString into corresponding TMapPropType. }
-  function  gStrToPropType(const AString: string): TMapPropType;
+
+function gStrToPropType(const AString: string): TMapPropType;
   {: Converts a TMapPropType into its streaming evquilv. }
-  function  gPropTypeToStr(const APropType: TMapPropType): string;
+
+function gPropTypeToStr(const APropType: TMapPropType): string;
   {: Finds a TtiAttrColMap given the AClassName.  Built in function uses the TClass instead of string. }
-  function  gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
+
+function gFindAttrMap(const AClassName: string; const AAttrName: string): TtiAttrColMap;
   {: Converts AString into corresponding TValidatorType. }
-  function  gStrToValType(const AString: string): TValidatorType;
+
+function gStrToValType(const AString: string): TValidatorType;
   {: Converts AValType into its string equiv. }
-  function  gValTypeToStr(const AValType: TValidatorType): string;
+
+function gValTypeToStr(const AValType: TValidatorType): string;
   {: Returns the absolute path of Source Path given Relative path. }
-  function  GetAbsolutePath(Source, Relative: string): string;
+
+function GetAbsolutePath(Source, Relative: string): string;
   {: Converts a string representation to TOIDType. }
-  function  gStrToOIDType(const AString: string): TOIDType;
+
+function gStrToOIDType(const AString: string): TOIDType;
 
   // -----------------------------------------------------------------
   //  Glob vars
@@ -724,7 +846,7 @@ implementation
 var
   mSchemaReaderClass: TMapSchemaReaderClass;
 
-function  gStrToOIDType(const AString: string): TOIDType;
+function gStrToOIDType(const AString: string): TOIDType;
 var
   s: string;
 begin
@@ -737,133 +859,134 @@ end;
 
 function GetappearNum(sub, st: string): integer;
 var
-    i: integer;
-    P: integer;
+  i: integer;
+  P: integer;
 begin
 
-    p := Pos(sub, st);
-    I := 0;
-    while p > 0 do
-    begin
-        inc(i);
-        delete(st, 1, p + length(sub) - 1);
-        p := Pos(sub, st);
-    end;
-    result := i;
+  P := Pos(sub, st);
+  i := 0;
+  while P > 0 do
+  begin
+    inc(i);
+    delete(st, 1, P + length(sub) - 1);
+    P := Pos(sub, st);
+  end;
+  result := i;
 end;
-
-
 
 function decomposestr(sub, st: string; var tst: TStringList): Boolean;
 var
-    num: integer;
-    P: integer;
-
+  num: integer;
+  P: integer;
 begin
-    p := Pos(sub, st);
-    tst.Clear;
-    while p > 0 do
-    begin
-        num := p + length(sub) - 1;
-        tst.Add(copy(st, 1, num));
-        delete(st, 1, num);
-        p := Pos(sub, st);
-    end;
-    tst.Add(st);
-    Result := True;
+  P := Pos(sub, st);
+  tst.Clear;
+  while P > 0 do
+  begin
+    num := P + length(sub) - 1;
+    tst.Add(copy(st, 1, num));
+    delete(st, 1, num);
+    P := Pos(sub, st);
+  end;
+  tst.Add(st);
+  Result := True;
 
 end;
-
-
 
 function CopyLeftNum(sub, st: string; num: integer): string;
 var
-    Tst: TStringList;
-    I: integer;
+  Tst: TStringList;
+  I: integer;
 begin
-    tst := TStringList.Create;
-    decomposestr(sub, st, Tst);
-    if Num >= Tst.Count then
-        Result := st
-    else
+  Tst := TStringList.Create;
+  decomposestr(sub, st, Tst);
+  if num >= Tst.Count then
+    Result := st
+  else
+  begin
+    for I := 0 to num - 1 do
     begin
-        for i := 0 to num - 1 do
-        begin
-            Result := Result + Tst[i];
-        end;
+      Result := Result + Tst[I];
     end;
-    Tst.Free;
+  end;
+  Tst.Free;
 end;
-
 
 function CopyRightNum(sub, st: string; Num: integer): string;
 var
-    Tst: TStringList;
-    I: integer;
+  Tst: TStringList;
+  I: integer;
 begin
-    Tst := TStringList.Create;
-    try
-        decomposestr(sub, st, Tst);
-        Result := '';
-        if Num < Tst.Count then
-        begin
-            for i := Tst.Count - Num to Tst.Count - 1 do
-            begin
-                Result := Result + Tst[i]
-            end;
-        end;
-    finally
-        Tst.Free;
+  Tst := TStringList.Create;
+  try
+    decomposestr(sub, st, Tst);
+    Result := '';
+    if Num < Tst.Count then
+    begin
+      for I := Tst.Count - Num to Tst.Count - 1 do
+      begin
+        Result := Result + Tst[I]
+      end;
     end;
+  finally
+    Tst.Free;
+  end;
 end;
 
 function gValTypeToStr(const AValType: TValidatorType): string;
 begin
 
   case AValType of
-    vtRequired: result := 'required';
-    vtGreater: result := 'greater';
-    vtGreaterEqual: result := 'greater-equal';
-    vtLess: result := 'less';
-    vtLessEqual: result := 'less-equal';
-    vtNotEqual: result := 'not-equal';
-    vtRegExp: result := 'reg-exp';
+    vtRequired:
+      result := 'required';
+    vtGreater:
+      result := 'greater';
+    vtGreaterEqual:
+      result := 'greater-equal';
+    vtLess:
+      result := 'less';
+    vtLessEqual:
+      result := 'less-equal';
+    vtNotEqual:
+      result := 'not-equal';
+    vtRegExp:
+      result := 'reg-exp';
   else
-    Raise Exception.Create('gValTypeToStr: Value out of range');
+    raise Exception.Create('gValTypeToStr: Value out of range');
   end;
 end;
 
 function GetAbsolutePath(Source, Relative: string): string;
 var
-    i, Num, num1: integer;
-    St: TStringList;
-    s: string;
+  i, Num, num1: integer;
+  St: TStringList;
+  s: string;
 begin
-    Num := GetappearNum('..', Relative);
-    St := TStringList.Create;
-    decomposestr(PathDelim, ExcludeTrailingBackslash(Source), st);
-    Num1 := st.Count;
+  Num := GetappearNum('..', Relative);
+  St := TStringList.Create;
+  decomposestr(PathDelim, ExcludeTrailingBackslash(Source), St);
+  num1 := St.Count;
 
-    Result := '';
+  Result := '';
 
-    for i := 0 to num1 - num - 1 do
-    begin
-        Result := Result + st[i];
-    end;
+  for i := 0 to num1 - Num - 1 do
+  begin
+    Result := Result + St[i];
+  end;
 
-    if Pos('\', Relative) > 0 then
-      s := CopyRightNum('..\', Relative, 1)
+  if Pos('\', Relative) > 0 then
+    s := CopyRightNum('..\', Relative, 1)
+  else
+  begin
+    if Pos('/', Relative) > 0 then
+      s := CopyRightNum('../', Relative, 1)
     else
-    begin
-      if Pos('/', Relative) > 0 then
-        s := CopyRightNum('../', Relative, 1)
-      else
         // if we got here it means the Relative value is simply a directory name with no slashes
-        s := PathDelim + Relative;
-    end;
+      s := PathDelim + Relative;
+  end;
 
-    Result := Result + s;
-    st.Free;
+  Result := Result + s;
+  St.Free;
 end;
 
 procedure RegisterMappings;
@@ -881,14 +1004,14 @@ begin
   result := mSchemaReaderClass;
 end;
 
-function gStrToClassDefType(const AString: String): TClassDefType;
+function gStrToClassDefType(const AString: string): TClassDefType;
 begin
   if LowerCase(AString) = 'create' then
     result := dtCreate
   else if LowerCase(AString) = 'reference' then
     result := dtReference
   else
-    Raise Exception.Create('gStrToClassDefType: invalid parameter');
+    raise Exception.Create('gStrToClassDefType: invalid parameter');
 end;
 
 function gStrToPropType(const AString: string): TMapPropType;
@@ -929,18 +1052,30 @@ end;
 function gPropTypeToStr(const APropType: TMapPropType): string;
 begin
   case APropType of
-    ptString: result := 'String';
-    ptInt64: result := 'Int64';
-    ptInteger: result := 'Integer';
-    ptAnsiString: result := 'AnsiString';
-    ptBoolean: result := 'Boolean';
-    ptDateTime: Result := 'TDateTime';
-    ptSingle: result := 'Single';
-    ptDouble: result := 'Double';
-    ptCurrency: result := 'Currency';
-    ptEnum: result := 'enum';
-    ptEnumSet: result := 'enumset';
-    ptStream: result := 'blob';
+    ptString:
+      result := 'String';
+    ptInt64:
+      result := 'Int64';
+    ptInteger:
+      result := 'Integer';
+    ptAnsiString:
+      result := 'AnsiString';
+    ptBoolean:
+      result := 'Boolean';
+    ptDateTime:
+      Result := 'TDateTime';
+    ptSingle:
+      result := 'Single';
+    ptDouble:
+      result := 'Double';
+    ptCurrency:
+      result := 'Currency';
+    ptEnum:
+      result := 'enum';
+    ptEnumSet:
+      result := 'enumset';
+    ptStream:
+      result := 'blob';
   end;
 end;
 
@@ -954,16 +1089,15 @@ begin
   result := nil;
 
   lMapList := GTIOPFManager.ClassDBMappingMgr.AttrColMaps;
-  for lCtr := 0 to lMapList.Count -1 do
+  for lCtr := 0 to lMapList.Count - 1 do
+  begin
+    lMap := lMapList.Items[lCtr];
+    if (lMap.AttrMap.Owner.PerObjAbsClass.ClassName = AClassName) and (SameText(lMap.AttrMap.AttrName, AAttrName)) then
     begin
-      lMap := lMapList.Items[lCtr];
-      if (lMap.AttrMap.Owner.PerObjAbsClass.ClassName = AClassName) and
-        (SameText(lMap.AttrMap.AttrName, AAttrName)) then
-        begin
-          result := lMap;
-          exit;
-        end;
+      result := lMap;
+      exit;
     end;
+  end;
 end;
 
 function gStrToValType(const AString: string): TValidatorType;
@@ -987,22 +1121,49 @@ begin
   else if lStr = 'req-exp' then
     result := vtRegExp
   else
-    Raise Exception.Create('gStrToValType: Value out of range');
+    raise Exception.Create('gStrToValType: Value out of range');
 end;
 
 { TMapProject }
 
+procedure TMapProject.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapProject;
+begin
+  inherited;
+
+  if ASource is TMapProject then
+  begin
+    lSource := ASource as TMapProject;
+
+    GeneralOptions.Assign(lSource.GeneralOptions);
+    CodeGenerationOptions.Assign(lSource.CodeGenerationOptions);
+    DatabaseOptions.Assign(lSource.DatabaseOptions);
+    Units.Assign(lSource.Units);
+    ProjectClasses.Assign(lSource.ProjectClasses);
+    ProjectEnums.Assign(lSource.ProjectEnums);
+  end;
+end;
+
 procedure TMapProject.ClearAll;
 begin
-  FIncludes.Clear;
-  FUnits.Clear;
+  Includes.Clear;
+  Units.Clear;
   ProjectClasses.Clear;
-  FProjectEnums.Clear;
+  ProjectEnums.Clear;
 end;
 
 constructor TMapProject.Create;
 begin
   inherited Create;
+
+  FGeneralOptions := TMapGeneralProjectOptions.Create;
+  FCodeGenerationOptions := TMapCodeGenerationProjectOptions.Create;
+  FCodeGenerationOptions.MaxEditorCodeWidth := 80;
+
+  FDatabaseOptions := TMapDatabaseProjectOptions.Create;
+  FDatabaseOptions.DoubleQuoteDBFieldNames := false;
+
   FIncludes := TStringList.Create;
   FUnits := TMapUnitDefList.Create;
 
@@ -1011,8 +1172,6 @@ begin
 
   FProjectEnums := TMapEnumList.Create;
   FProjectEnums.OwnsObjects := false;
-
-  FMaxEditorCodeWidth := 80;
 end;
 
 destructor TMapProject.Destroy;
@@ -1021,11 +1180,15 @@ begin
   FUnits.Free;
   FProjectClasses.Free;
   FProjectEnums.Free;
+
+  FCodeGenerationOptions.Free;
+  FDatabaseOptions.Free;
+  FGeneralOptions.Free;
+
   inherited Destroy;
 end;
 
-function TMapProject.FindEnumForPropName(const AUnitName: string; const AClassName: string;
-  const APropName: string): TMapEnum;
+function TMapProject.FindEnumForPropName(const AUnitName: string; const AClassName: string; const APropName: string): TMapEnum;
 var
   lClassDef: TMapClassDef;
   lProp: TMapClassProp;
@@ -1035,7 +1198,7 @@ begin
     lUnit := Units.FindByName(AUnitName);
     lClassDef := lUnit.UnitClasses.FindByName(AClassName);
     lProp := lClassDef.ClassProps.FindByName(APropName);
-    result := lUnit.UnitEnums.FindByName(lProp.PropTypeName);
+    result := lUnit.UnitEnums.FindByName(lProp.PropertyType.TypeName);
   except
     result := nil;
   end;
@@ -1050,84 +1213,33 @@ begin
   result := false;
 
   for lUnitCtr := 0 to Units.Count - 1 do
+  begin
+    lUnit := Units.Items[lUnitCtr];
+    for lClassCtr := 0 to lUnit.UnitClasses.Count - 1 do
     begin
-      lUnit := Units.Items[lUnitCtr];
-      for lClassCtr := 0 to lUnit.UnitClasses.Count - 1 do
-        begin
-          lClassDef := lUnit.UnitClasses.Items[lClassCtr];
-          if lClassDef.Selections.Count > 0 then
-            begin
-              result := true;
-              exit;
-            end;
-        end;
+      lClassDef := lUnit.UnitClasses.Items[lClassCtr];
+      if lClassDef.Selections.Count > 0 then
+      begin
+        result := true;
+        exit;
+      end;
     end;
-end;
-
-procedure TMapProject.SetBaseDirectory(const AValue: string);
-begin
-  if FBaseDirectory=AValue then exit;
-  FBaseDirectory:=AValue;
-end;
-
-procedure TMapProject.SetBeginEndTabs(const AValue: integer);
-begin
-  if FBeginEndTabs=AValue then exit;
-  FBeginEndTabs:=AValue;
-end;
-
-procedure TMapProject.SetEnumType(const AValue: TEnumType);
-begin
-  if FEnumType=AValue then exit;
-  FEnumType:=AValue;
+  end;
 end;
 
 procedure TMapProject.SetFileName(const AValue: string);
 begin
-  if FFileName=AValue then exit;
-  FFileName:=AValue;
-end;
-
-procedure TMapProject.SetMaxEditorCodeWidth(const AValue: integer);
-begin
-  if FMaxEditorCodeWidth=AValue then exit;
-  FMaxEditorCodeWidth:=AValue;
-end;
-
-procedure TMapProject.SetOrigOutDirectory(const AValue: string);
-begin
-  if FOrigOutDirectory=AValue then exit;
-  FOrigOutDirectory:=AValue;
-end;
-
-procedure TMapProject.SetOutputDirectory(const AValue: string);
-begin
-  if FOutputDirectory=AValue then exit;
-  FOutputDirectory:=AValue;
+  if FFileName = AValue then
+    exit;
+  FFileName := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapProject.SetProjectClasses(const AValue: TMapClassDefList);
 begin
-  if FProjectClasses=AValue then exit;
-  FProjectClasses:=AValue;
-end;
-
-procedure TMapProject.SetProjectName(const AValue: string);
-begin
-  if FProjectName=AValue then exit;
-  FProjectName:=AValue;
-end;
-
-procedure TMapProject.SetTabSpaces(const AValue: integer);
-begin
-  if FTabSpaces=AValue then exit;
-  FTabSpaces:=AValue;
-end;
-
-procedure TMapProject.SetVisibilityTabs(const AValue: integer);
-begin
-  if FVisibilityTabs=AValue then exit;
-  FVisibilityTabs:=AValue;
+  if FProjectClasses = AValue then
+    exit;
+  FProjectClasses := AValue;
 end;
 
 
@@ -1181,20 +1293,27 @@ end;
 
 procedure TMapConnectionDef.SetConnType(const AValue: string);
 begin
-  if FConnType=AValue then exit;
-  FConnType:=AValue;
+  if FConnType = AValue then
+    exit;
+  FConnType := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapConnectionDef.SetDataSource(const AValue: string);
 begin
-  if FDataSource=AValue then exit;
-  FDataSource:=AValue;
+  if FDataSource = AValue then
+    exit;
+  FDataSource := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapConnectionDef.SetHost(const AValue: string);
 begin
-  if FHost=AValue then exit;
-  FHost:=AValue;
+  if FHost = AValue then
+    exit;
+
+  FHost := AValue;
+  NotifyObservers;
 end;
 
 { TMapConnectionDefList }
@@ -1209,13 +1328,28 @@ begin
   result := TMapConnectionDef(inherited GetItems(i));
 end;
 
-procedure TMapConnectionDefList.SetItems(i: Integer;
-  AObject: TMapConnectionDef);
+procedure TMapConnectionDefList.SetItems(i: Integer; AObject: TMapConnectionDef);
 begin
   inherited SetItems(i, AObject);
 end;
 
 { TMapUnitDef }
+
+procedure TMapUnitDef.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapUnitDef;
+begin
+  inherited;
+
+  if ASource is TMapUnitDef then
+  begin
+    lSource := ASource as TMapUnitDef;
+
+    UnitClasses.Assign(lSource.UnitClasses);
+    UnitEnums.Assign(lSource.UnitEnums);
+    References.Assign(lSource.References);
+  end;
+end;
 
 constructor TMapUnitDef.Create;
 begin
@@ -1240,19 +1374,34 @@ begin
   result := false;
 
   for lClassCtr := 0 to UnitClasses.Count - 1 do
+  begin
+    if UnitClasses.Items[lClassCtr].Validators.Count > 0 then
     begin
-      if UnitClasses.Items[lClassCtr].Validators.Count > 0 then
-        begin
-          result := true;
-          exit;
-        end;
+      result := true;
+      exit;
     end;
+  end;
+end;
+
+function TMapUnitDef.IsValid(const AErrors: TtiObjectErrors): boolean;
+begin
+  result := false;
+
+  if Assigned(AErrors) then
+  begin
+    if Name = EmptyStr then
+      AErrors.AddError('Name', 'Unit must have a name.');
+
+    result := AErrors.Count = 0;
+  end;
 end;
 
 procedure TMapUnitDef.SetUnitName(const AValue: string);
 begin
-  if FName=AValue then exit;
-  FName:=AValue;
+  if FName = AValue then
+    exit;
+  FName := AValue;
+  NotifyObservers;
 end;
 
 { TMapEnumValue }
@@ -1270,20 +1419,25 @@ end;
 
 procedure TMapEnumValue.SetEnumValue(const AValue: integer);
 begin
-  if FEnumValue=AValue then exit;
-  FEnumValue:=AValue;
+  if FEnumValue = AValue then
+    exit;
+
+  FEnumValue := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapEnumValue.SetEnumValueName(const AValue: string);
 begin
-  if FEnumValueName=AValue then exit;
-  FEnumValueName:=AValue;
+  if FEnumValueName = AValue then
+    exit;
+
+  FEnumValueName := AValue;
+  NotifyObservers;
 end;
 
 { TMapEnumValueList }
 
-function TMapEnumValueList.Add(const AName: string; const AValue: integer
-  ): integer;
+function TMapEnumValueList.Add(const AName: string; const AValue: integer): integer;
 var
   lValue: TMapEnumValue;
 begin
@@ -1310,9 +1464,28 @@ end;
 
 { TMapEnum }
 
+procedure TMapEnum.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapEnum;
+begin
+  inherited;
+
+  if ASource is TMapEnum then
+  begin
+    lSource := ASource as TMapEnum;
+
+    Values.Assign(lSource.Values);
+  end;
+end;
+
 constructor TMapEnum.Create;
 begin
   inherited Create;
+  BaseType := ptEnum;
+  TypeName := 'TEnumerated';
+  EnumerationSet := false;
+  EnumerationSetName := '';
+
   FValues := TMapEnumValueList.Create;
 end;
 
@@ -1322,20 +1495,23 @@ begin
   inherited Destroy;
 end;
 
-procedure TMapEnum.SetEnumName(const AValue: string);
+procedure TMapEnum.SetEnumerationSet(const Value: boolean);
 begin
-  if FEnumName = AValue then
-    Exit;
-  FEnumName := AValue;
+  if FEnumerationSet = Value then
+    exit;
+
+  FEnumerationSet := Value;
+  NotifyObservers;
 end;
 
-procedure TMapEnum.SetEnumSetName(const AValue: string);
+procedure TMapEnum.SetEnumerationSetName(const Value: string);
 begin
-  if FEnumSetName = AValue then
-    Exit;
-  FEnumSetName := AValue;
-end;
+  if FEnumerationSetName = Value then
+    exit;
 
+  FEnumerationSetName := Value;
+  NotifyObservers;
+end;
 
 procedure TMapEnum.SetValues(const AValue: TMapEnumValueList);
 begin
@@ -1347,9 +1523,27 @@ end;
 
 { TMapClassDef }
 
+procedure TMapClassDef.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapClassDef;
+begin
+  inherited;
+
+  if ASource is TMapClassDef then
+  begin
+    lSource := ASource as TMapClassDef;
+
+    ClassProps.Assign(lSource.ClassProps);
+    ClassMapping.Assign(lSource.ClassMapping);
+    Selections.Assign(lSource.Selections);
+    Validators.Assign(lSource.Validators);
+  end;
+end;
+
 constructor TMapClassDef.Create;
 begin
   inherited Create;
+
   FClassProps := TMapClassPropList.Create;
   FClassMapping := TClassMapping.Create;
   FSelections := TClassMappingSelectList.Create;
@@ -1363,91 +1557,106 @@ begin
   FClassMapping.free;
   FSelections.Free;
   FValidators.Free;
+
   inherited Destroy;
 end;
 
 procedure TMapClassDef.SetAutoCreateBase(const AValue: boolean);
 begin
-  if FAutoCreateBase=AValue then exit;
-  FAutoCreateBase:=AValue;
+  if FAutoCreateBase = AValue then
+    exit;
+  FAutoCreateBase := AValue;
 end;
 
 procedure TMapClassDef.SetAutoCreateListClass(const AValue: boolean);
 begin
-  if FAutoCreateListClass=AValue then exit;
-  FAutoCreateListClass:=AValue;
+  if FAutoCreateListClass = AValue then
+    exit;
+  FAutoCreateListClass := AValue;
 end;
 
 procedure TMapClassDef.SetAutoMap(const AValue: boolean);
 begin
-  if FAutoMap=AValue then exit;
-  FAutoMap:=AValue;
+  if FAutoMap = AValue then
+    exit;
+  FAutoMap := AValue;
 end;
 
 procedure TMapClassDef.SetBaseClassName(const AValue: string);
 begin
-  if FBaseClassName=AValue then exit;
-  FBaseClassName:=AValue;
+  if FBaseClassName = AValue then
+    exit;
+  FBaseClassName := AValue;
 end;
 
 procedure TMapClassDef.SetBaseClassParent(const AValue: string);
 begin
-  if FBaseClassParent=AValue then exit;
-  FBaseClassParent:=AValue;
+  if FBaseClassParent = AValue then
+    exit;
+  FBaseClassParent := AValue;
 end;
 
 procedure TMapClassDef.SetBaseListClassParent(AValue: string);
 begin
-  if FBaseListClassParent=AValue then Exit;
-  FBaseListClassParent:=AValue;
+  if FBaseListClassParent = AValue then
+    Exit;
+  FBaseListClassParent := AValue;
 end;
 
 procedure TMapClassDef.SetBaseUnitName(const AValue: string);
 begin
-  if FBaseUnitName=AValue then exit;
-  FBaseUnitName:=AValue;
+  if FBaseUnitName = AValue then
+    exit;
+  FBaseUnitName := AValue;
 end;
 
 procedure TMapClassDef.SetClassProps(const AValue: TMapClassPropList);
 begin
-  if FClassProps=AValue then exit;
-  FClassProps:=AValue;
+  if FClassProps = AValue then
+    exit;
+  FClassProps := AValue;
 end;
 
 procedure TMapClassDef.SetCrud(const AValue: string);
 begin
-  if FCrud=AValue then exit;
-  FCrud:=AValue;
+  if FCrud = AValue then
+    exit;
+  FCrud := AValue;
 end;
 
 procedure TMapClassDef.SetDefType(const AValue: TClassDefType);
 begin
-  if FDefType=AValue then exit;
-  FDefType:=AValue;
+  if FDefType = AValue then
+    exit;
+  FDefType := AValue;
 end;
 
 procedure TMapClassDef.SetForwardDeclare(const AValue: boolean);
 begin
-  if FForwardDeclare=AValue then exit;
-  FForwardDeclare:=AValue;
+  if FForwardDeclare = AValue then
+    exit;
+  FForwardDeclare := AValue;
 end;
 
 procedure TMapClassDef.SetListSavesDatabaseName(const AValue: boolean);
 begin
-  if FListSavesDatabaseName=AValue then exit;
-  FListSavesDatabaseName:=AValue;
+  if FListSavesDatabaseName = AValue then
+    exit;
+  FListSavesDatabaseName := AValue;
 end;
 
 procedure TMapClassDef.SetNotifyObserversOfPropertyChanges(const AValue: boolean);
 begin
-  if FNotifyObserversOfPropertyChanges = AValue then exit;
+  if FNotifyObserversOfPropertyChanges = AValue then
+    exit;
   FNotifyObserversOfPropertyChanges := AValue;
 end;
 
 procedure TMapClassDef.SetORMClassName(const AValue: string);
 begin
-  if FORMClassName=AValue then exit;
-  FORMClassName:=AValue;
+  if FORMClassName = AValue then
+    exit;
+  FORMClassName := AValue;
 end;
 
 { TMapClassDefList }
@@ -1467,13 +1676,13 @@ begin
   lName := LowerCase(AName);
 
   for lCtr := 0 to Count - 1 do
+  begin
+    if LowerCase(Items[lCtr].BaseClassName) = lName then
     begin
-      if LowerCase(Items[lCtr].BaseClassName) = lName then
-        begin
-          result := Items[lCtr];
-          exit;
-        end;
+      result := Items[lCtr];
+      exit;
     end;
+  end;
 end;
 
 function TMapClassDefList.GetItems(i: Integer): TMapClassDef;
@@ -1488,40 +1697,59 @@ end;
 
 { TMapClassProp }
 
+procedure TMapClassProp.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapClassProp;
+begin
+  inherited;
+
+  if ASource is TMapClassProp then
+  begin
+    lSource := ASource as TMapClassProp;
+
+    PropertyType := lSource.PropertyType;
+  end;
+end;
+
 procedure TMapClassProp.SetIsReadOnly(const AValue: boolean);
 begin
-  if FIsReadOnly=AValue then exit;
-  FIsReadOnly:=AValue;
+  if FIsReadOnly = AValue then
+    exit;
+
+  FIsReadOnly := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapClassProp.SetPropName(const AValue: string);
 begin
-  if FName=AValue then exit;
-  FName:=AValue;
+  if FName = AValue then
+    exit;
+
+  FName := AValue;
+  NotifyObservers;
 end;
 
-procedure TMapClassProp.SetPropType(const AValue: TMapPropType);
+procedure TMapClassProp.SetPropType(const AValue: TMapPropertyType);
 begin
-  if FPropertyType=AValue then exit;
-  FPropertyType:=AValue;
-end;
+  if FPropertyType = AValue then
+    exit;
 
-procedure TMapClassProp.SetPropTypeName(const AValue: string);
-begin
-  if FPropTypeName=AValue then exit;
-  FPropTypeName:=AValue;
+  FPropertyType := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapClassProp.SetVirtualGetter(AValue: boolean);
 begin
-  if FVirtualGetter=AValue then Exit;
-  FVirtualGetter:=AValue;
+  if FVirtualGetter = AValue then
+    Exit;
+
+  FVirtualGetter := AValue;
+  NotifyObservers;
 end;
 
 { TMapClassPropList }
 
-function TMapClassPropList.Add(const AName: string;
-  const APropType: TMapPropType): integer;
+function TMapClassPropList.Add(const AName: string; const APropType: TMapPropertyType): integer;
 var
   lProp: TMapClassProp;
 begin
@@ -1543,13 +1771,13 @@ begin
   result := nil;
 
   for lCtr := 0 to Count - 1 do
+  begin
+    if LowerCase(Items[lCtr].Name) = LowerCase(AName) then
     begin
-      if LowerCase(Items[lCtr].Name) = LowerCase(AName) then
-        begin
-          result := Items[lCtr];
-          exit;
-        end;
+      result := Items[lCtr];
+      exit;
     end;
+  end;
 end;
 
 function TMapClassPropList.GetItems(i: Integer): TMapClassProp;
@@ -1563,6 +1791,20 @@ begin
 end;
 
 { TClassMapping }
+
+procedure TClassMapping.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TClassMapping;
+begin
+  inherited;
+
+  if ASource is TClassMapping then
+  begin
+    lSource := ASource as TClassMapping;
+
+    PropMappings.Assign(lSource.PropMappings);
+  end;
+end;
 
 constructor TClassMapping.Create;
 begin
@@ -1578,26 +1820,34 @@ end;
 
 procedure TClassMapping.SetOIDType(const AValue: TOIDType);
 begin
-  if FOIDType=AValue then exit;
-  FOIDType:=AValue;
+  if FOIDType = AValue then
+    exit;
+  FOIDType := AValue;
+  NotifyObservers;
 end;
 
 procedure TClassMapping.SetPKField(const AValue: string);
 begin
-  if FPKField=AValue then exit;
-  FPKField:=AValue;
+  if FPKField = AValue then
+    exit;
+  FPKField := AValue;
+  NotifyObservers;
 end;
 
 procedure TClassMapping.SetPKName(const AValue: string);
 begin
-  if FPKName=AValue then exit;
-  FPKName:=AValue;
+  if FPKName = AValue then
+    exit;
+  FPKName := AValue;
+  NotifyObservers;
 end;
 
 procedure TClassMapping.SetTableName(const AValue: string);
 begin
-  if FTableName=AValue then exit;
-  FTableName:=AValue;
+  if FTableName = AValue then
+    exit;
+  FTableName := AValue;
+  NotifyObservers;
 end;
 
 { TClassMappingList }
@@ -1619,6 +1869,20 @@ end;
 
 { TPropMapping }
 
+procedure TPropMapping.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TPropMapping;
+begin
+  inherited;
+
+  if ASource is TPropMapping then
+  begin
+    lSource := ASource as TPropMapping;
+
+    PropertyType := lSource.PropertyType;
+  end;
+end;
+
 function TPropMapping.IsValid(const AErrors: TtiObjectErrors): Boolean;
 begin
   result := inherited IsValid(AErrors);
@@ -1626,15 +1890,15 @@ begin
   if not result then
     exit;
 
-  if (PropName = '') or (Pos(' ', PropName) > 0)  then
-    begin
-      AErrors.AddError('PropName: Must be present and include no spaces');
-    end;
+  if (PropName = '') or (Pos(' ', PropName) > 0) then
+  begin
+    AErrors.AddError('Property Name: Must be present and include no spaces');
+  end;
 
-  if (FieldName = '') or (Pos(' ', FieldName) > 0)  then
-    begin
-      AErrors.AddError('Database Field Name: Must be present and include no spaces');
-    end;
+  if (FieldName = '') or (Pos(' ', FieldName) > 0) then
+  begin
+    AErrors.AddError('Database Field Name: Must be present and include no spaces');
+  end;
 
   Result := AErrors.Count = 0;
 
@@ -1642,32 +1906,42 @@ end;
 
 procedure TPropMapping.SetFieldName(const AValue: string);
 begin
-  if FFieldName=AValue then exit;
-  FFieldName:=AValue;
+  if FFieldName = AValue then
+    exit;
+  FFieldName := AValue;
+  NotifyObservers;
 end;
 
 procedure TPropMapping.SetPropName(const AValue: string);
 begin
-  if FPropName=AValue then exit;
-  FPropName:=AValue;
+  if FPropName = AValue then
+    exit;
+  FPropName := AValue;
+  NotifyObservers;
 end;
 
-procedure TPropMapping.SetPropType(const AValue: TMapPropType);
+procedure TPropMapping.SetPropType(const AValue: TMapPropertyType);
 begin
-  if FPropertyType=AValue then exit;
-  FPropertyType:=AValue;
+  if FPropertyType = AValue then
+    exit;
+  FPropertyType := AValue;
+  NotifyObservers;
 end;
 
-procedure TPropMapping.SetPropertyGetter(const AValue: String);
+procedure TPropMapping.SetPropertyGetter(const AValue: string);
 begin
-  if FPropertyGetter=AValue then exit;
-  FPropertyGetter:=AValue;
+  if FPropertyGetter = AValue then
+    exit;
+  FPropertyGetter := AValue;
+  NotifyObservers;
 end;
 
-procedure TPropMapping.SetPropertySetter(const AValue: String);
+procedure TPropMapping.SetPropertySetter(const AValue: string);
 begin
-  if FPropertySetter=AValue then exit;
-  FPropertySetter:=AValue;
+  if FPropertySetter = AValue then
+    exit;
+  FPropertySetter := AValue;
+  NotifyObservers;
 end;
 
 { TPropMappingList }
@@ -1689,16 +1963,20 @@ end;
 
 { TFilterDef }
 
-procedure TFilterDef.SetField(const AValue: String);
+procedure TFilterDef.SetField(const AValue: string);
 begin
-  if FField=AValue then exit;
-  FField:=AValue;
+  if FField = AValue then
+    exit;
+  FField := AValue;
+  NotifyObservers;
 end;
 
 procedure TFilterDef.SetFilterType(const AValue: TFilterType);
 begin
-  if FFilterType=AValue then exit;
-  FFilterType:=AValue;
+  if FFilterType = AValue then
+    exit;
+  FFilterType := AValue;
+  NotifyObservers;
 end;
 
 { TFilterDefList }
@@ -1735,13 +2013,13 @@ begin
   lName := LowerCase(AName);
 
   for lCtr := 0 to Count - 1 do
+  begin
+    if LowerCase(Items[lCtr].TypeName) = lName then
     begin
-      if LowerCase(Items[lCtr].EnumName) = lName then
-        begin
-          result := Items[lCtr];
-          exit;
-        end;
+      result := Items[lCtr];
+      exit;
     end;
+  end;
 end;
 
 function TMapEnumList.GetItems(i: Integer): TMapEnum;
@@ -1771,13 +2049,13 @@ begin
   lName := LowerCase(AName);
 
   for lCtr := 0 to Count - 1 do
+  begin
+    if LowerCase(Items[lCtr].Name) = lName then
     begin
-      if LowerCase(Items[lCtr].Name) = lName then
-        begin
-          result := Items[lCtr];
-          exit;
-        end;
+      result := Items[lCtr];
+      exit;
     end;
+  end;
 end;
 
 function TMapUnitDefList.GetItems(i: Integer): TMapUnitDef;
@@ -1815,38 +2093,39 @@ end;
 
 procedure TMapSchemaWriter.SetCurrentIndent(const AValue: integer);
 begin
-  if FCurrentIndent=AValue then exit;
-  FCurrentIndent:=AValue;
+  if FCurrentIndent = AValue then
+    exit;
+  FCurrentIndent := AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteClass(const AValue: TOnWriteClassIntf);
 begin
-  FOnWriteClass:=AValue;
+  FOnWriteClass := AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteEnum(const AValue: TOnWriteEnum);
 begin
-  FOnWriteEnum:=AValue;
+  FOnWriteEnum := AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteMapping(const AValue: TOnWriteMapping);
 begin
-  FOnWriteMapping:=AValue;
+  FOnWriteMapping := AValue;
 end;
 
 procedure TMapSchemaWriter.SetOnWriteUnit(const AValue: TOnWriteUnit);
 begin
-  FOnWriteUnit:=AValue;
+  FOnWriteUnit := AValue;
 end;
 
 procedure TMapSchemaWriter.SetProject(const AValue: TMapProject);
 begin
-  FProject:=AValue;
+  FProject := AValue;
 end;
 
 function TMapSchemaWriter.TabToSpaces(const ANumTabs: integer): string;
 begin
-  result := StringOfChar(' ', ANumTabs * Project.TabSpaces);
+  result := StringOfChar(' ', ANumTabs * Project.CodeGenerationOptions.TabSpaces);
 end;
 
 procedure TMapSchemaWriter.WriteLine(const AText: string; AList: TStringList);
@@ -1866,44 +2145,42 @@ end;
 
 procedure TSelectParam.SetParamName(const AValue: string);
 begin
-  if FParamName=AValue then exit;
-  FParamName:=AValue;
+  if FParamName = AValue then
+    exit;
+  FParamName := AValue;
+  NotifyObservers;
 end;
 
-procedure TSelectParam.SetParamType(const AValue: TMapPropType);
+procedure TSelectParam.SetParamType(const AValue: TMapPropertyType);
 begin
-  if FParamType=AValue then exit;
-  FParamType:=AValue;
-end;
-
-procedure TSelectParam.SetParamTypeName(const AValue: string);
-begin
-  if FParamTypeName=AValue then exit;
-  FParamTypeName:=AValue;
+  if FParamType = AValue then
+    exit;
+  FParamType := AValue;
+  NotifyObservers;
 end;
 
 procedure TSelectParam.SetPassBy(const AValue: string);
 begin
-  if FPassBy=AValue then exit;
-  FPassBy:=AValue;
+  if FPassBy = AValue then
+    exit;
+  FPassBy := AValue;
+  NotifyObservers;
 end;
 
 procedure TSelectParam.SetSQLParamName(const AValue: string);
 begin
-  if FSQLParamName=AValue then exit;
-  FSQLParamName:=AValue;
-end;
-
-procedure TSelectParam.SetTypeName(const AValue: string);
-begin
-  if FTypeName=AValue then exit;
-  FTypeName:=AValue;
+  if FSQLParamName = AValue then
+    exit;
+  FSQLParamName := AValue;
+  NotifyObservers;
 end;
 
 procedure TSelectParam.SetValue(const AValue: Variant);
 begin
-  if FValue=AValue then exit;
-  FValue:=AValue;
+  if FValue = AValue then
+    exit;
+  FValue := AValue;
+  NotifyObservers;
 end;
 
 { TSelectParamList }
@@ -1920,13 +2197,13 @@ begin
   result := nil;
 
   for lCtr := 0 to Count - 1 do
+  begin
+    if LowerCase(Items[lCtr].ParamName) = LowerCase(AName) then
     begin
-      if LowerCase(Items[lCtr].ParamName) = LowerCase(AName) then
-        begin
-          result := Items[lCtr];
-          exit;
-        end;
+      result := Items[lCtr];
+      exit;
     end;
+  end;
 end;
 
 function TSelectParamList.GetItems(i: Integer): TSelectParam;
@@ -1940,6 +2217,20 @@ begin
 end;
 
 { TClassMappingSelect }
+
+procedure TClassMappingSelect.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TClassMappingSelect;
+begin
+  inherited;
+
+  if ASource is TClassMappingSelect then
+  begin
+    lSource := ASource as TClassMappingSelect;
+
+    lSource.Params.Assign(lSource.Params);
+  end;
+end;
 
 constructor TClassMappingSelect.Create;
 begin
@@ -1962,27 +2253,35 @@ var
 begin
   lParams := '';
   result := FName + '(';
-  for lCtr := 0 to FParams.Count - 1 do
-    begin
-      lPar := FParams.Items[lCtr];
-      if lParams = '' then
-        lParams := lPar.ParamName
-      else
-        lParams := lParams + ', ' + lPar.ParamName;
-    end;
-  result := result + lParams + ')';
 
+  for lCtr := 0 to FParams.Count - 1 do
+  begin
+    lPar := FParams.Items[lCtr];
+
+    if lParams = '' then
+      lParams := lPar.ParamName
+    else
+      lParams := lParams + ', ' + lPar.ParamName;
+  end;
+
+  result := result + lParams + ')';
 end;
 
 procedure TClassMappingSelect.SetName(const AValue: string);
 begin
-  if FName=AValue then exit;
-  FName:=AValue;
+  if FName = AValue then
+    exit;
+  FName := AValue;
+  NotifyObservers;
 end;
 
 procedure TClassMappingSelect.SetSQL(const Value: string);
 begin
+  if FSQL = Value then
+    exit;
+
   FSQL := Value;
+  NotifyObservers;
 end;
 
 { TClassMappingSelectList }
@@ -1997,8 +2296,7 @@ begin
   result := TClassMappingSelect(inherited GetItems(i));
 end;
 
-procedure TClassMappingSelectList.SetItems(i: Integer;
-  AObject: TClassMappingSelect);
+procedure TClassMappingSelectList.SetItems(i: Integer; AObject: TClassMappingSelect);
 begin
   inherited SetItems(i, AObject);
 end;
@@ -2025,26 +2323,30 @@ end;
 
 procedure TtiMapParameterListReadVisitor.SetClassDef(const AValue: TMapClassDef);
 begin
-  if FClassDef=AValue then exit;
-  FClassDef:=AValue;
+  if FClassDef = AValue then
+    exit;
+  FClassDef := AValue;
 end;
 
 procedure TtiMapParameterListReadVisitor.SetEnumType(const AValue: TEnumType);
 begin
-  if FEnumType=AValue then exit;
-  FEnumType:=AValue;
+  if FEnumType = AValue then
+    exit;
+  FEnumType := AValue;
 end;
 
 procedure TtiMapParameterListReadVisitor.SetObjClass(const AValue: TtiObjectClass);
 begin
-  if FObjClass=AValue then exit;
-  FObjClass:=AValue;
+  if FObjClass = AValue then
+    exit;
+  FObjClass := AValue;
 end;
 
 procedure TtiMapParameterListReadVisitor.SetSQL(const AValue: string);
 begin
-  if FSQL=AValue then exit;
-  FSQL:=AValue;
+  if FSQL = AValue then
+    exit;
+  FSQL := AValue;
 end;
 
 procedure TtiMapParameterListReadVisitor.SetupParams;
@@ -2102,12 +2404,11 @@ end;
 
 { TtiMappedFilteredObjectList }
 
-procedure TtiMappedFilteredObjectList.AddParam(const AName: string; const ASQLParamName: string;
-  AParamType: TMapPropType; AValue: Variant);
+procedure TtiMappedFilteredObjectList.AddParam(const AName: string; const ASQLParamName: string; AParamType: TMapPropertyType; AValue: Variant);
 var
   lParam: TSelectParam;
 begin
-  lParam := FParams.FindByName(Aname);
+  lParam := FParams.FindByName(AName);
   if lParam <> nil then
     exit;
 
@@ -2133,40 +2434,86 @@ end;
 
 procedure TtiMappedFilteredObjectList.SetEnumType(const AValue: TEnumType);
 begin
-  if FEnumType=AValue then exit;
-  FEnumType:=AValue;
+  if FEnumType = AValue then
+    exit;
+  FEnumType := AValue;
 end;
 
-procedure TtiMappedFilteredObjectList.SetObjClass(const AValue: TtiObjectClass
-  );
+procedure TtiMappedFilteredObjectList.SetObjClass(const AValue: TtiObjectClass);
 begin
-  if FObjClass=AValue then exit;
-  FObjClass:=AValue;
+  if FObjClass = AValue then
+    exit;
+  FObjClass := AValue;
 end;
 
-procedure TtiMappedFilteredObjectList.SetSQL(const AValue: String);
+procedure TtiMappedFilteredObjectList.SetSQL(const AValue: string);
 begin
-  if FSQL=AValue then exit;
-  FSQL:=AValue;
+  if FSQL = AValue then
+    exit;
+  FSQL := AValue;
 end;
 
 { TMapValidator }
 
-procedure TMapValidator.SetClassProp(const AValue: string);
+procedure TMapValidator.AssignClassProps(ASource: TtiObject);
+var
+  lSource: TMapValidator;
 begin
-  if FClassProp=AValue then exit;
-  FClassProp:=AValue;
+  inherited;
+
+  if ASource is TMapValidator then
+  begin
+    lSource := ASource as TMapValidator;
+
+    ClassProp := lSource.ClassProp;
+  end;
+end;
+
+function TMapValidator.IsValid(const AErrors: TtiObjectErrors): boolean;
+begin
+  result := False;
+
+  if Assigned(AErrors) then
+  begin
+    if not Assigned(ClassProp) then
+      AErrors.AddError('ClassProp', 'ClassProp canno''t be empty.');
+
+    if Assigned(ClassProp) and (ClassProp.PropertyType.BaseType in [ptEnum, ptEnumSet, ptStream]) and
+      (ValidatorType in [vtRegExp, vtRequired]) then
+      AErrors.AddError('ValidatorType', 'Validator not available for the property "' + ClassProp.Name + '" of type "' +
+        gPropTypeToStr(ClassProp.PropertyType.BaseType) + '".');
+
+    if (ValidatorType in [vtGreater, vtGreaterEqual, vtLess, vtLessEqual, vtNotEqual, vtRegExp]) and
+      (VarIsEmpty(Value) or VarIsClear(Value) or VarIsNull(Value) or (VarCompareValue(Value, Unassigned) = vrEqual)) then
+      AErrors.AddError('Value', 'Value required for this validator type.');
+
+    result := AErrors.Count = 0;
+  end;
+end;
+
+procedure TMapValidator.SetClassProp(const AValue: TMapClassProp);
+begin
+  if FClassProp = AValue then
+    exit;
+  FClassProp := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapValidator.SetValidatorType(const AValue: TValidatorType);
 begin
-  if FValidatorType=AValue then exit;
-  FValidatorType:=AValue;
+  if FValidatorType = AValue then
+    exit;
+  FValidatorType := AValue;
+  NotifyObservers;
 end;
 
 procedure TMapValidator.SetValue(const AValue: variant);
 begin
-  FValue:=AValue;
+  if FValue = AValue then
+    exit;
+
+  FValue := AValue;
+  NotifyObservers;
 end;
 
 { TMapValidatorList }
@@ -2192,9 +2539,7 @@ end;
     vtNotEqual, vtRegExp);
 }
 
-
-class function TValidatorStringGenerator.CreateGreaterOrEqualValidatorMsg(
-  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.CreateGreaterOrEqualValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 var
   lType: TtiTypeKind;
   lValue: string;
@@ -2211,48 +2556,42 @@ begin
 
 end;
 
-class function TValidatorStringGenerator.CreateGreaterValidatorMsg(
-  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.CreateGreaterValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 const
   MSG = 'Value of %s must be greater than %s.';
 begin
   result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
 end;
 
-class function TValidatorStringGenerator.CreateLessThanOrEqualValidatorMsg(
-  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.CreateLessThanOrEqualValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 const
   MSG = 'Value of %s must be greater than or equal to %s.';
 begin
   result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
 end;
 
-class function TValidatorStringGenerator.CreateLessThanValidatorMsg(
-  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.CreateLessThanValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 const
   MSG = 'Value of %s must be less than or equal to %s.';
 begin
   result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
 end;
 
-class function TValidatorStringGenerator.CreateNotEqualToValidatorMsg(
-  AObject: TtiObject; const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.CreateNotEqualToValidatorMsg(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 const
   MSG = 'Value of %s must not equal to %s.';
 begin
   result := format(MSG, [APropName, GetValueAsString(AObject, APropName, AValue)]);
 end;
 
-class function TValidatorStringGenerator.CreateRequiredValidatorMsg(
-  AObject: TtiObject; const APropName: string): string;
+class function TValidatorStringGenerator.CreateRequiredValidatorMsg(AObject: TtiObject; const APropName: string): string;
 const
   MSG = '%s must have a value.';
 begin
   result := format(MSG, [APropName]);
 end;
 
-class function TValidatorStringGenerator.GetValueAsString(AObject: TtiObject;
-  const APropName: string; AValue: Variant): string;
+class function TValidatorStringGenerator.GetValueAsString(AObject: TtiObject; const APropName: string; AValue: Variant): string;
 var
   lType: TtiTypeKind;
 begin
@@ -2269,12 +2608,270 @@ begin
       result := FormatFloat('#0.00', AValue);
     tiTKString:
       result := AValue;
-    else
-      raise Exception.Create('Value out of range');
+  else
+    raise Exception.Create('Value out of range');
   end;
+end;
+
+{ TMapPropertyTypeList }
+
+function TMapPropertyTypeList.Add(AObject: TMapPropertyType): Integer;
+begin
+  result := inherited Add(AObject);
+end;
+
+function TMapPropertyTypeList.Add(const AName: string; const AType: TMapPropType): integer;
+var
+  lValue: TMapPropertyType;
+begin
+  lValue := TMapPropertyType.Create;
+  lValue.BaseType := AType;
+  lValue.TypeName := AName;
+  result := Self.Add(lValue);
+end;
+
+function TMapPropertyTypeList.FindByTypeName(
+  const ATypeName: string): TMapPropertyType;
+begin
+  result := TMapPropertyType(FindByProps(['TypeName'], [ATypeName], false));
+end;
+
+function TMapPropertyTypeList.GetItems(i: Integer): TMapPropertyType;
+begin
+  result := TMapPropertyType(inherited GetItems(I));
+end;
+
+procedure TMapPropertyTypeList.SetItems(i: Integer; AObject: TMapPropertyType);
+begin
+  inherited SetItems(I, AObject);
+end;
+
+{ TMapPropertyType }
+
+procedure TMapPropertyType.SetBaseType(const Value: TMapPropType);
+begin
+  if FBaseType = Value then
+    exit;
+
+  FBaseType := Value;
+  NotifyObservers;
+end;
+
+procedure TMapPropertyType.SetTypeName(const Value: string);
+begin
+  if FTypeName = Value then
+    exit;
+
+  FTypeName := Value;
+  NotifyObservers;
+end;
+
+{ TMapStringProperty }
+
+constructor TMapStringProperty.Create;
+begin
+  inherited Create;
+
+  FBaseType := ptString;
+  FTypeName := 'String';
+end;
+
+{ TMapIntegerProperty }
+
+constructor TMapIntegerProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptInteger;
+  FTypeName := 'Integer';
+end;
+
+{ TMapAnsiStringProperty }
+
+constructor TMapAnsiStringProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptAnsiString;
+  FTypeName := 'AnsiString';
+end;
+
+{ TMapDoubleProperty }
+
+constructor TMapDoubleProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptDouble;
+  FTypeName := 'Double';
+end;
+
+{ TMapSingleProperty }
+
+constructor TMapSingleProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptSingle;
+  FTypeName := 'Single';
+end;
+
+{ TMapCurrencyProperty }
+
+constructor TMapCurrencyProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptCurrency;
+  FTypeName := 'Currency';
+end;
+
+{ TMapInt64Property }
+
+constructor TMapInt64Property.Create;
+begin
+  inherited;
+
+  FBaseType := ptInt64;
+  FTypeName := 'Int64';
+end;
+
+{ TMapDateTimeProperty }
+
+constructor TMapDateTimeProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptDateTime;
+  FTypeName := 'TDateTime';
+end;
+
+{ TMapBooleanProperty }
+
+constructor TMapBooleanProperty.Create;
+begin
+  inherited;
+
+  FBaseType := ptBoolean;
+  FTypeName := 'Boolean';
+end;
+
+{ TBaseMapObject }
+
+procedure TBaseMapObject.AssignClassProps(ASource: TtiObject);
+begin
+
+end;
+
+{ TBaseMapOptions }
+
+procedure TBaseMapOptions.SetGroupName(const Value: string);
+begin
+  if FGroupName = Value then
+    exit;
+
+  FGroupName := Value;
+  NotifyObservers;
+end;
+
+{ TMapGeneralProjectOptions }
+
+function TMapGeneralProjectOptions.GetOutputDirectory: string;
+begin
+  result := IncludeTrailingPathDelimiter(BaseDirectory) + OrigOutDirectory;
+end;
+
+procedure TMapGeneralProjectOptions.SetBaseDirectory(const Value: string);
+begin
+  if FBaseDirectory = Value then
+    exit;
+
+  FBaseDirectory := Value;
+  NotifyObservers;
+end;
+
+procedure TMapGeneralProjectOptions.SetOrigOutDirectory(const Value: string);
+begin
+  if FOrigOutDirectory = Value then
+    exit;
+
+  FOrigOutDirectory := Value;
+  NotifyObservers;
+end;
+
+procedure TMapGeneralProjectOptions.SetProjectName(const Value: string);
+begin
+  if FProjectName = Value then
+    exit;
+
+  FProjectName := Value;
+  NotifyObservers;
+end;
+
+{ TMapCodeGenerationProjectOptions }
+
+procedure TMapCodeGenerationProjectOptions.SetBeginEndTabs(
+  const Value: integer);
+begin
+  if FBeginEndTabs = Value then
+    exit;
+
+  FBeginEndTabs := Value;
+  NotifyObservers;
+end;
+
+procedure TMapCodeGenerationProjectOptions.SetMaxEditorCodeWidth(
+  const Value: integer);
+begin
+  if FMaxEditorCodeWidth = Value then
+    exit;
+
+  FMaxEditorCodeWidth := Value;
+  NotifyObservers;
+end;
+
+procedure TMapCodeGenerationProjectOptions.SetTabSpaces(const Value: integer);
+begin
+  if FTabSpaces = Value then
+    exit;
+
+  FTabSpaces := Value;
+  NotifyObservers;
+end;
+
+procedure TMapCodeGenerationProjectOptions.SetVisibilityTabs(
+  const Value: integer);
+begin
+  if FVisibilityTabs = Value then
+    exit;
+
+  FVisibilityTabs := Value;
+  NotifyObservers;
+end;
+
+{ TMapDatabaseProjectOptions }
+
+procedure TMapDatabaseProjectOptions.SetDoubleQuoteDBFieldNames(
+  const Value: boolean);
+begin
+  if FDoubleQuoteDBFieldNames = Value then
+    exit;
+
+  FDoubleQuoteDBFieldNames := Value;
+  NotifyObservers;
+end;
+
+procedure TMapDatabaseProjectOptions.SetEnumerationType(const Value: TEnumType);
+begin
+  if FEnumerationType = Value then
+    exit;
+
+  FEnumerationType := Value;
+  NotifyObservers;
 end;
 
 initialization
   ValidatorStringClass := TValidatorStringGenerator;
 
 end.
+
