@@ -1,53 +1,86 @@
-unit delphi_schema_reader;
+unit common_schema_reader;
+{$ifdef FPC}
+{$MODE DELPHI}
+{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, Variants, tiUtils, mapper, OmniXML, OmniXMLUtils;
+  Classes, SysUtils, Variants, tiUtils, mapper
+  {$IFDEF FPC}
+  ,DOM
+  ,XMLRead
+  ,XMLWrite
+  {$ELSE}
+  ,OmniXML
+  ,OmniXMLUtils
+  {$ENDIF};
 
 type
+
+  {$IFDEF FPC}
+  _XMLDocType = TXMLDocument;
+  _XMLNodeType = TDOMNode;
+  _XMLElementType = TDOMElement;
+  _XMLNodeListType = TDOMNodeList;
+  _XMLCDATASectionType = TDOMCDATASection;
+
+  {$ELSE}
+  _XMLDocType = IXMLDocument
+  _XMLNodeType = IXMLNode;
+  _XMLElementType = IXMLElement;
+  _XMLNodeListType = _XMLNodeListType;
+  _XMLCDATASectionType = IXMLCDATASection;
+  {$ENDIF}
+
+
 
   // -----------------------------------------------------------------
   //  Class Objects
   // -----------------------------------------------------------------
 
-  {: OmniXML version of TMapSchemaReader. }
-  TOmniXMLSchemaReader = class(TMapSchemaReader)
+  {: Common XML version of TMapSchemaReader. }
+
+  { TCommonXMLSchemaReader }
+
+  TCommonXMLSchemaReader = class(TMapSchemaReader)
   private
     FProject: TMapProject;
-    FXML: IXMLDocument;
-    function FindFirstCData(ANode: IXMLNode): IXMLText;
+    FXML: _XMLDocType;
+    function FindFirstCData(ANode: _XMLNodeType): _XMLNodeType;
     function CreateSQLSelectList(AClassDef: TMapClassDef): string;
     function ExtractBaseClassName(const AName: string): string;
     procedure LoadXMLDoc(const AFile: string);
     procedure ReadProjectInfo;
-    procedure ReadProjectUnits(AUnitList: IXMLNodeList);
-    procedure ReadUnitClasses(AUnit: TMapUnitDef; ANode: IXMLNode);
-    procedure ReadUnitEnums(AUnit: TMapUnitDef; ANode: IXMLNode);
-    procedure ReadClassProps(AClass: TMapClassDef; ANode: IXMLNodeList);
-    procedure ReadClassMapping(AClass: TMapClassDef; ANode: IXMLNodeList);
-    procedure ReadClassSelects(AClass: TMapClassDef; ANode: IXMLNode);
-    procedure ReadClassValidators(AClass: TMapClassDef; ANode: IXMLNode);
+    procedure ReadProjectUnits(AUnitList: _XMLNodeListType);
+    procedure ReadUnitClasses(AUnit: TMapUnitDef; ANode: _XMLNodeType);
+    procedure ReadUnitEnums(AUnit: TMapUnitDef; ANode: _XMLNodeType);
+    procedure ReadClassProps(AClass: TMapClassDef; ANode: _XMLNodeListType);
+    procedure ReadClassMapping(AClass: TMapClassDef; ANode: _XMLNodeListType);
+    procedure ReadClassSelects(AClass: TMapClassDef; ANode: _XMLNodeType);
+    procedure ReadClassValidators(AClass: TMapClassDef; ANode: _XMLNodeType);
   public
     procedure ReadSchema(AProject: TMapProject; const AFileName: string = ''); overload; override;
     constructor Create; override;
     destructor Destroy; override;
   end;
 
+  { TProjectWriter }
+
   TProjectWriter = class(TBaseMapObject)
   protected
     FDirectory: string;
     FWriterProject: TMapProject;
-    FDoc: IXMLDocument;
-    procedure WriteProjectUnits(AProject: TMapProject; ADocElem: IXMLElement);
-    procedure WriteUnit(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
-    procedure WriteUnitEnums(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
-    procedure WriteUnitClasses(AUnitDef: TMapUnitDef; AClassesNode: IXMLElement);
-    procedure WriteSingleUnitClass(AClassDef: TMapClassDef; AClassesNode: IXMLElement);
-    procedure WriteClassProps(AClassDef: TMapClassDef; AClassNode: IXMLElement);
-    procedure WriteClassValidators(AClassDef: TMapClassDef; AClassNode: IXMLElement);
-    procedure WriteClassMappings(AClassDef: TMapClassDef; AClassNode: IXMLElement);
-    procedure WriteClassSelections(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+    FDoc: _XMLDocType;
+    procedure WriteProjectUnits(AProject: TMapProject; ADocElem: _XMLElementType);
+    procedure WriteUnit(AUnitDef: TMapUnitDef; AUnitNode: _XMLElementType);
+    procedure WriteUnitEnums(AUnitDef: TMapUnitDef; AUnitNode: _XMLElementType);
+    procedure WriteUnitClasses(AUnitDef: TMapUnitDef; AClassesNode: _XMLElementType);
+    procedure WriteSingleUnitClass(AClassDef: TMapClassDef; AClassesNode: _XMLElementType);
+    procedure WriteClassProps(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
+    procedure WriteClassValidators(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
+    procedure WriteClassMappings(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
+    procedure WriteClassSelections(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
   public
     procedure WriteProject(AProject: TMapProject; const ADirectory: string; const AFileName: string); overload; virtual;
     procedure WriteProject(AProject: TMapProject; const AFilePath: string); overload; virtual;
@@ -59,15 +92,82 @@ implementation
 uses
   AppModel;
 
+function CreateXMLDocument(AFileName: String): _XMLDocType;
+begin
+  Result := nil;
+  {$IFDEF FPC}
+  if AFileName <> '' then
+    ReadXMLFile(Result, AFileName)
+  else
+    Result := TXMLDocument.Create;
+  {$ELSE}
+  Result := CreateXMLDoc;
+  if AFileName <> '' then
+    XMLLoadFromFile(Result, AFileName);
+  {$ENDIF}
+end;
 
-{ TOmniXMLSchemaReader }
+procedure SaveXMLDocument(ADoc: _XMLDocType; AFileName: String);
+begin
+  {$IFDEF FPC}
+  WriteXML(ADoc, AFileName);
+  {$ELSE}
+  XMLSaveToFile(ADoc, AFileName, ofIndent);
+  {$ENDIF}
+end;
 
-constructor TOmniXMLSchemaReader.Create;
+function FindChildNode(ANode: _XMLNodeType; ANodeName: String): _XMLNodeType;
+begin
+  {$IFDEF FPC}
+  Result := ANode.FindNode(ANodeName);
+  {$ELSE}
+  Result := ANode.SelectSingleNode(ANodeName);
+  {$ENDIF}
+end;
+
+function GetNodeText(ANode: _XMLNodeType): String;
+begin
+  {$IFDEF FPC}
+  Result := ANode.TextContent;
+  {$ELSE}
+  Result := ANode.Text;
+  {$ENDIF}
+end;
+
+procedure SetNodeText(ANode: _XMLNodeType; AValue: String);
+begin
+  {$IFDEF FPC}
+  ANode.TextContent := AValue;
+  {$ELSE}
+  ANode.Text := AValue;
+  {$ENDIF}
+end;
+
+{$IFDEF FPC}
+function GetCDataChild(ANode: _XMLNodeType): _XMLNodeType;
+var
+  lChild: TDOMNode;
+begin
+  Result := nil;
+  lChild := ANode.FirstChild;
+  while lChild <> nil do
+  begin
+    if lChild.NodeType = CDATA_SECTION_NODE then
+      Exit(lChild);
+    lChild := lChild.NextSibling;
+  end;
+end;
+
+{$ENDIF}
+
+{ TCommonXMLSchemaReader }
+
+constructor TCommonXMLSchemaReader.Create;
 begin
   inherited Create;
 end;
 
-function TOmniXMLSchemaReader.CreateSQLSelectList(AClassDef: TMapClassDef): string;
+function TCommonXMLSchemaReader.CreateSQLSelectList(AClassDef: TMapClassDef): string;
 var
   lCtr: integer;
   lPropMap: TPropMapping;
@@ -83,13 +183,13 @@ begin
   result := UpperCase(result);
 end;
 
-destructor TOmniXMLSchemaReader.Destroy;
+destructor TCommonXMLSchemaReader.Destroy;
 begin
   FXML := nil;
   inherited Destroy;
 end;
 
-function TOmniXMLSchemaReader.ExtractBaseClassName(const AName: string): string;
+function TCommonXMLSchemaReader.ExtractBaseClassName(const AName: string): string;
 begin
   if AnsiPos('T', AName) > 0 then
     result := Copy(AName, 2, Length(AName) - 1)
@@ -97,10 +197,11 @@ begin
     result := AName;
 end;
 
-function TOmniXMLSchemaReader.FindFirstCData(ANode: IXMLNode): IXMLText;
+function TCommonXMLSchemaReader.FindFirstCData(ANode: _XMLNodeType
+  ): _XMLNodeType;
 var
   lCtr: Integer;
-  lNode: IXMLNode;
+  lNode: _XMLNodeType;
 begin
   result := nil;
 
@@ -109,25 +210,25 @@ begin
     lNode := ANode.ChildNodes.Item[lCtr];
     if lNode.NodeType = CDATA_SECTION_NODE then
     begin
-      Result := IXMLText(lNode);
+      Result := _XMLNodeType(lNode);
       exit;
     end;
   end;
 end;
 
-procedure TOmniXMLSchemaReader.LoadXMLDoc(const AFile: string);
+procedure TCommonXMLSchemaReader.LoadXMLDoc(const AFile: string);
 begin
   FXML := nil;
-  FXML := CreateXMLDoc;
-  XMLLoadFromFile(FXML, AFile);
+  FXML := CreateXMLDocument(AFile);
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassMapping(AClass: TMapClassDef; ANode: IXMLNodeList);
+procedure TCommonXMLSchemaReader.ReadClassMapping(AClass: TMapClassDef;
+  ANode: _XMLNodeListType);
 var
   lCtr: integer;
-  lNode: IXMLNode;
-  lMapNode: IXMLNode;
-  lMapPropNode: IXMLNode;
+  lNode: _XMLNodeType;
+  lMapNode: _XMLNodeType;
+  lMapPropNode: _XMLNodeType;
   lNewMapProp: TPropMapping;
   lLastGood: string;
   lAbstractValue: Boolean;
@@ -181,11 +282,12 @@ begin
   end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassProps(AClass: TMapClassDef; ANode: IXMLNodeList);
+procedure TCommonXMLSchemaReader.ReadClassProps(AClass: TMapClassDef;
+  ANode: _XMLNodeListType);
 var
   lCtr: Integer;
-  lPropNode: IXMLNode;
-  lPropAttr: IXMLNode;
+  lPropNode: _XMLNodeType;
+  lPropAttr: _XMLNodeType;
   lNewProp: TMapClassProp;
 begin
   for lCtr := 0 to ANode.Length - 1 do
@@ -236,20 +338,22 @@ begin
   end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassSelects(AClass: TMapClassDef; ANode: IXMLNode);
+procedure TCommonXMLSchemaReader.ReadClassSelects(AClass: TMapClassDef;
+  ANode: _XMLNodeType);
 //var
-//  lSelectList: IXMLNodeList;
+//  lSelectList: _XMLNodeListType;
 begin
 //  lSelectList := ANode.FindNode('enums').ChildNodes;
 end;
 
-procedure TOmniXMLSchemaReader.ReadClassValidators(AClass: TMapClassDef; ANode: IXMLNode);
+procedure TCommonXMLSchemaReader.ReadClassValidators(AClass: TMapClassDef;
+  ANode: _XMLNodeType);
 var
   lCtr: Integer;
   lVal: TMapValidator;
-  lValNode: IXMLNode;
-  lValueNode: IXMLNode;
-  lTypeNode: IXMLNode;
+  lValNode: _XMLNodeType;
+  lValueNode: _XMLNodeType;
+  lTypeNode: _XMLNodeType;
   lProp: TMapClassProp;
   lValStr: string;
   lTempStr: string;
@@ -281,11 +385,11 @@ begin
         lProp := lVal.ClassProp;
         lType := lProp.PropertyType.BaseType;
 
-        lValueNode := lValNode.SelectSingleNode('value');
+        lValueNode := FindChildNode(lValNode, 'value');
 
         if lValueNode <> nil then
         begin
-          lValStr := lValueNode.Text;
+          lValStr := GetNodeText(lValueNode);
           case lProp.PropertyType.BaseType of
             ptAnsiString, ptString:
               lVal.Value := lValStr;
@@ -307,19 +411,19 @@ begin
   end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadProjectInfo;
+procedure TCommonXMLSchemaReader.ReadProjectInfo;
 begin
 
 end;
 
-procedure TOmniXMLSchemaReader.ReadProjectUnits(AUnitList: IXMLNodeList);
+procedure TCommonXMLSchemaReader.ReadProjectUnits(AUnitList: _XMLNodeListType);
 var
-  lUnitsList: IXMLNodeList;
+  lUnitsList: _XMLNodeListType;
   lCtr: Integer;
   lUnit: TMapUnitDef;
-  lRefNodeList, lRefNode: IXMLNode;
+  lRefNodeList, lRefNode: _XMLNodeType;
   lRefCtr: integer;
-  lUnitNode: IXMLNode;
+  lUnitNode: _XMLNodeType;
   lName: string;
 begin
   if AUnitList = nil then
@@ -341,11 +445,11 @@ begin
         FProject.Units.Add(lUnit);
       end;
 
-      ReadUnitEnums(lUnit, lUnitNode.SelectSingleNode('enums'));
-      ReadUnitClasses(lUnit, lUnitNode.SelectSingleNode('classes'));
+      ReadUnitEnums(lUnit, FindChildNode(lUnitNode, 'enums'));
+      ReadUnitClasses(lUnit, FindChildNode(lUnitNode, 'classes'));
 
       // Reference (uses)
-      lRefNodeList := lUnitNode.SelectSingleNode('references');
+      lRefNodeList := FindChildNode(lUnitNode, 'references');
 
       if (lRefNodeList <> nil) and (lRefNodeList.HasChildNodes) then
       begin
@@ -361,18 +465,18 @@ begin
   end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadSchema(AProject: TMapProject; const AFileName: string);
+procedure TCommonXMLSchemaReader.ReadSchema(AProject: TMapProject; const AFileName: string);
 var
-  lNode: IXMLNode;
-  lNodeList: IXMLNodeList;
-  lAttr: IXMLNode;
-  lIncNode: IXMLNode;
+  lNode: _XMLNodeType;
+  lNodeList: _XMLNodeListType;
+  lAttr: _XMLNodeType;
+  lIncNode: _XMLNodeType;
   lCtr: Integer;
   lEnumTypeStr: string;
-  lUnitList: IXMLNodeList;
-  lIncProjDoc: IXMLDocument;
+  lUnitList: _XMLNodeListType;
+  lIncProjDoc: _XMLDocType;
   lIncPath: string;
-  lDirNode: IXMLNode;
+  lDirNode: _XMLNodeType;
   lPath: string;
 begin
   FProject := AProject;
@@ -464,8 +568,8 @@ begin
     FProject.DatabaseOptions.DoubleQuoteDBFieldNames := false;
 
   // Process Includes
-  if lNode.SelectSingleNode('includes') <> nil then
-    lNodeList := lNode.SelectSingleNode('includes').ChildNodes
+  if FindChildNode(lNode, 'includes') <> nil then
+    lNodeList := FindChildNode(lNode, 'includes').ChildNodes
   else
     lNodeList := nil;
 
@@ -479,11 +583,10 @@ begin
       begin
         lIncPath := lIncNode.Attributes.GetNamedItem('file-name').NodeValue;
         FProject.Includes.Add(lIncPath);
-        lIncProjDoc := CreateXMLDoc;
-        XMLLoadFromFile(lIncProjDoc, FProject.GeneralOptions.BaseDirectory + PathDelim + lIncPath);
+        lIncProjDoc := CreateXMLDocument(FProject.GeneralOptions.BaseDirectory + PathDelim + lIncPath);
 
         try
-          lUnitList := lIncProjDoc.DocumentElement.SelectSingleNode('project-units').ChildNodes;
+          lUnitList := FindChildNode(lIncProjDoc.DocumentElement,'project-units').ChildNodes;
         finally
           ReadProjectUnits(lUnitList);
 
@@ -494,30 +597,31 @@ begin
     end;
   end;
 
-  lUnitList := FXML.DocumentElement.SelectSingleNode('project-units').ChildNodes;
+  lUnitList := FindChildNode(FXML.DocumentElement, 'project-units').ChildNodes;
   ReadProjectUnits(lUnitList);
 end;
 
-procedure TOmniXMLSchemaReader.ReadUnitClasses(AUnit: TMapUnitDef; ANode: IXMLNode);
+procedure TCommonXMLSchemaReader.ReadUnitClasses(AUnit: TMapUnitDef;
+  ANode: _XMLNodeType);
 var
   lCtr, lSelectCtr, lParamsCtr: integer;
-  lClassNode: IXMLNode;
-  lClassListNodes: IXMLNodeList;
-  lClassMappings: IXMLNodeList;
-  lClassMapNode: IXMLNode;
-  lClassProps: IXMLNodeList;
-  lClassSelects: IXMLNodeList;
+  lClassNode: _XMLNodeType;
+  lClassListNodes: _XMLNodeListType;
+  lClassMappings: _XMLNodeListType;
+  lClassMapNode: _XMLNodeType;
+  lClassProps: _XMLNodeListType;
+  lClassSelects: _XMLNodeListType;
   lNewClass: TMapClassDef;
-  lClassAttr: IXMLNode;
-  lSelListNode: IXMLNode;
-  lSelectNode: IXMLNode;
-  lParamListNode: IXMLNode;
-  lParam: IXMLNode;
+  lClassAttr: _XMLNodeType;
+  lSelListNode: _XMLNodeType;
+  lSelectNode: _XMLNodeType;
+  lParamListNode: _XMLNodeType;
+  lParam: _XMLNodeType;
   lNewParam: TSelectParam;
-  lCData: IXMLText;
+  lCData: _XMLNodeType;
   lNewSelect: TClassMappingSelect;
   lTemp: string;
-  lValNode: IXMLNode;
+  lValNode: _XMLNodeType;
   lCDataCtr: Integer;
 begin
   lClassListNodes := ANode.ChildNodes;
@@ -590,14 +694,14 @@ begin
         if lClassAttr <> nil then
           lNewClass.NotifyObserversOfPropertyChanges := StrToBool(lClassAttr.NodeValue);
 
-        if lClassNode.SelectSingleNode('class-props') = nil then
+        if FindChildNode(lClassNode, 'class-props') = nil then
           raise Exception.Create(ClassName + '.ReadUnitClasses: "class-props" node is not present.');
 
-        lClassProps := lClassNode.SelectSingleNode('class-props').ChildNodes;
+        lClassProps := FindChildNode(lClassNode, 'class-props').ChildNodes;
         if lClassProps <> nil then
           ReadClassProps(lNewClass, lClassProps);
 
-        lClassMapNode := lClassNode.SelectSingleNode('mapping');
+        lClassMapNode := FindChildNode(lClassNode, 'mapping');
         if lClassMapNode <> nil then
         begin
           lNewClass.ClassMapping.PKName := lClassMapNode.Attributes.GetNamedItem('pk').NodeValue;
@@ -610,13 +714,13 @@ begin
             ReadClassMapping(lNewClass, lClassMappings);
         end;
 
-        lValNode := lClassNode.SelectSingleNode('validators');
+        lValNode := FindChildNode(lClassNode, 'validators');
 
         if lValNode <> nil then
           ReadClassValidators(lNewClass, lValNode);
 
         // Read in any selections
-        lSelListNode := lClassNode.SelectSingleNode('selections');
+        lSelListNode := FindChildNode(lClassNode, 'selections');
 
         if lSelListNode <> nil then
         begin
@@ -631,14 +735,14 @@ begin
 
                 lNewSelect := TClassMappingSelect.Create;
 
-                lCData := FindFirstCData(lSelectNode.SelectSingleNode('sql'));
+                lCData := FindFirstCData(FindChildNode(lSelectNode, 'sql'));
 
                 if lCData.HasChildNodes then
                   raise exception.Create('has children');
 
-                lTemp := lCData.Text;
+                lTemp :=  GetNodeText(lCData);
 
-                lTemp := GetCDataChild(lSelectNode.SelectSingleNode('sql')).NodeValue;
+                lTemp := GetCDataChild(FindChildNode(lSelectNode, 'sql')).NodeValue;
 //                                lTemp := StringReplace(lCData.Data, #13, '', [rfReplaceAll]);
 //                                lTemp := StringReplace(lTemp, #10, '', [rfReplaceAll]);
                             // Change variable ${field_list} into list of field names in sql format
@@ -647,7 +751,7 @@ begin
                 lNewSelect.SQL := lTemp;
 
                 lNewSelect.Name := lSelectNode.Attributes.GetNamedItem('name').NodeValue;
-                lParamListNode := lSelectNode.SelectSingleNode('params');
+                lParamListNode := FindChildNode(lSelectNode, 'params');
                 if (lParamListNode <> nil) and (lParamListNode.HasChildNodes) then
                 begin
                   for lParamsCtr := 0 to lParamListNode.ChildNodes.Length - 1 do
@@ -687,18 +791,19 @@ begin
   end;
 end;
 
-procedure TOmniXMLSchemaReader.ReadUnitEnums(AUnit: TMapUnitDef; ANode: IXMLNode);
+procedure TCommonXMLSchemaReader.ReadUnitEnums(AUnit: TMapUnitDef;
+  ANode: _XMLNodeType);
 var
-  lEnumList: IXMLNodeList;
-  lEnumValuesList: IXMLNodeList;
-  lEnumValueNode: IXMLNode;
-  lEnum: IXMLNode;
-  lAttr: IXMLNode;
+  lEnumList: _XMLNodeListType;
+  lEnumValuesList: _XMLNodeListType;
+  lEnumValueNode: _XMLNodeType;
+  lEnum: _XMLNodeType;
+  lAttr: _XMLNodeType;
   lCtr: Integer;
   lValueCtr: integer;
   lNewEnum: TMapEnum;
   lNewEnumValue: TMapEnumValue;
-  lValuesNode: IXMLNode;
+  lValuesNode: _XMLNodeType;
 begin
   if (ANode = nil) or (not ANode.HasChildNodes) then
     exit;
@@ -723,7 +828,7 @@ begin
       end;
 
       // Retrieve its values
-      lValuesNode := lEnum.SelectSingleNode('values');
+      lValuesNode := FindChildNode(lEnum, 'values');
       if lValuesNode <> nil then
         lEnumValuesList := lValuesNode.ChildNodes;
 
@@ -765,12 +870,12 @@ begin
   inherited;
 end;
 
-procedure TProjectWriter.WriteClassMappings(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+procedure TProjectWriter.WriteClassMappings(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
 var
   lCtr: integer;
   lMapProp: TPropMapping;
-  lNewMapNode: IXMLElement;
-  lNewMapPropNode: IXMLElement;
+  lNewMapNode: _XMLElementType;
+  lNewMapPropNode: _XMLElementType;
 begin
   lNewMapNode := FDoc.CreateElement('mapping');
   AClassNode.AppendChild(lNewMapNode);
@@ -797,10 +902,11 @@ begin
   end;
 end;
 
-procedure TProjectWriter.WriteClassProps(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+procedure TProjectWriter.WriteClassProps(AClassDef: TMapClassDef;
+  AClassNode: _XMLElementType);
 var
-  lNewPropNode: IXMLElement;
-  lClassPropsNode: IXMLElement;
+  lNewPropNode: _XMLElementType;
+  lClassPropsNode: _XMLElementType;
   lCtr: integer;
   lProp: TMapClassProp;
 begin
@@ -817,17 +923,18 @@ begin
   end;
 end;
 
-procedure TProjectWriter.WriteClassSelections(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+procedure TProjectWriter.WriteClassSelections(AClassDef: TMapClassDef;
+  AClassNode: _XMLElementType);
 var
   lCtr, lParamCtr: integer;
   lSelect: TClassMappingSelect;
   lParam: TSelectParam;
-  lNewSelNode: IXMLElement;
-  lNewSelectionsNode: IXMLElement;
-  lNewParamsNode: IXMLElement;
-  lNewParam: IXMLElement;
-  lNewCDATA: IXMLCDATASection;
-  lNewSQLNode: IXMLElement;
+  lNewSelNode: _XMLElementType;
+  lNewSelectionsNode: _XMLElementType;
+  lNewParamsNode: _XMLElementType;
+  lNewParam: _XMLElementType;
+  lNewCDATA: _XMLCDATASectionType;
+  lNewSQLNode: _XMLElementType;
 begin
   lNewSelectionsNode := FDoc.CreateElement('selections');
   AClassNode.AppendChild(lNewSelectionsNode);
@@ -863,13 +970,14 @@ begin
   end;
 end;
 
-procedure TProjectWriter.WriteClassValidators(AClassDef: TMapClassDef; AClassNode: IXMLElement);
+procedure TProjectWriter.WriteClassValidators(AClassDef: TMapClassDef;
+  AClassNode: _XMLElementType);
 var
   lVal: TMapValidator;
-  lNewValidatorsNode: IXMLElement;
-  lNewValNode: IXMLElement;
-  lNewValItemNode: IXMLElement;
-  lNewValueNode: IXMLElement;
+  lNewValidatorsNode: _XMLElementType;
+  lNewValNode: _XMLElementType;
+  lNewValItemNode: _XMLElementType;
+  lNewValueNode: _XMLElementType;
   lCtr, lItemCtr: integer;
 begin
   lNewValidatorsNode := FDoc.CreateElement('validators');
@@ -884,17 +992,18 @@ begin
     if not VarIsNull(lVal.Value) then
     begin
       lNewValueNode := FDoc.CreateElement('value');
-      lNewValueNode.Text := lVal.Value;
+      SetNodeText(lNewValueNode, lVal.Value);
       lNewValNode.AppendChild(lNewValueNode);
     end;
     lNewValidatorsNode.AppendChild(lNewValNode);
   end;
 end;
 
-procedure TProjectWriter.WriteProject(Aproject: TMapProject; const AFilePath: string);
+procedure TProjectWriter.WriteProject(AProject: TMapProject;
+  const AFilePath: string);
 var
-  lDocElem: IXMLElement;
-  lNewElem: IXMLElement;
+  lDocElem: _XMLElementType;
+  lNewElem: _XMLElementType;
   lDir: string;
 begin
   if FDoc <> nil then
@@ -927,10 +1036,11 @@ begin
 
   WriteProjectUnits(FWriterProject, lDocElem);
 
-  XMLSaveToFile(FDoc, AFilePath, ofIndent);
+  SaveXMLDocument(FDoc, AFilePath);
 end;
 
-procedure TProjectWriter.WriteProject(AProject: TMapProject; const ADirectory, AFileName: string);
+procedure TProjectWriter.WriteProject(AProject: TMapProject;
+  const ADirectory: string; const AFileName: string);
 begin
   if FDoc <> nil then
   begin
@@ -939,7 +1049,7 @@ begin
 
   FWriterProject := AProject;
 
-  FDoc := CreateXMLDoc;
+  FDoc := CreateXMLDocument(''); // creates blank document
 
   FDirectory := ExcludeTrailingPathDelimiter(ADirectory);
 
@@ -951,12 +1061,13 @@ begin
     WriteProject(AProject, FDirectory + PathDelim + FWriterProject.GeneralOptions.ProjectName + '.xml');
 end;
 
-procedure TProjectWriter.WriteProjectUnits(AProject: TMapProject; ADocElem: IXMLElement);
+procedure TProjectWriter.WriteProjectUnits(AProject: TMapProject;
+  ADocElem: _XMLElementType);
 var
   lCtr: integer;
   lUnit: TMapUnitDef;
-  lUnitsElem: IXMLElement;
-  lNewUnitNode: IXMLElement;
+  lUnitsElem: _XMLElementType;
+  lNewUnitNode: _XMLElementType;
 begin
   lUnitsElem := FDoc.CreateElement('project-units');
   FDoc.DocumentElement.AppendChild(lUnitsElem);
@@ -971,9 +1082,10 @@ begin
   end;
 end;
 
-procedure TProjectWriter.WriteSingleUnitClass(AClassDef: TMapClassDef; AClassesNode: IXMLElement);
+procedure TProjectWriter.WriteSingleUnitClass(AClassDef: TMapClassDef;
+  AClassesNode: _XMLElementType);
 var
-  lNewClassNode: IXMLElement;
+  lNewClassNode: _XMLElementType;
 begin
   lNewClassNode := FDoc.CreateElement('class');
   AClassesNode.AppendChild(lNewClassNode);
@@ -991,11 +1103,12 @@ begin
   WriteClassSelections(AClassDef, lNewClassNode);
 end;
 
-procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
+procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef;
+  AUnitNode: _XMLElementType);
 var
   lCtr: integer;
-  lEnumNode: IXMLElement;
-  lClassesNode: IXMLElement;
+  lEnumNode: _XMLElementType;
+  lClassesNode: _XMLElementType;
   lEnum: TMapEnum;
   lClass: TMapClassDef;
 begin
@@ -1010,11 +1123,12 @@ begin
   WriteUnitClasses(AUnitDef, lClassesNode);
 end;
 
-procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef; AClassesNode: IXMLElement);
+procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef;
+  AClassesNode: _XMLElementType);
 var
   lCtr: integer;
   lClassDef: TMapClassDef;
-  lClassesNode: IXMLNode;
+  lClassesNode: _XMLNodeType;
 begin
   for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
   begin
@@ -1023,19 +1137,20 @@ begin
   end;
 end;
 
-procedure TProjectWriter.WriteUnitEnums(AUnitDef: TMapUnitDef; AUnitNode: IXMLElement);
+procedure TProjectWriter.WriteUnitEnums(AUnitDef: TMapUnitDef;
+  AUnitNode: _XMLElementType);
 var
-  lEnumsNode: IXMLNode;
-  lEnumEl: IXMLElement;
-  lValuesEl: IXMLElement;
-  lSingleValNode: IXMLElement;
-  lItemEl: IXMLElement;
+  lEnumsNode: _XMLNodeType;
+  lEnumEl: _XMLElementType;
+  lValuesEl: _XMLElementType;
+  lSingleValNode: _XMLElementType;
+  lItemEl: _XMLElementType;
   lCtr: integer;
   lItemCtr: integer;
   lEnum: TMapEnum;
   lEnumVal: TMapEnumValue;
 begin
-  lEnumsNode := AUnitNode.SelectSingleNode('enums');
+  lEnumsNode := FindChildNode(AUnitNode, 'enums');
   for lCtr := 0 to AUnitDef.UnitEnums.Count - 1 do
   begin
     lEnum := AUnitDef.UnitEnums.Items[lCtr];
@@ -1067,7 +1182,7 @@ begin
 end;
 
 initialization
-  gSetSchemaReaderClass(TOmniXMLSchemaReader);
+  gSetSchemaReaderClass(TCommonXMLSchemaReader);
 
 end.
 

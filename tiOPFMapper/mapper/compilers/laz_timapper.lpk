@@ -1,21 +1,17 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="3">
+  <Package Version="5">
     <PathDelim Value="\"/>
     <Name Value="laz_timapper"/>
-    <AddToProjectUsesSection Value="False"/>
     <CompilerOptions>
-      <Version Value="9"/>
+      <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value=".."/>
+        <OtherUnitFiles Value="..;..\..\utils\delphi\gui\models"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
-      <Other>
-        <CompilerPath Value="$(CompPath)"/>
-      </Other>
     </CompilerOptions>
-    <Files Count="6">
+    <Files Count="7">
       <Item1>
         <Filename Value="..\tiSQLParser.pas"/>
         <UnitName Value="tiSQLParser"/>
@@ -25,21 +21,25 @@
         <UnitName Value="mapper"/>
       </Item2>
       <Item3>
-        <Filename Value="..\fpc_schema_reader.pas"/>
-        <UnitName Value="fpc_schema_reader"/>
-      </Item3>
-      <Item4>
         <Filename Value="..\mapper_project_writer.pas"/>
         <UnitName Value="mapper_project_writer"/>
-      </Item4>
-      <Item5>
+      </Item3>
+      <Item4>
         <Filename Value="..\..\README.txt"/>
         <Type Value="Text"/>
-      </Item5>
-      <Item6>
+      </Item4>
+      <Item5>
         <Filename Value="..\fpc_schema_writer.pas"/>
         <UnitName Value="fpc_schema_writer"/>
+      </Item5>
+      <Item6>
+        <Filename Value="..\common_schema_reader.pas"/>
+        <UnitName Value="common_schema_reader"/>
       </Item6>
+      <Item7>
+        <Filename Value="..\..\utils\delphi\gui\models\AppModel.pas"/>
+        <UnitName Value="AppModel"/>
+      </Item7>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
@@ -55,7 +55,6 @@
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
-      <IgnoreBinaries Value="False"/>
     </PublishOptions>
   </Package>
-</CONFIG>
+</CONFIG>
