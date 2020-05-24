@@ -332,6 +332,7 @@ procedure TCommonXMLSchemaReader.ReadClassSelects(AClass: TMapClassDef;
 //var
 //  lSelectList: _XMLNodeListType;
 begin
+  // TODO: What are we supposed to do here?
 //  lSelectList := ANode.FindNode('enums').ChildNodes;
 end;
 
@@ -583,6 +584,8 @@ begin
 
   lUnitList := FindChildNode(FXML.DocumentElement, 'project-units').ChildNodes;
   ReadProjectUnits(lUnitList);
+
+  FProject.FileName := AFileName;
 end;
 
 procedure TCommonXMLSchemaReader.ReadUnitClasses(AUnit: TMapUnitDef;
