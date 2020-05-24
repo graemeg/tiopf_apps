@@ -1934,7 +1934,7 @@ begin
   if Verbose then
   begin
     WriteLine('// ---------------------------------------------------------', ASL);
-    WriteLine('// Automatically generated on ' + DateToStr(now) + ' ' + TimeToStr(now), ASL);
+    WriteLine('// Automatically generated on ' + FormatDateTime('yyyy-mm-dd HH:hh:ss', now), ASL);
     WriteLine('// Warning: ', ASL);
     WriteLine('//   If you rerun timap, your changes in this file will be lost', ASL);
     WriteLine('// ---------------------------------------------------------', ASL);
