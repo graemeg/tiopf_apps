@@ -35,13 +35,7 @@ type
 
 
 
-  // -----------------------------------------------------------------
-  //  Class Objects
-  // -----------------------------------------------------------------
-
   {: Common XML version of TMapSchemaReader. }
-
-  { TCommonXMLSchemaReader }
 
   TCommonXMLSchemaReader = class(TMapSchemaReader)
   private
@@ -65,7 +59,6 @@ type
     destructor Destroy; override;
   end;
 
-  { TProjectWriter }
 
   TProjectWriter = class(TBaseMapObject)
   protected
@@ -231,7 +224,6 @@ var
   lMapNode: _XMLNodeType;
   lMapPropNode: _XMLNodeType;
   lNewMapProp: TPropMapping;
-  lLastGood: string;
   lAbstractValue: Boolean;
   s: string;
 begin
@@ -243,7 +235,7 @@ begin
       lMapPropNode := lNode.Attributes.GetNamedItem('field');
       if lMapPropNode = nil then
       begin
-              //WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
+        //WriteLn('Error Node Type: ' + IntToStr(lNode.NodeType));
         raise Exception.Create(ClassName + '.ReadClassMapping: Mapping node Attribute "field" not found ' + 'reading schema for ' + AClass.BaseClassName);
       end;
 
@@ -268,8 +260,6 @@ begin
       else
         lAbstractValue := True;
       lNewMapProp.PropertyAccessorsAreAbstract := lAbstractValue;
-
-      lLastGood := lNewMapProp.PropName;
 
       lMapNode := lNode.Attributes.GetNamedItem('type');
 
@@ -309,7 +299,6 @@ begin
 
       // virtual getter?
       lPropAttr := lPropNode.Attributes.GetNamedItem('virtual');
-
       if lPropAttr <> nil then
         lNewProp.VirtualGetter := StrToBool(lPropAttr.NodeValue)
       else
@@ -317,7 +306,6 @@ begin
 
       // Property type?
       lPropAttr := lPropNode.Attributes.GetNamedItem('type');
-
       if lPropAttr <> nil then
       begin
         if lPropAttr.NodeValue <> '' then
@@ -357,8 +345,6 @@ var
   lTypeNode: _XMLNodeType;
   lProp: TMapClassProp;
   lValStr: string;
-  lTempStr: string;
-  lType: TMapPropType;
 begin
   if not ANode.HasChildNodes then
     exit;
@@ -384,8 +370,6 @@ begin
           raise Exception.Create('No registered property in class "' + AClass.BaseClassName + '" found with name "' + lValNode.Attributes.GetNamedItem('prop').NodeValue + '"');
 
         lProp := lVal.ClassProp;
-        lType := lProp.PropertyType.BaseType;
-
         lValueNode := FindChildNode(lValNode, 'value');
 
         if lValueNode <> nil then
@@ -419,7 +403,6 @@ end;
 
 procedure TCommonXMLSchemaReader.ReadProjectUnits(AUnitList: _XMLNodeListType);
 var
-  lUnitsList: _XMLNodeListType;
   lCtr: Integer;
   lUnit: TMapUnitDef;
   lRefNodeList, lRefNode: _XMLNodeType;
@@ -611,7 +594,6 @@ var
   lClassMappings: _XMLNodeListType;
   lClassMapNode: _XMLNodeType;
   lClassProps: _XMLNodeListType;
-  lClassSelects: _XMLNodeListType;
   lNewClass: TMapClassDef;
   lClassAttr: _XMLNodeType;
   lSelListNode: _XMLNodeType;
@@ -741,6 +723,7 @@ begin
                 if lCData.HasChildNodes then
                   raise exception.Create('has children');
 
+// TODO: graemeg: lTemp is overwritten, and what about commented code here?
                 lTemp :=  GetNodeText(lCData);
 
                 lTemp := GetCDataChild(FindChildNode(lSelectNode, 'sql')).NodeValue;
@@ -1005,8 +988,6 @@ procedure TProjectWriter.WriteProject(AProject: TMapProject;
   const AFilePath: string);
 var
   lDocElem: _XMLElementType;
-  lNewElem: _XMLElementType;
-  lDir: string;
 begin
   if Assigned(FDoc) then
     FreeAndNil(FDoc);
@@ -1103,11 +1084,8 @@ end;
 procedure TProjectWriter.WriteUnit(AUnitDef: TMapUnitDef;
   AUnitNode: _XMLElementType);
 var
-  lCtr: integer;
   lEnumNode: _XMLElementType;
   lClassesNode: _XMLElementType;
-  lEnum: TMapEnum;
-  lClass: TMapClassDef;
 begin
   lEnumNode := FDoc.CreateElement('enums');
   AUnitNode.AppendChild(lEnumNode);
@@ -1125,7 +1103,6 @@ procedure TProjectWriter.WriteUnitClasses(AUnitDef: TMapUnitDef;
 var
   lCtr: integer;
   lClassDef: TMapClassDef;
-  lClassesNode: _XMLNodeType;
 begin
   for lCtr := 0 to AUnitDef.UnitClasses.Count - 1 do
   begin
@@ -1141,7 +1118,6 @@ var
   lEnumEl: _XMLElementType;
   lValuesEl: _XMLElementType;
   lSingleValNode: _XMLElementType;
-  lItemEl: _XMLElementType;
   lCtr: integer;
   lItemCtr: integer;
   lEnum: TMapEnum;
