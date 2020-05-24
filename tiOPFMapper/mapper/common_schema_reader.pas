@@ -185,7 +185,8 @@ end;
 
 destructor TCommonXMLSchemaReader.Destroy;
 begin
-  FXML := nil;
+  if Assigned(FXML) then
+    FreeAndNil(FXML);
   inherited Destroy;
 end;
 
@@ -866,8 +867,9 @@ end;
 
 destructor TProjectWriter.Destroy;
 begin
-
-  inherited;
+  if Assigned(FDoc) then
+    FreeAndNil(FDoc);
+  inherited Destroy;
 end;
 
 procedure TProjectWriter.WriteClassMappings(AClassDef: TMapClassDef; AClassNode: _XMLElementType);
@@ -1006,13 +1008,10 @@ var
   lNewElem: _XMLElementType;
   lDir: string;
 begin
-  if FDoc <> nil then
-  begin
-    FDoc := nil;
-  end;
+  if Assigned(FDoc) then
+    FreeAndNil(FDoc);
 
-  FWriterProject := Aproject;
-
+  FWriterProject := AProject;
   FDoc := TXMLDocument.Create;
 
   // Setup the <project> root node
@@ -1042,10 +1041,8 @@ end;
 procedure TProjectWriter.WriteProject(AProject: TMapProject;
   const ADirectory: string; const AFileName: string);
 begin
-  if FDoc <> nil then
-  begin
+  if Assigned(FDoc) then
     FreeAndNil(FDoc);
-  end;
 
   FWriterProject := AProject;
 
