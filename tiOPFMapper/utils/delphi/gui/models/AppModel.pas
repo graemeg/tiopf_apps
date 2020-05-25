@@ -1,9 +1,12 @@
 unit AppModel;
+{$IFDEF fpc}
+{$MODE Delphi}
+{$ENDIF}
 
 interface
 
 uses
-  Classes, SysUtils, tiObject, mapper, mvc_base, EventsConsts;
+  Classes, SysUtils, tiObject, mapper{,mvc_base, EventsConsts};
 
 type
 
@@ -17,6 +20,8 @@ type
   // -----------------------------------------------------------------
 
   {: Main application controller model. }
+
+  { TAppModel }
 
   TAppModel = class(TtiObject)
   private
@@ -62,7 +67,8 @@ type
     procedure SaveProjectAs(const AFileName: string);
     procedure CreateNewProject(const AFileName: string);
     procedure CloseProject;
-    procedure WriteProject; overload;
+    procedure WriteProject(AVerbose: Boolean; AOnWriteClass: TOnWriteClassIntf;
+      AOnWriteEnum: TOnWriteEnum; AOnWriteUnit: TOnWriteUnit); overload;
 
     property Project: TMapProject read FProject write SetProject;
     property State: TModelProjectState read FState write SetState;
@@ -84,7 +90,7 @@ type
 implementation
 
 uses
-  delphi_schema_reader, mapper_project_writer;
+  common_schema_reader, mapper_project_writer;
 
 var
   mModel: TAppModel;
@@ -189,6 +195,8 @@ begin
   CurrentPropertyTypes.Add('Int64', ptInt64);
   CurrentPropertyTypes.Add('TDateTime', ptDateTime);
   CurrentPropertyTypes.Add('Boolean', ptBoolean);
+  CurrentPropertyTypes.Add('Enum', ptEnum);
+
 end;
 
 class function TAppModel.Instance: TAppModel;
@@ -377,7 +385,9 @@ begin
   CurrentEnums.NotifyObservers;
 end;
 
-procedure TAppModel.WriteProject;
+procedure TAppModel.WriteProject(AVerbose: Boolean;
+  AOnWriteClass: TOnWriteClassIntf; AOnWriteEnum: TOnWriteEnum;
+  AOnWriteUnit: TOnWriteUnit);
 var
   lWriter: TMapperProjectWriter;
 begin
@@ -387,6 +397,13 @@ begin
   SaveProject;
 
   lWriter := TMapperProjectWriter.Create(Project);
+  lWriter.Verbose:=AVerbose;
+  if AVerbose then
+  begin
+    lWriter.OnWriteClass := AOnWriteClass;
+    lWriter.OnWriteEnum := AOnWriteEnum;
+    lWriter.OnWriteUnit := AOnWriteUnit;
+  end;
 
   try
     lWriter.WriteProject(Project.GeneralOptions.OutputDirectory);

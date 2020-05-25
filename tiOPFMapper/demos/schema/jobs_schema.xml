@@ -28,7 +28,7 @@
                     auto-map="true"                      
                     auto-create-list="true">
                     <class-props>                        
-                        <prpo name="JobName"/>
+                        <prop name="JobName"/>
                         <prop name="JobDesc"/>  
                         <prop name="Status" type="TJobStatus"/>                                                                      
                     </class-props>                     
@@ -98,7 +98,6 @@
                     <selections> 
                         <select type="func" name="FindByUser">                        
                             <params>
-                                <!-- Notice extra attribute "type-name".  Enums just have this extra attribute. -->
                                 <item name="AUserOID" type="string" pass-by="const" sql-param="user_oid"/>                                                           
                             </params>
                             <sql>

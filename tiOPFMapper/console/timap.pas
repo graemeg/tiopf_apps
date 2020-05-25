@@ -13,13 +13,12 @@ uses
   mapper,
   {$ifdef FPC}
   custapp,
-  fpc_schema_reader,
   {$endif}
   {$ifndef FPC}
-  delphi_custom_app,
-  delphi_schema_reader,
+  delphi_custom_app,  
   {$endif}
-  mapper_project_writer;
+  AppModel,
+  common_schema_reader;
 
 type
 
@@ -44,11 +43,7 @@ type
 
 procedure TMapperCmd.DoRun;
 var
-  lRead: TMapSchemaReader;
-  lWriter: TMapperProjectWriter;
-  lProj: TMapProject;
   lPath: string;
-  lSL: TStringList;
 //  lProjWriter: TProjectWriter;
 begin
   if (ParamCount = 0) or HasOption('h','help') then
@@ -65,45 +60,23 @@ begin
       exit;
     end;
 
-
-  lProj := TMapProject.Create;
-  lRead := gGetSchemaReaderClass.Create;
   try
     lPath := GetOptionValue('f', 'file');
-    lRead.ReadSchema(lProj, lPath);
-    lWriter := TMapperProjectWriter.Create(lProj);
-    lSL := TStringList.create;
-    try
-      WriteLn('');
 
-      if HasOption('v', '-verbose') then
-        begin
-          lWriter.OnWriteClass := {$IFDEF FPC}@{$ENDIF}Self.OnWriteClass;
-          lWriter.OnWriteEnum := {$IFDEF FPC}@{$ENDIF}self.OnWriteEnum;
-          lWriter.OnWriteUnit := {$IFDEF FPC}@{$ENDIF}self.OnWriteUnit;
-          lWriter.Verbose := true;
-        end;
+    TAppModel.Instance.LoadProject(lPath);
+    TAppModel.Instance.WriteProject(
+                               HasOption('v', '-verbose'),
+                               {$IFDEF FPC}@{$ENDIF}OnWriteClass,
+                               {$IFDEF FPC}@{$ENDIF}OnWriteEnum,
+                               {$IFDEF FPC}@{$ENDIF}OnWriteUnit
+                               );
 
-      lWriter.WriteProject(lProj.OutputDirectory);
-
-      //lProjWriter := TProjectWriter.Create;
-      //try
-      //  lProjWriter.WriteProject(lProj, lProj.OutputDirectory, 'backup.xml');
-      //finally
-      //  lProjWriter.Free;
-      //end;
-
-      WriteLn('Operation was successful');
-      WriteProjectStats(lProj);
-      WriteLn;
-      WriteLn;
-    finally
-      lWriter.free;
-      lSL.free;
-    end;
+    WriteLn('Operation was successful');
+    WriteProjectStats(TAppModel.Instance.Project);
+    WriteLn;
+    WriteLn;
   finally
-    lRead.Free;
-    lProj.free;
+    TAppModel.Instance.CloseProject;
   end;
 
   Terminate;
@@ -116,7 +89,7 @@ end;
 
 procedure TMapperCmd.OnWriteEnum(AEnum: TMapEnum);
 begin
-  WriteLn('  Writing Enum: ' + AEnum.EnumName + '...');
+  WriteLn('  Writing Enum: ' + AEnum.TypeName + '...');
 end;
 
 procedure TMapperCmd.OnWriteUnit(AUnitDef: TMapUnitDef);
@@ -157,7 +130,7 @@ end;
 procedure TMapperCmd.WriteProject(AProject: TMapProject);
 begin
   WriteLn('---------------------------------');
-  WriteLn('|Project: ' + AProject.ProjectName);
+  WriteLn('|Project: ' + AProject.GeneralOptions.ProjectName);
 end;
 
 procedure TMapperCmd.WriteProjectStats(AProject: TMapProject);

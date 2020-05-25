@@ -1154,7 +1154,7 @@ begin
 
   WriteLine('Query.SQLText :=', ASL);
   IncTab;
-  WriteLine('''INSERT INTO ' + lMapping.TableName + ''' +', ASL);
+  WriteLine('''INSERT INTO ' + lMapping.TableName + ' '' +', ASL);
   WriteLine('''('' +', ASL);
 
   WriteLine('''  ' + DoubleQuoteFieldName(AClassDef.ClassMapping.PKField,
@@ -1173,8 +1173,8 @@ begin
       WriteLine('''  ' + lFieldName + ''' +', ASL)
   end;
 
-  WriteLine(''')'' +', ASL);
-  WriteLine('''VALUES'' +', ASL);
+  WriteLine(''') '' +', ASL);
+  WriteLine('''VALUES '' +', ASL);
   WriteLine('''('' +', ASL);
   WriteLine('''  :' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
@@ -1414,7 +1414,6 @@ begin
   WriteLine('''SELECT '' +', ASL);
   WriteLine(''' ' + AClassDef.ClassMapping.PKField + ', '' +', ASL);
 
-      //' + lMapping.TableName + ' SET '' +', ASL);
   for lCtr := 0 to lMapping.PropMappings.Count - 1 do
   begin
     lPropMap := lMapping.PropMappings.Items[lCtr];
@@ -1723,11 +1722,11 @@ begin
     if lCtr < (lMapping.PropMappings.Count - 1) then
       WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ','' +', ASL)
     else
-      WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ''' +', ASL)
+      WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' '' +', ASL)
   end;
 
   WriteLine('''FROM'' +', ASL);
-  WriteLine('''  ' + lMapping.TableName + ''' +', ASL);
+  WriteLine('''  ' + lMapping.TableName + ' '' +', ASL);
   WriteLine('''WHERE'' +', ASL);
   WriteLine('''  ' + DoubleQuoteFieldName(lMapping.PKField, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' = :' + lMapping.PKField + ''';', ASL);
   DecTab;
@@ -1935,7 +1934,7 @@ begin
   if Verbose then
   begin
     WriteLine('// ---------------------------------------------------------', ASL);
-    WriteLine('// Automatically generated on ' + DateToStr(now) + ' ' + TimeToStr(now), ASL);
+    WriteLine('// Automatically generated on ' + FormatDateTime('yyyy-mm-dd HH:hh:ss', now), ASL);
     WriteLine('// Warning: ', ASL);
     WriteLine('//   If you rerun timap, your changes in this file will be lost', ASL);
     WriteLine('// ---------------------------------------------------------', ASL);
@@ -2089,7 +2088,7 @@ begin
 
   WriteLine('Query.SQLText :=', ASL);
   IncTab;
-  WriteLine('''UPDATE ' + lMapping.TableName + ''' +', ASL);
+  WriteLine('''UPDATE ' + lMapping.TableName + ' '' +', ASL);
   WriteLine('''SET'' +', ASL);
 
   for lCtr := 0 to lMapping.PropMappings.Count - 1 do
@@ -2099,10 +2098,10 @@ begin
     if lCtr < (lMapping.PropMappings.Count - 1) then
       WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' = :' + lPropMap.FieldName + ','' +', ASL)
     else
-      WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' = :' + lPropMap.FieldName + ''' +', ASL)
+      WriteLine('''  ' + DoubleQuoteFieldName(lPropMap.FieldName, Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' = :' + lPropMap.FieldName + ' '' +', ASL)
   end;
 
-  WriteLine('''WHERE'' +', ASL);
+  WriteLine('''WHERE '' +', ASL);
   WriteLine('''  ' + DoubleQuoteFieldName(lMapping.PKField,
     Project.DatabaseOptions.DoubleQuoteDBFieldNames) + ' = :' + lMapping.PKField + ''';', ASL);
   DecTab;
