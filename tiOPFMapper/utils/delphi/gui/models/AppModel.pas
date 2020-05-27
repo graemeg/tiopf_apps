@@ -281,8 +281,8 @@ begin
 
     if Assigned(FOnAfterProjectSaved) then
       FOnAfterProjectSaved(Self);
-    if Assigned(FOnProjectLoaded) then
-      FOnProjectLoaded(Self);
+//    if Assigned(FOnProjectLoaded) then
+//      FOnProjectLoaded(Self);
   finally
     lProjWriter.Free;
   end;
