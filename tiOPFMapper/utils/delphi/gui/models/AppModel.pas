@@ -394,7 +394,7 @@ begin
   if State = mpsClosed then
     raise Exception.Create(ClassName + '.WriteProject: No project loaded');
 
-  if not AResaveSchema then
+  if AResaveSchema then
     SaveProject;
 
   lWriter := TMapperProjectWriter.Create(Project);
