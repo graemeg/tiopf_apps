@@ -237,6 +237,7 @@ begin
 
   // Update last directory used
   FLastDirectoryUsed := ExtractFilePath(AFile);
+  Result := true;
 end;
 
 procedure TAppModel.RemoveEnumsFromPropertyTypes;
