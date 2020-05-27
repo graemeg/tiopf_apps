@@ -15,7 +15,7 @@ uses
   custapp,
   {$endif}
   {$ifndef FPC}
-  delphi_custom_app,  
+  delphi_custom_app,
   {$endif}
   AppModel,
   common_schema_reader;
@@ -64,8 +64,8 @@ begin
     lPath := GetOptionValue('f', 'file');
 
     TAppModel.Instance.LoadProject(lPath);
-    TAppModel.Instance.WriteProject(
-                               HasOption('v', '-verbose'),
+    TAppModel.Instance.WriteProject(HasOption('r','resave'),
+                               HasOption('v', 'verbose'),
                                {$IFDEF FPC}@{$ENDIF}OnWriteClass,
                                {$IFDEF FPC}@{$ENDIF}OnWriteEnum,
                                {$IFDEF FPC}@{$ENDIF}OnWriteUnit
@@ -121,9 +121,11 @@ begin
   { add your help code here }
   writeln('Usage: ',ExeName,' -h');
   writeln('');
-  writeln('   -h             Displays this help');
-  writeln('   -v             Verbose output');
-  writeln('   -f <file>      Where <file> is the XML schema file');
+  writeln('   -h  or --help         Displays this help');
+  writeln('   -v  or --verbose      Verbose output');
+  writeln('   -r  or --resave       Resave the XML schema file');
+  writeln('   -f <file>   or        Where <file> is the XML schema file');
+  writeln('   --file=<file>         ');
   writeln('');
 end;
 

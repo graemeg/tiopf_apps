@@ -67,7 +67,7 @@ type
     procedure SaveProjectAs(const AFileName: string);
     procedure CreateNewProject(const AFileName: string);
     procedure CloseProject;
-    procedure WriteProject(AVerbose: Boolean; AOnWriteClass: TOnWriteClassIntf;
+    procedure WriteProject(AResaveSchema: boolean; AVerbose: Boolean; AOnWriteClass: TOnWriteClassIntf;
       AOnWriteEnum: TOnWriteEnum; AOnWriteUnit: TOnWriteUnit); overload;
 
     property Project: TMapProject read FProject write SetProject;
@@ -385,16 +385,16 @@ begin
   CurrentEnums.NotifyObservers;
 end;
 
-procedure TAppModel.WriteProject(AVerbose: Boolean;
-  AOnWriteClass: TOnWriteClassIntf; AOnWriteEnum: TOnWriteEnum;
-  AOnWriteUnit: TOnWriteUnit);
+procedure TAppModel.WriteProject(AResaveSchema: boolean; AVerbose: Boolean; AOnWriteClass: TOnWriteClassIntf;
+  AOnWriteEnum: TOnWriteEnum; AOnWriteUnit: TOnWriteUnit);
 var
   lWriter: TMapperProjectWriter;
 begin
   if State = mpsClosed then
     raise Exception.Create(ClassName + '.WriteProject: No project loaded');
 
-  SaveProject;
+  if not AResaveSchema then
+    SaveProject;
 
   lWriter := TMapperProjectWriter.Create(Project);
   lWriter.Verbose:=AVerbose;
