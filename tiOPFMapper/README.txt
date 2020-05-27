@@ -20,7 +20,7 @@ have INCLUDES pointing to other XML files which describe yet additional classes,
 enums and mappings if necessary.
 
 Eventually, I'll write a GUI utility front end for it, but for now I am content
-writing out the xml. A typical 200 line xml schema will produce about 2000 lines
+writing out the XML. A typical 200 line XML schema will produce about 2000 lines
 or more of pascal code for defining the classes, their visitors, registering
 visitors, mappings, etc and gluing everything up so that you're basically able
 to just start writing code.
@@ -83,11 +83,11 @@ The root <project> node should include the bare parameters required.  There are:
 
   enum-type=          The mapping framework takes into consideration whether you
                       are storing your enumerated types as either the String
-                      representation (eg "bsNone") or the integer representation
+                      representation (eg. "bsNone") or the integer representation
                       such as 0. Valid values are "string" or "int".
 
   outputdir=          Determines the directory where the mapping utility should
-                      dump the unit files which it creates. You can specify a
+                      write the unit files which it creates. You can specify a
                       relative or absolute directory path. If the outputdir
                       parameter is omitted, the output directory defaults to the
                       same directory in which the schema file itself resides.
